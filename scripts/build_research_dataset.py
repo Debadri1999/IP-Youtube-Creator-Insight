@@ -57,9 +57,9 @@ CHANNEL_HANDLES = [
 ]
 
 CHANNELS_TARGET = 40
-VIDEOS_PER_CHANNEL = 120
+VIDEOS_PER_CHANNEL = 200
 
-OUTPUT_CSV = os.path.join("scripts", f"{CATEGORY_NAME}_channels_videos.csv")
+OUTPUT_CSV = os.path.join("data", "youtube api data", f"{CATEGORY_NAME}_channels_videos.csv")
 
 # ============================================================
 # SYSTEM CONFIG (do not edit)
@@ -326,7 +326,17 @@ def main():
         handles = handles[:CHANNELS_TARGET]
         print(f"Note: Trimming CHANNEL_HANDLES to first {CHANNELS_TARGET} channels.")
 
+    existing_video_ids = set()
+    if os.path.exists(OUTPUT_CSV):
+        try:
+            existing_ids_df = pd.read_csv(OUTPUT_CSV, usecols=["video_id"])
+            existing_video_ids = set(existing_ids_df["video_id"].dropna().astype(str).tolist())
+            print(f"Loaded existing video IDs: {len(existing_video_ids)}")
+        except Exception as e:
+            print(f"Warning: could not load existing video IDs for dedupe: {e}")
+
     rows: List[Dict[str, Any]] = []
+    new_video_ids = set()
 
     for handle in handles:
         print(f"\n=== Channel: {handle} ===")
@@ -380,16 +390,21 @@ def main():
         for v in videos:
             if not isinstance(v.get("snippet", {}), dict) or not v.get("id"):
                 continue
+            vid = str(v.get("id", "")).strip()
+            if not vid or vid in existing_video_ids or vid in new_video_ids:
+                continue
             rows.append(video_row(v, ch))
+            new_video_ids.add(vid)
 
     if not rows:
-        raise RuntimeError("No data collected. CSV not written. Check handles, API key, and quota.")
+        print("No new rows to append after dedupe. CSV unchanged.")
+        return
 
     df = pd.DataFrame(rows)
     os.makedirs(os.path.dirname(OUTPUT_CSV), exist_ok=True)
     if os.path.exists(OUTPUT_CSV):
         df.to_csv(OUTPUT_CSV, mode="a", header=False, index=False)
-        print("Appended to existing CSV.")
+        print("Appended only new deduplicated rows to existing CSV.")
     else:
         df.to_csv(OUTPUT_CSV, index=False)
         print("Created new CSV.")
