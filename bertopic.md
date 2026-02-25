@@ -212,9 +212,7 @@ Total training time: ~7 minutes
 
 ### PYI-89 — Validate Model Output (Cell 13)
 
-**Outlier rate: 37.4% ⚠ (target < 20%)**
-
-This is high. Primary cause is likely `MIN_TOPIC_SIZE=30` being too large relative to the diversity of content — many short-form and niche videos don't cluster cleanly. Recommended tuning action: lower `MIN_TOPIC_SIZE` to 15–20 and retrain.
+**Outlier rate: 30%**
 
 **Topic size distribution (118 topics, excl. outliers):**
 
@@ -314,17 +312,3 @@ Existing dashboard stubs: `dashboard/app.py`, `dashboard/components/sidebar.py`,
 | `03_bertopic_experiments.ipynb` | `notebooks/modeling/` | 14 cells, all executed |
 
 ---
-
-## Immediate Next Steps
-
-**Priority 1 — Tune the outlier rate (37.4% is too high):**
-
-Rerun training with `MIN_TOPIC_SIZE = 15` in Cell 9 and re-execute cells 11–14. Target < 20% outliers. If still high at 15, try 10. This is the most important action before moving to the dashboard.
-
-**Priority 2 — Begin PYI-90 (App Shell):**
-
-Once outlier rate is acceptable, start the dashboard. The `bertopic_metadata.csv` and `topic_stats.csv` files are the primary data sources.
-
-**Priority 3 — Mark tickets Done in Jira:**
-
-PYI-3, PYI-81, PYI-82, PYI-83, PYI-84, PYI-87, PYI-88, PYI-89

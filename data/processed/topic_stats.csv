@@ -1,119 +1,293 @@
 topic_id,video_count,median_views,median_like_rate,top_category,category_mix,topic_label
-42,80,36901338.5,0.01874335156961322,gaming,"{'gaming': 72, 'research_science': 2, 'tech': 2, 'fitness': 2, 'food': 1, 'entertainment': 1}",42_minecraft challenges_future minecraft_minecraft_sponsoring video
-108,39,7586647.0,0.02601867518931848,entertainment,{'entertainment': 39},108_arcade_order_vodka_2nd channel
-61,53,7385807.0,0.022791148046253578,entertainment,"{'entertainment': 43, 'gaming': 5, 'fitness': 3, 'food': 1, 'research_science': 1}",61_instagram_livestreams_youtuber_youtubers
-107,40,6072483.0,0.0021503712513916305,fitness,"{'fitness': 38, 'food': 2}",107_gym_olympic_competition_competing
-116,32,4997199.5,0.03706508925901847,research_science,"{'research_science': 30, 'entertainment': 2}",116_voice kurzgesagt_kurzgesagt voice_kurzgesagt_bird army
-8,359,4609015.0,0.04588383910942961,research_science,"{'research_science': 332, 'tech': 13, 'entertainment': 5, 'food': 4, 'fitness': 4, 'gaming': 1}",8_science chemistry_chemical_chemistry_acid
-103,41,4272683.0,0.031936888327077306,gaming,"{'gaming': 37, 'food': 3, 'entertainment': 1}",103_stream_donations_channels_irl
-97,43,3345146.0,0.02560806685227962,gaming,"{'gaming': 41, 'entertainment': 1, 'fitness': 1}",97_pokemon_twitch discord_twitch_emerald
-17,177,2887104.0,0.03280963481012084,research_science,"{'research_science': 172, 'tech': 4, 'fitness': 1}",17_instagram smarter_facebook smarter_smarter day_patreon smarter
-89,46,2002146.5,0.033030345478115196,food,"{'food': 41, 'entertainment': 5}",89_uncle_roger_grandpa_nigel
-18,176,1866527.0,0.029142655925622832,research_science,"{'research_science': 156, 'tech': 7, 'entertainment': 6, 'gaming': 5, 'food': 2}",18_infrastructure_construction_practical engineering_engineer
-31,96,1835634.0,0.046653532692760985,research_science,"{'research_science': 93, 'gaming': 1, 'tech': 1, 'fitness': 1}",31_discord_nerdy maths_discord just_exclusive discord
-106,40,1716370.5,0.05065363257553537,gaming,"{'gaming': 39, 'entertainment': 1}",106_hermit_episode 10_episode 23_episode 19
-28,107,1630493.0,0.03639756277774323,gaming,"{'gaming': 98, 'tech': 4, 'entertainment': 2, 'research_science': 2, 'food': 1}",28_minecraft_empires_empire_adventure
-26,112,1622943.5,0.032222028074485584,research_science,{'research_science': 112},26_animations_animating math_animations largely_animating
-24,120,1497206.5,0.06312136194999027,research_science,"{'research_science': 117, 'tech': 2, 'entertainment': 1}",24_science future_scientists_science camera_future breakthrough
-66,52,1187861.0,0.033231558987635614,gaming,"{'gaming': 50, 'research_science': 1, 'fitness': 1}",66_minecraft funny_minecraft_games minecraft_dantdm
-34,89,843207.0,0.036716223311026766,research_science,"{'research_science': 76, 'tech': 10, 'food': 1, 'gaming': 1, 'fitness': 1}",34_nuclear power_nuclear fusion_nuclear_nuclear reactors
-96,43,792353.0,0.03941256253695083,entertainment,"{'entertainment': 42, 'gaming': 1}",96_tv shows_music channel_tv_shows
-102,41,680328.0,0.03745597262755359,tech,"{'tech': 39, 'gaming': 1, 'research_science': 1}",102_engines_turbo_engine_exhaust
-29,98,653368.5,0.010660022951000454,entertainment,"{'entertainment': 95, 'gaming': 3}",29_minecraft_roblox_minecraft minecraft_mod
-57,55,634838.0,0.03291868980786719,research_science,"{'research_science': 54, 'entertainment': 1}",57_minutephysics patreon_minutephysics science_physics minutephysics_minutephysics
-115,34,629216.5,0.032947305169499716,research_science,"{'research_science': 32, 'entertainment': 1, 'tech': 1}",115_nasa mars_mars_martian_rover
-38,84,620462.5,0.02431755158072231,gaming,"{'gaming': 82, 'food': 1, 'fitness': 1}",38_minecraft funny_minecraft minecraft_minecraft_mob
-2,1406,604429.5,0.03858916413011169,research_science,"{'research_science': 1047, 'tech': 157, 'entertainment': 116, 'gaming': 81, 'food': 4, 'fitness': 1}",2_black holes_space time_dark matter_general relativity
-99,42,538690.5,0.04224166330321388,gaming,"{'gaming': 40, 'entertainment': 1, 'fitness': 1}",99_battle_captainsauce_secrets_goblins
-98,42,470797.0,0.03319112576999085,research_science,{'research_science': 42},98_videos patreon_support videos_ways support_video possible
-78,49,449942.0,0.01829362590533795,entertainment,{'entertainment': 49},78_rocket_league_code_charm
-52,59,446154.0,0.05327863831885825,gaming,"{'gaming': 58, 'tech': 1}",52_snapchat_subscribe channels_channels_games gaming
-92,45,421974.0,0.018285390005710816,research_science,"{'research_science': 42, 'tech': 3}",92_registers_components_ram_build
-39,83,378068.0,0.017312675077104666,gaming,"{'gaming': 82, 'fitness': 1}",39_fortnite videos_fortnite battle_fortnite_battle royale
-85,47,349030.0,0.03891929105394691,gaming,"{'gaming': 38, 'entertainment': 9}",85_nights freddy_freddy_fnaf_nightshift
-36,88,347315.0,0.031129057954390894,entertainment,"{'entertainment': 86, 'tech': 2}",36_comedian_emmy_executive producer_podcast
-69,51,340181.0,0.054611795510493485,tech,"{'tech': 47, 'research_science': 4}",69_updates_channel support_support patreon_update
-10,321,310320.0,0.03673366414624496,research_science,"{'research_science': 315, 'entertainment': 2, 'gaming': 2, 'tech': 2}",10_numberphile_numbers_number_mathematics comedy
-87,46,296006.0,0.038873489414079185,gaming,"{'gaming': 42, 'fitness': 2, 'food': 1, 'tech': 1}",87_podcast_poki pokimane_pokimane poki_pokimane
-3,974,295703.5,0.035815683430917365,gaming,"{'gaming': 776, 'entertainment': 143, 'tech': 26, 'research_science': 13, 'fitness': 10, 'food': 6}",3_roblox_sonic_horror game_walkthrough gameplay
-94,44,237815.0,0.03725748046081854,research_science,"{'research_science': 43, 'tech': 1}",94_quantum computers_quantum computing_quantum_quantum quantum
-70,51,226367.0,0.0333440828389297,entertainment,"{'entertainment': 44, 'research_science': 3, 'gaming': 2, 'tech': 1, 'fitness': 1}",70_beat_dungeon_nerd_die
-15,193,206104.0,0.03628319633728309,research_science,"{'research_science': 192, 'gaming': 1}",15_periodic videos_periodic_elements_element
-7,404,200573.0,0.020935533874611285,gaming,"{'gaming': 384, 'entertainment': 8, 'tech': 6, 'fitness': 4, 'research_science': 2}",7_fortnite fortnite_fortnite battle_fortnite_battle royale
-65,52,189645.5,0.043305051782967174,tech,"{'tech': 48, 'gaming': 3, 'entertainment': 1}",65_windows 11_windows 10_windows_linux windows
-72,51,169430.0,0.03083146020861603,food,"{'food': 50, 'entertainment': 1}",72_fishing_fish_salmon_tuna
-23,121,160799.0,0.029291646642255656,gaming,"{'gaming': 114, 'tech': 4, 'entertainment': 2, 'research_science': 1}",23_gta gta_gta_grand theft_rockstar games
-76,50,138887.0,0.017129408545593243,entertainment,"{'entertainment': 49, 'gaming': 1}",76_celebrity moments_celebrity interviews_graham_celebrity
-22,132,136594.5,0.03400461896510061,research_science,"{'research_science': 131, 'entertainment': 1}",22_sixtysymbols_list sixtysymbols_symbols_symbols videos
-43,77,128686.0,0.04047852114927715,tech,"{'tech': 71, 'research_science': 4, 'gaming': 2}",43_nintendo_nintendo switch_game boy_retro tech
-32,95,127804.0,0.040110104603366836,entertainment,"{'entertainment': 85, 'tech': 5, 'gaming': 4, 'research_science': 1}",32_mysteries_videos channel_disturbing_channel
-14,211,123338.0,0.02404800776596214,research_science,"{'research_science': 207, 'tech': 4}",14_statistics_data_statistical_data science
-13,214,123263.5,0.034037821525404265,research_science,"{'research_science': 201, 'tech': 12, 'food': 1}",13_computers computerphile_computerphile computer_numberphile computers_computerphile
-11,278,118613.5,0.04076600837821664,research_science,"{'research_science': 217, 'tech': 55, 'gaming': 4, 'entertainment': 1, 'fitness': 1}",11_nvidia ai_gpu_nvidia_nvidia nvidia
-64,52,114636.5,0.010968732861138496,entertainment,"{'entertainment': 51, 'gaming': 1}",64_talent_superstar_audition_mel
-110,39,112958.0,0.041125043031128176,gaming,"{'gaming': 38, 'tech': 1}",110_battlefield_walkthrough gameplay_gameplay_trailer gameplay
-16,187,111597.0,0.03107152017115297,entertainment,"{'entertainment': 170, 'research_science': 5, 'fitness': 5, 'gaming': 4, 'tech': 2, 'food': 1}",16_tiktok_tiktok tiktok_copyright_copyright act
-25,118,105689.0,0.022893956673767125,gaming,"{'gaming': 81, 'entertainment': 33, 'tech': 2, 'research_science': 2}",25_twitch_video subscribe_channels content_youtube channels
-20,147,101966.0,0.02504477582402359,tech,{'tech': 147},20_iphone 17_17 iphone_iphone 16_17 pro
-45,64,97766.5,0.023654813076907727,entertainment,{'entertainment': 64},45_fallout season_fallout_trailer fallout_prime video
-80,48,90669.0,0.043600772415019515,research_science,{'research_science': 48},80_explained quantum_quantum physics_quantum mechanics_quantum
-93,45,87273.0,0.04011909920740316,entertainment,{'entertainment': 45},93_disturbing breakdown_breakdown_breakdowns_horror movie
-60,53,80317.0,0.042452421520778584,entertainment,"{'entertainment': 51, 'food': 1, 'gaming': 1}",60_harry potter_potter_harry_hunger games
-12,219,79787.0,0.03512766102240177,entertainment,"{'entertainment': 212, 'gaming': 5, 'research_science': 1, 'fitness': 1}",12_spider man_avengers doomsday_avengers_marvel
-71,51,79065.0,0.039433174038790465,entertainment,{'entertainment': 51},71_copyright_107 copyright_copyright act_video essay
-1,1740,78078.0,0.03376323873537855,food,"{'food': 1690, 'research_science': 16, 'gaming': 14, 'entertainment': 12, 'fitness': 6, 'tech': 2}",1_cook_cookbook_chef_cooking
-88,46,70542.0,0.041340905977332636,research_science,"{'research_science': 21, 'fitness': 9, 'entertainment': 5, 'food': 4, 'tech': 4, 'gaming': 3}",88_sleep_sleeping_fall asleep_asleep
-74,50,66094.0,0.021152462501126,food,{'food': 50},74_cooks_chicken_meal_korean
-4,579,63760.0,0.029433025040312866,tech,"{'tech': 572, 'gaming': 3, 'entertainment': 2, 'research_science': 2}",4_laptops_lenovo_laptop_dell
-75,50,61382.5,0.01540820344190997,entertainment,{'entertainment': 50},75_voice_vocal_singer_singing
-83,47,58459.0,0.020765723483798362,tech,"{'tech': 38, 'research_science': 5, 'entertainment': 3, 'food': 1}",83_smart glasses_glasses_lenses_apple vision
-5,550,57536.5,0.03851828707320037,entertainment,"{'entertainment': 535, 'gaming': 5, 'research_science': 4, 'food': 3, 'tech': 2, 'fitness': 1}",5_supernatural_thriller_ending explained_stranger things
-53,57,56192.0,0.021197510925327758,entertainment,{'entertainment': 57},53_hbo max_hbo_new episodes_warner bros
-19,166,55709.0,0.021443328861583906,gaming,"{'gaming': 164, 'tech': 2}",19_arc raiders_raiders_raider_arc
-109,39,54057.0,0.06714971469975546,entertainment,{'entertainment': 39},109_mikey_movies_film review_film
-59,54,53159.0,0.033373270934332615,fitness,"{'fitness': 51, 'entertainment': 2, 'gaming': 1}",59_instagram tiktok_tiktok twitch_tiktok_twitch
-35,88,53157.0,0.025143539181746104,entertainment,"{'entertainment': 87, 'research_science': 1}",35_knight seven_kingdoms trailer_seven kingdoms_episode knight
-44,76,52515.5,0.03388313057577266,entertainment,"{'entertainment': 69, 'research_science': 3, 'food': 2, 'gaming': 1, 'tech': 1}",44_disney_walt disney_mermaid_films
-56,55,51585.0,0.007472406937684239,entertainment,"{'entertainment': 54, 'food': 1}",56_spongebob_cartoons_animated series_nick
-21,139,51390.0,0.03905059455515742,tech,"{'tech': 132, 'research_science': 3, 'gaming': 2, 'entertainment': 1, 'fitness': 1}",21_cybersecurity_computer security_hackers_antivirus
-55,56,44787.0,0.03778564003222076,gaming,"{'gaming': 53, 'entertainment': 3}",55_silent hill_hill_walkthrough gameplay_horror game
-111,37,43810.0,0.051360608227633706,tech,"{'tech': 34, 'gaming': 2, 'research_science': 1}",111_privacy internet_internet privacy_privacy focused_tech privacy
-68,51,42601.0,0.025859514523452955,tech,{'tech': 51},68_galaxy fold_samsung galaxy_samsung_folding
-0,2529,39986.0,0.035523114355231145,fitness,"{'fitness': 2278, 'research_science': 219, 'food': 13, 'entertainment': 9, 'gaming': 5, 'tech': 5}",0_yoga_routine_exercises_exercise
-9,333,37174.0,0.03039735421428919,fitness,"{'fitness': 136, 'entertainment': 73, 'gaming': 66, 'research_science': 31, 'food': 14, 'tech': 13}",9_gratitude_kindness_life_say thank
-27,111,36339.0,0.034800320700340205,gaming,"{'gaming': 102, 'entertainment': 7, 'research_science': 1, 'fitness': 1}",27_donations_twitter twitch_twitch twitter_channel twitter
-112,36,34614.0,0.038032102126751566,tech,{'tech': 36},112_affiliate_affiliate programs_apple_iphone
-117,32,33291.0,0.033153855182370455,fitness,"{'fitness': 24, 'entertainment': 5, 'food': 1, 'gaming': 1, 'research_science': 1}",117_pregnant_pregnancy_baby_birth
-114,34,33058.0,0.022692922708261072,tech,{'tech': 34},114_apple watch_smartwatch_watch ultra_watch review
-58,55,31045.0,0.054686110617108305,research_science,{'research_science': 55},58_neutrino_scientists_experiments_scientist
-48,61,30438.0,0.03666810073799517,gaming,"{'gaming': 60, 'research_science': 1}",48_tears kingdom_kingdom_legend zelda_zelda
-30,98,28259.0,0.01855588988257509,entertainment,"{'entertainment': 95, 'tech': 1, 'research_science': 1, 'fitness': 1}",30_documentary history_history channel_history documentary_aliens
-6,538,26900.5,0.03314950980392157,tech,"{'tech': 429, 'research_science': 54, 'entertainment': 27, 'gaming': 19, 'fitness': 7, 'food': 2}",6_verge_tech news_gadget tech_vergecast
-81,47,25375.0,0.033427697234851735,gaming,"{'gaming': 43, 'tech': 2, 'entertainment': 1, 'research_science': 1}",81_gta gta_gta_gta vi_rockstar games
-41,81,25360.0,0.014642700569925471,gaming,"{'gaming': 79, 'entertainment': 2}",41_pranks_wife_digger_prank
-101,42,25089.0,0.012146555157307845,tech,"{'tech': 40, 'food': 1, 'research_science': 1}",101_vacuum_carpet_robot_cleaner
-77,49,24108.0,0.03650485436893204,research_science,"{'research_science': 47, 'tech': 2}",77_timelapse_observatory_sky_solar eclipse
-104,41,24051.0,0.03993847168049223,research_science,{'research_science': 41},104_muon_fermilab physics_fermilab_new physics
-67,52,23334.0,0.011440741858866347,entertainment,"{'entertainment': 48, 'tech': 2, 'gaming': 1, 'research_science': 1}",67_fifa_football_united_cup
-54,57,20534.0,0.03644452858765619,tech,{'tech': 57},54_linux linux_linux_linux tutorial_ubuntu
-95,44,18365.5,0.035839963954002615,tech,"{'tech': 42, 'research_science': 1, 'fitness': 1}",95_developers_developer_programming_projects
-86,46,17454.5,0.00858107620844533,entertainment,{'entertainment': 46},86_cartoon_cartoons_animated series_episodes
-91,45,16431.0,0.05807564528494761,tech,{'tech': 45},91_analyzer_probe_repair_meter
-51,59,15713.0,0.027110766847405113,tech,"{'tech': 56, 'research_science': 2, 'fitness': 1}",51_airpods pro_airpods_headphones_earbuds
-49,59,14542.0,0.008641975308641974,entertainment,"{'entertainment': 57, 'gaming': 1, 'fitness': 1}",49_kardashian_jennifer lopez_celebrity_kelly
-62,53,13270.0,0.053309796999117386,food,{'food': 53},62_bread_dough_baking_baker
-105,41,5797.0,0.07764477515367195,tech,"{'tech': 40, 'research_science': 1}",105_radio_rf_station_antenna
-79,49,5392.0,0.021289630877622912,entertainment,{'entertainment': 49},79_mtv_survivor_favorite shows_shows
-84,47,4475.0,0.020077220077220077,entertainment,{'entertainment': 47},84_celebrities_celebrity_anne_comedy funny
-113,35,4398.0,0.03447703098731668,fitness,"{'fitness': 28, 'research_science': 5, 'entertainment': 2}",113_habits_motivation_habit_fitness
-50,59,3546.0,0.007237635705669481,tech,"{'tech': 58, 'gaming': 1}",50_p5 js_js p5_js web_p5
-90,45,3479.0,0.0014017381553125877,entertainment,{'entertainment': 45},90_wars star_star wars_generated youtube_auto generated
-47,61,1842.0,0.041300980898296334,gaming,"{'gaming': 49, 'entertainment': 10, 'food': 1, 'tech': 1}",47_isle_dinosaur_jurassic_dinosaurs
-73,51,1710.0,0.007858546168958742,fitness,"{'fitness': 35, 'research_science': 11, 'food': 5}",73_pregnancy_pregnant_nutrients_babies
-63,53,1704.0,0.022020725388601035,food,"{'food': 51, 'research_science': 1, 'entertainment': 1}",63_pig_pigs_bacon_pork
-37,87,1469.0,0.014694508894044857,gaming,"{'gaming': 83, 'entertainment': 2, 'fitness': 2}",37_generated youtube_youtuber_provided youtube_youtube
-82,47,940.0,0.04060913705583756,food,"{'food': 46, 'research_science': 1}",82_cheese_making_make_beginners
-33,90,197.5,0.034878075028275016,gaming,"{'gaming': 60, 'entertainment': 25, 'fitness': 2, 'tech': 2, 'food': 1}",33_days_donate_visited_50
-40,83,65.0,0.05555555555555555,food,"{'food': 43, 'fitness': 23, 'research_science': 7, 'gaming': 4, 'tech': 4, 'entertainment': 2}",40_october 2025_march 2025_2024 2024_2024
-100,42,0.0,0.037914188860197484,entertainment,"{'entertainment': 41, 'tech': 1}",100_subtitles_lyricist_official music_subtitle
-46,63,0.0,0.0,food,"{'food': 50, 'gaming': 8, 'entertainment': 4, 'fitness': 1}",46_soundtrack_playlist_song_night
+39,79,37126807.0,0.018642651253648748,gaming,"{'gaming': 71, 'research_science': 2, 'tech': 2, 'fitness': 2, 'food': 1, 'entertainment': 1}",39_minecraft_1000_100 000_000
+129,37,8733952.0,0.03205541621421015,gaming,"{'gaming': 36, 'research_science': 1}",129_donations tts_tts donations_donations follow_memberships donations
+109,43,8047251.0,0.021819633310355663,entertainment,"{'entertainment': 41, 'gaming': 1, 'research_science': 1}",109_instagram_livestreams_follow instagram_instagram instagram
+127,38,7672198.0,0.025950213866707338,entertainment,{'entertainment': 38},127_arcade_50 order_vodka_order
+13,190,6773649.0,0.04861858500629003,research_science,"{'research_science': 182, 'tech': 3, 'food': 2, 'entertainment': 1, 'gaming': 1, 'fitness': 1}",13_chemicals_reaction kit_chemical_science chemistry
+148,30,6498883.0,0.05386653146428713,entertainment,"{'entertainment': 27, 'fitness': 2, 'tech': 1}",148_claire_anne_dummer kelly_emilee dummer
+115,41,6146515.0,0.002204854752208788,fitness,"{'fitness': 39, 'food': 2}",115_gym_olympic_competition_athletes
+174,24,5935259.5,0.04145148501945725,entertainment,"{'entertainment': 21, 'gaming': 2, 'tech': 1}",174_guy parody_instagram video_sponsoring video_sponsored hellofresh
+271,12,5695662.0,0.03368007239237474,entertainment,"{'entertainment': 11, 'tech': 1}",271_com internethistorian_internethistorian_internet historian_com nethistorian
+286,10,4983209.5,0.0430696770524414,research_science,"{'research_science': 8, 'tech': 1, 'entertainment': 1}",286_illusion_illusions_veritasium science_physics veritasium
+128,37,4772225.0,0.040219258132783174,research_science,"{'research_science': 35, 'entertainment': 2}",128_voice kurzgesagt_kurzgesagt voice_kurzgesagt_bird army
+181,23,4541747.0,0.009366804818509142,gaming,"{'gaming': 21, 'entertainment': 2}",181_furious_chase_beam_high speed
+46,70,4534176.5,0.05116533223185464,research_science,{'research_science': 70},46_kurzgesagt voice_voice kurzgesagt_kurzgesagt soundtracks_kurzgesagt
+160,28,4346517.0,0.025477094646967274,gaming,"{'gaming': 26, 'entertainment': 1, 'fitness': 1}",160_pokemon_random_sapphire_emerald
+152,29,4148123.0,0.03184577536574393,entertainment,"{'entertainment': 27, 'gaming': 2}",152_disturbing_channel_mysteries_tv
+119,40,4026992.0,0.03189380416096088,gaming,"{'gaming': 36, 'food': 3, 'entertainment': 1}",119_stream_donations tts_tts donations_channels yt
+261,13,3261753.0,0.03411704661627948,gaming,{'gaming': 13},261_ldshadowlady minecraft_smp_minecraft_joel gaming
+240,15,3170478.0,0.028708930770214167,research_science,"{'research_science': 12, 'tech': 2, 'gaming': 1}",240_submarine_navy_uss_arctic
+161,27,3119761.0,0.034137529949668476,entertainment,"{'entertainment': 25, 'gaming': 1, 'fitness': 1}",161_donated_days_visited_donate
+31,89,3016025.0,0.03025339644067937,research_science,"{'research_science': 86, 'tech': 3}",31_smarter day_tweet ideas_support smarter_like camera
+141,31,2894295.0,0.030065281298449167,gaming,"{'gaming': 29, 'research_science': 2}",141_minecraft_empires_ldshadowlady minecraft_empire
+289,10,2883854.5,0.04499726791696773,research_science,"{'research_science': 9, 'entertainment': 1}",289_drug_drugs_weed_smoking
+41,79,2733327.0,0.02562743360040579,research_science,"{'research_science': 77, 'tech': 2}",41_real engineering_engineering_engineering science_hochsprung engineering
+179,24,2613786.0,0.02540740838514898,gaming,{'gaming': 24},179_super mario_mario_games_odyssey
+282,11,2487669.0,0.030064518923184826,gaming,"{'gaming': 10, 'research_science': 1}",282_empire_schedule_coffee follow_buy coffee
+23,123,2470133.0,0.051893980366593984,gaming,"{'gaming': 77, 'entertainment': 40, 'tech': 5, 'research_science': 1}",23_nordvpn deal_exclusive nordvpn_nordvpn_free nord
+140,32,2097157.5,0.04093158945481665,gaming,{'gaming': 32},140_ldshadowlady minecraft_new life_wild_joel gaming
+188,22,2051045.5,0.031297877862714284,food,"{'food': 15, 'research_science': 5, 'entertainment': 1, 'fitness': 1}",188_egg_eggs_nest_crack
+96,46,2002146.5,0.033030345478115196,food,"{'food': 41, 'entertainment': 5}",96_uncle_roger_grandpa_nigel
+281,11,1959025.0,0.03930097384890665,gaming,{'gaming': 11},281_poki pokimane_pokimane poki_pokimane lol_pokimane
+131,37,1918903.0,0.038145048424787296,research_science,"{'research_science': 36, 'fitness': 1}",131_smarter day_smarter_ideas smarter_smarter section
+270,12,1880793.5,0.047755130495933565,research_science,"{'research_science': 8, 'tech': 4}",270_trains_railway_train_routes
+278,11,1750861.0,0.02325066745170492,fitness,"{'fitness': 9, 'food': 2}",278_store_gummies_homemade_goods
+9,233,1722769.0,0.030459988213802268,research_science,"{'research_science': 203, 'tech': 15, 'entertainment': 6, 'gaming': 6, 'food': 3}",9_infrastructure_practical engineering_engineering_engineer
+117,40,1716370.5,0.05065363257553537,gaming,"{'gaming': 39, 'entertainment': 1}",117_hermit_episode 10_10 episode_season 10
+143,31,1700278.0,0.03637298299996026,research_science,"{'research_science': 28, 'tech': 2, 'entertainment': 1}",143_bouncing_bounce_animations kyle_physics girl
+149,30,1623431.0,0.04653604847190559,entertainment,{'entertainment': 30},149_gaming channel_roblox_starforge_soap
+171,25,1589428.0,0.04316142623078723,research_science,"{'research_science': 22, 'food': 1, 'tech': 1, 'entertainment': 1}",171_ice cube_crystals_dry ice_ice
+25,114,1267396.5,0.05928561941269257,research_science,"{'research_science': 102, 'tech': 11, 'entertainment': 1}",25_future breakthrough_science camera_science future_scientists
+204,19,1238581.0,0.03181864709726695,research_science,{'research_science': 19},204_sun solar_solar_sun_earth solar
+170,25,1087269.0,0.05151429988131913,research_science,"{'research_science': 22, 'fitness': 3}",170_support dianna_dianna recovery_dianna_girl dianna
+21,135,1052712.0,0.040160657112502704,gaming,"{'gaming': 128, 'entertainment': 3, 'food': 1, 'tech': 1, 'research_science': 1, 'fitness': 1}",21_minecraft funny_minecraft_games minecraft_minecraft movie
+254,14,998701.5,0.04065125114165756,research_science,"{'research_science': 13, 'entertainment': 1}",254_asteroid impact_asteroid_asteroids_hit earth
+255,14,953170.0,0.07199657106433875,gaming,"{'gaming': 7, 'entertainment': 6, 'tech': 1}",255_iron lung_lung_iron_spider man
+284,11,894380.0,0.03505109684921398,research_science,{'research_science': 11},284_interstellar_extraterrestrial_atlas_astrumspace astronomy
+207,19,855685.0,0.04378119800332779,entertainment,"{'entertainment': 17, 'food': 1, 'research_science': 1}",207_christmas_best christmas_holiday_holidays
+238,15,852113.0,0.019171811233076607,entertainment,{'entertainment': 15},238_rocket_league_ranks_rank
+90,48,831386.5,0.03901873402170976,entertainment,"{'entertainment': 47, 'gaming': 1}",90_tv shows_music channel_tv_astro radio
+247,14,803295.0,0.04250245334756499,research_science,"{'research_science': 11, 'gaming': 1, 'entertainment': 1, 'fitness': 1}",247_water bottle_bottle_drinking water_water water
+137,32,776447.0,0.03655080062222449,research_science,"{'research_science': 29, 'gaming': 1, 'tech': 1, 'fitness': 1}",137_nuclear fusion_fusion_deuterium_nuclear
+177,24,749677.0,0.05562745582226124,gaming,"{'gaming': 19, 'entertainment': 3, 'food': 2}",177_production coordinator_associate producer_production assistant_creative producer
+266,12,745975.5,0.009530108740062142,entertainment,"{'entertainment': 11, 'gaming': 1}",266_timed_seconds_challenge_hour
+203,19,729996.0,0.04602614572740728,entertainment,{'entertainment': 19},203_shirt twitter_quickie_cosmonaut_code cosmonaut
+118,40,664524.0,0.03751892874432672,tech,"{'tech': 38, 'gaming': 1, 'research_science': 1}",118_turbo_engine_engines_exhaust
+214,18,663082.0,0.03666469981743573,gaming,{'gaming': 18},214_dispatch_episode game_superhero_gameplay ps5
+153,29,645469.0,0.03215290007919222,tech,"{'tech': 28, 'entertainment': 1}",153_coldfusion socials_coldfusion_listen coldfusion_book coldfusion
+34,86,621842.0,0.010929866691554734,entertainment,"{'entertainment': 84, 'gaming': 2}",34_minecraft mod_minecraft_nico_minecraft minecraft
+36,84,620462.5,0.02431755158072231,gaming,"{'gaming': 82, 'food': 1, 'fitness': 1}",36_minecraft funny_minecraft_minecraft minecraft_minecraft mods
+225,16,607954.5,0.037554203682109766,research_science,{'research_science': 16},225_rainbow_minutephysics science_minutephysics patreon_minutephysics
+56,61,601590.0,0.020286509255989044,gaming,"{'gaming': 60, 'entertainment': 1}",56_game roblox_games roblox_roblox_robux
+182,23,596725.0,0.021266479392847024,gaming,"{'gaming': 21, 'entertainment': 2}",182_mann_sssniperwolf sniper_sssniperwolf_sniper wolf
+185,22,587194.0,0.04130464495774577,research_science,"{'research_science': 17, 'tech': 3, 'entertainment': 1, 'fitness': 1}",185_balloon_balloons_air balloons_science experiment
+217,18,563626.5,0.039650553199085226,gaming,{'gaming': 18},217_azzy reaction_azzy_azzyland azzy_azzyland family
+28,105,555003.0,0.030043164200140943,tech,"{'tech': 102, 'food': 2, 'research_science': 1}",28_nebula using_nebula_free nebula_china
+180,23,541119.0,0.051411634761907826,research_science,"{'research_science': 20, 'entertainment': 2, 'food': 1}",180_infrastructure_ep_telecommunications_canal
+69,53,525398.0,0.02999197405743728,entertainment,"{'entertainment': 50, 'gaming': 2, 'tech': 1}",69_japan japan_japan_osaka_japanese
+287,10,525327.5,0.04287159664310543,research_science,{'research_science': 10},287_superconducting_superconductor_superconductors_magnetic
+134,35,519810.0,0.033440773569701855,research_science,"{'research_science': 33, 'entertainment': 1, 'tech': 1}",134_nasa mars_mars mars_mars_martian
+193,20,510583.0,0.04207840783847457,food,"{'food': 9, 'research_science': 9, 'entertainment': 1, 'fitness': 1}",193_coffee_brewing_brew_starbucks
+197,20,507764.0,0.03824485054611043,research_science,{'research_science': 20},197_antimatter_anti_antigravity_annihilation
+82,50,503122.5,0.025323429257736885,gaming,"{'gaming': 44, 'entertainment': 6}",82_tiktoks_tiktok_tiktok buy_sniper wolf
+20,138,496641.5,0.03479945810137092,research_science,"{'research_science': 137, 'food': 1}",20_black holes_black hole_holes black_spacetime
+135,35,490939.0,0.03201680783308448,research_science,{'research_science': 35},135_videos patreon_support videos_6502_ways support
+280,11,476732.0,0.024662946961637826,fitness,"{'fitness': 10, 'research_science': 1}",280_lee_priest_bodybuilding_weight
+6,332,467788.0,0.04145418287085951,research_science,"{'research_science': 328, 'entertainment': 3, 'tech': 1}",6_quantum gravity_space physics_spacetime_space time
+198,19,447488.0,0.03881205440750628,food,"{'food': 9, 'research_science': 8, 'tech': 1, 'fitness': 1}",198_flavors_bananas_fruit_banana
+58,59,446154.0,0.05327863831885825,gaming,"{'gaming': 58, 'tech': 1}",58_gaming comedy_snapchat_subscribe channels_channels
+87,49,445683.0,0.049549777418049376,entertainment,"{'entertainment': 45, 'research_science': 3, 'gaming': 1}",87_batman_matt_tyler_wicked
+208,19,426946.0,0.04863630494572986,research_science,"{'research_science': 18, 'tech': 1}",208_secret weapon_117_weapon_secret
+92,47,421974.0,0.01840914384587229,research_science,"{'research_science': 44, 'tech': 3}",92_ram_components_module_parts
+147,30,403095.0,0.034777814699668834,entertainment,"{'entertainment': 29, 'gaming': 1}",147_mandalorian grogu_mandalorian_star wars_wars movies
+7,270,401291.5,0.04217558857592153,gaming,"{'gaming': 260, 'tech': 4, 'entertainment': 4, 'fitness': 2}",7_game roblox_games roblox_roblox_roblox funny
+145,31,397835.0,0.02948591495404185,entertainment,{'entertainment': 31},145_jon_comedian_tv_daily
+106,44,380378.5,0.0519043866397841,research_science,{'research_science': 44},106_mozart_sciencephile science_sciencephile merch_piano
+37,83,378068.0,0.017312675077104666,gaming,"{'gaming': 82, 'fitness': 1}",37_fortnite videos_fortnite new_new fortnite_fortnite battle
+192,20,377322.5,0.04864338320255465,gaming,"{'gaming': 19, 'tech': 1}",192_xbox game_gamertag act_xbox_xbox series
+194,20,372200.5,0.04306932752140495,gaming,"{'gaming': 11, 'entertainment': 6, 'tech': 2, 'research_science': 1}",194_epstein files_epstein_files_file
+211,18,371924.0,0.03612636462790157,research_science,"{'research_science': 10, 'tech': 6, 'entertainment': 2}",211_sexual_sex_desire_kids vlogbrothers
+94,47,349030.0,0.03891929105394691,gaming,"{'gaming': 38, 'entertainment': 9}",94_nights freddy_freddy_fnaf_nightshift
+84,50,347315.0,0.031075874982894887,entertainment,{'entertainment': 50},84_comedian_emmy_podcast_late night
+79,51,340181.0,0.054611795510493485,tech,"{'tech': 47, 'research_science': 4}",79_updates_update_channel support_support patreon
+2,1024,316756.5,0.03771292595664815,research_science,"{'research_science': 968, 'tech': 45, 'gaming': 5, 'entertainment': 3, 'fitness': 2, 'food': 1}",2_numberphile computers_numberphile_numbers_haran numberphile
+17,160,316499.0,0.03415114696602452,gaming,"{'gaming': 132, 'entertainment': 23, 'tech': 2, 'food': 1, 'research_science': 1, 'fitness': 1}",17_games horror_horror games_horror game_game horror
+178,24,314285.0,0.016982636447823347,entertainment,{'entertainment': 24},178_tuesday_monday_sunday_saturday
+196,20,305375.5,0.039070039679808266,research_science,"{'research_science': 9, 'entertainment': 7, 'tech': 2, 'food': 1, 'fitness': 1}",196_smuggling_fishing_trafficking_pirates
+19,139,305130.0,0.03878779330910831,gaming,"{'gaming': 124, 'tech': 10, 'entertainment': 3, 'research_science': 1, 'fitness': 1}",19_mortal kombat_ps5 gameplay_kombat_new gameplay
+245,14,298851.5,0.03336443822996671,entertainment,"{'entertainment': 10, 'tech': 3, 'gaming': 1}",245_scammed_scamming_scam_scammers
+99,45,293446.0,0.038540766723790906,gaming,"{'gaming': 41, 'fitness': 2, 'food': 1, 'tech': 1}",99_pokemane pokimane_podcast_poki pokimane_pokimane poki
+290,10,283696.0,0.036817567149093705,entertainment,"{'entertainment': 6, 'gaming': 3, 'food': 1}",290_jurassic world_jurassic_dinosaur_dino
+164,26,282250.0,0.030397071132036727,gaming,{'gaming': 26},164_black ops_gameplay ps5_cod_duty black
+172,25,278655.0,0.04693090503841867,research_science,{'research_science': 25},172_co2_carbon_carbon dioxide_climate change
+234,16,254782.5,0.032728673369935755,gaming,{'gaming': 16},234_beast_2025 gameplay_xbox series_ps5
+246,14,251280.0,0.06949631221845906,gaming,{'gaming': 14},246_stampy cat_stampylonghead stampy_stampy stampylongnose_stampy
+150,29,249963.0,0.04938218637377725,entertainment,"{'entertainment': 8, 'gaming': 7, 'research_science': 7, 'tech': 7}",150_facebook smarter_twitter_social media_facebook
+104,44,237815.0,0.03725748046081854,research_science,"{'research_science': 43, 'tech': 1}",104_quantum computers_quantum computing_quantum technology_quantum
+144,31,237538.0,0.02814825086024762,entertainment,{'entertainment': 31},144_trailer fallout_fallout season_fallout_doomsday trailer
+78,51,226367.0,0.0333440828389297,entertainment,"{'entertainment': 44, 'research_science': 3, 'gaming': 2, 'tech': 1, 'fitness': 1}",78_zombies_zombie_beat_dungeon
+16,164,222161.5,0.03760085042296707,research_science,{'research_science': 164},16_periodic table_periodic videos_videos chemistry_periodic
+201,19,217369.0,0.019742856760601696,research_science,"{'research_science': 16, 'tech': 3}",201_networking_protocols_protocol_packet
+12,206,210304.0,0.04461165692973168,research_science,"{'research_science': 199, 'entertainment': 4, 'food': 2, 'tech': 1}",12_helping scishow_join scishow_patreon scishow_scishow going
+4,387,208271.0,0.020477971322180235,gaming,"{'gaming': 372, 'entertainment': 6, 'fitness': 4, 'tech': 3, 'research_science': 2}",4_new fortnite_fortnite fortnite_fortnite new_fortnite battle
+250,14,206865.5,0.039413356851773884,gaming,{'gaming': 14},250_quarantine_zone_zombies_border
+202,19,204186.0,0.034081927989115725,gaming,{'gaming': 19},202_ghost_gameplay ps5_ps5 gameplay_2025 gameplay
+241,15,203469.0,0.03026505352377359,research_science,{'research_science': 15},241_entropy_thermodynamics_information theory_boltzmann
+142,31,199296.0,0.036102935678795,research_science,{'research_science': 31},142_nobel prize_nobel_prize physics_prize
+47,68,189179.5,0.03168131010144997,tech,"{'tech': 64, 'entertainment': 2, 'gaming': 2}",47_build ai_net_openai_chatbot
+114,41,180068.0,0.02807209175314036,entertainment,"{'entertainment': 40, 'research_science': 1}",114_knight seven_kingdoms trailer_seven kingdoms_thrones episodes
+272,12,178581.5,0.03577326787458146,entertainment,"{'entertainment': 11, 'fitness': 1}",272_bridgerton_netflix netflix_netflix series_netflix
+30,97,171764.0,0.04302281876269903,research_science,"{'research_science': 46, 'tech': 33, 'entertainment': 8, 'gaming': 7, 'fitness': 2, 'food': 1}",30_future ai_ai ai_ai_intelligence ai
+77,52,169380.5,0.03087520979736435,food,"{'food': 51, 'entertainment': 1}",77_fishing_fish_trout_salmon
+89,49,169162.0,0.043303592958765375,tech,"{'tech': 45, 'gaming': 3, 'entertainment': 1}",89_10 windows_windows 11_windows 10_windows
+22,125,168627.0,0.03695425799405684,research_science,"{'research_science': 123, 'tech': 2}",22_exoplanets_exoplanet_planets_planet
+186,22,162879.0,0.03749620554197537,research_science,"{'research_science': 21, 'tech': 1}",186_spacex_spaceflight_starship_crew
+213,18,156929.0,0.03818962359425708,research_science,{'research_science': 18},213_webb telescope_telescope jwst_webb space_space telescope
+159,28,154784.5,0.038407063428395796,research_science,"{'research_science': 23, 'entertainment': 3, 'food': 2}",159_vaccine_vaccines_covid 19_covid
+274,11,152789.0,0.023703722896613075,entertainment,{'entertainment': 11},274_adult_favorite shows_binge_hbo max
+29,104,152180.5,0.04404319522350662,gaming,"{'gaming': 75, 'entertainment': 19, 'research_science': 6, 'tech': 3, 'food': 1}",29_resident evil_episodes game_game_episodes
+50,64,140658.5,0.02090995252779789,entertainment,"{'entertainment': 63, 'gaming': 1}",50_celebrity interviews_celebrity moments_jimmy fallon_celebrity
+219,17,136646.0,0.03177168093756649,research_science,{'research_science': 17},219_physics 101_physics physics_acceleration_physics girl
+262,12,132350.5,0.017911261531858597,entertainment,{'entertainment': 12},262_comics_plans_soap_merch
+43,77,128686.0,0.04047852114927715,tech,"{'tech': 71, 'research_science': 4, 'gaming': 2}",43_nintendo_nintendo switch_game boy_retro gaming
+11,213,123338.0,0.024151710117526124,research_science,"{'research_science': 209, 'tech': 4}",11_statquest videos_statquests_new statquests_statquests follow
+111,42,123273.5,0.04992018163073607,research_science,"{'research_science': 40, 'food': 1, 'tech': 1}",111_dark matter_matter dark_dark energy_cosmology
+210,18,121018.5,0.032078877069067084,entertainment,"{'entertainment': 11, 'food': 3, 'research_science': 3, 'tech': 1}",210_winter olympics_olympics_olympic_milano
+168,26,116596.5,0.004607266737267898,tech,"{'tech': 25, 'entertainment': 1}",168_iphone android_android iphone_whatsapp_photos videos
+27,107,116250.0,0.035141374017178144,research_science,"{'research_science': 106, 'entertainment': 1}",27_sixtysymbols_list sixtysymbols_symbols_symbols videos
+76,52,114636.5,0.010968732861138496,entertainment,"{'entertainment': 51, 'gaming': 1}",76_talent_superstar_mel_audition
+244,14,109172.0,0.025753530204987607,research_science,"{'research_science': 13, 'fitness': 1}",244_transistors_electronics_circuits_circuit
+26,112,104739.5,0.02598844420847129,tech,"{'tech': 108, 'entertainment': 3, 'research_science': 1}",26_macbook pro_macbook_macbook air_pro m5
+110,42,103797.0,0.021538325321269827,tech,{'tech': 42},110_wifi_wi fi_wireless_ghz
+243,14,102814.5,0.03591768171624053,fitness,"{'fitness': 12, 'gaming': 1, 'tech': 1}",243_splits_split_routine_practice
+200,19,101731.0,0.010151899693170196,entertainment,{'entertainment': 19},200_saudi_arabia_saudi arabia_skyscraper
+122,39,94090.0,0.04127962589010522,entertainment,"{'entertainment': 38, 'food': 1}",122_harry potter_potter_harry_hogwarts
+97,46,92811.5,0.0397024583996866,research_science,"{'research_science': 43, 'tech': 2, 'gaming': 1}",97_nvidia ai_ai nvidia_gpu cloud_nvidia nvidia
+40,79,92702.0,0.04368242874303811,entertainment,"{'entertainment': 78, 'tech': 1}",40_movies 2025_films cinema_cinema oscars_new movies
+236,15,92528.0,0.01918789270995203,gaming,{'gaming': 15},236_assassins creed_creed_ubisoft_dlc gameplay
+1,1875,91322.0,0.033197458707855426,food,"{'food': 1821, 'entertainment': 19, 'research_science': 13, 'gaming': 12, 'fitness': 7, 'tech': 3}",1_chef_cook_culinary_cooks
+32,87,89280.0,0.020888130066294433,gaming,"{'gaming': 81, 'entertainment': 3, 'tech': 2, 'research_science': 1}",32_twitch_video subscribe_channels content_youtube channels
+226,16,88522.5,0.0372255140882915,gaming,{'gaming': 16},226_simulator gameplay_simulator_movie theater_theater
+91,47,87273.0,0.04011909920740316,entertainment,{'entertainment': 47},91_disturbing breakdown_breakdown_instagram twitter_twitter instagram
+15,170,86702.5,0.03047325512030225,gaming,"{'gaming': 161, 'tech': 5, 'entertainment': 3, 'research_science': 1}",15_gta_cars_roblox_gaming
+93,47,86553.0,0.02363277579402368,fitness,"{'fitness': 46, 'entertainment': 1}",93_training nutrition_exercise_trainer_rp
+113,41,84958.0,0.03548437106862294,entertainment,"{'entertainment': 32, 'gaming': 6, 'tech': 2, 'research_science': 1}",113_avatar ash_ash_avatar_disney plus
+80,51,84354.0,0.03866272863141414,entertainment,{'entertainment': 51},80_copyright_permitted copyright_107 copyright_infringing
+260,13,83673.0,0.026579381025152848,tech,"{'tech': 8, 'gaming': 3, 'research_science': 2}",260_keyboard_switches_wireless_usb
+249,14,82358.0,0.0406588499565723,gaming,"{'gaming': 10, 'tech': 3, 'entertainment': 1}",249_simulator_simulator gameplay_sim simulator_car
+8,259,82150.0,0.025782252039299385,tech,"{'tech': 257, 'entertainment': 2}",8_iphone 17_17 iphone_iphone 16_pro iphone
+275,11,80999.0,0.011469176587919966,entertainment,{'entertainment': 11},275_gold rush_mining_gold gold_rush
+67,54,79347.0,0.041874855625172284,entertainment,"{'entertainment': 48, 'tech': 4, 'gaming': 2}",67_watch uncut_uncut_unsolved mysteries_videos channel
+95,47,78234.0,0.04100692172595475,research_science,"{'research_science': 22, 'fitness': 9, 'entertainment': 5, 'food': 4, 'tech': 4, 'gaming': 3}",95_sleep_hours sleep_sleeping_fall asleep
+121,40,78021.5,0.04183911726024494,gaming,"{'gaming': 39, 'tech': 1}",121_battlefield battlefield_battlefield_walkthrough gameplay_gameplay
+267,12,77395.5,0.041880545919050875,gaming,{'gaming': 12},267_simulator_real estate_sim simulator_sim
+98,46,77131.5,0.02057852512016969,tech,"{'tech': 37, 'research_science': 5, 'entertainment': 3, 'food': 1}",98_smart glasses_glasses_lenses_apple vision
+10,214,76761.5,0.03545906984012706,entertainment,"{'entertainment': 207, 'gaming': 5, 'research_science': 1, 'fitness': 1}",10_spider man_marvel_avengers_avengers doomsday
+258,13,76498.0,0.01940259331198488,tech,{'tech': 13},258_dell_best laptop_laptop best_laptop review
+291,10,75997.0,0.03445771736160254,research_science,{'research_science': 10},291_periodic videos_videos chemistry_periodic table_nottingham periodic
+45,71,74929.0,0.0298932384341637,entertainment,"{'entertainment': 68, 'food': 3}",45_supernatural_derry_welcome derry_ending explained
+24,121,73748.0,0.0220125786163522,entertainment,"{'entertainment': 119, 'fitness': 2}",24_ellen_ariana grande_celebrity_jessica
+3,522,73725.5,0.03212302028564746,tech,"{'tech': 517, 'gaming': 3, 'research_science': 1, 'fitness': 1}",3_amd_gpu_gpus_amd ryzen
+35,86,73181.0,0.03503171935063268,entertainment,"{'entertainment': 79, 'research_science': 3, 'gaming': 2, 'food': 1, 'tech': 1}",35_disney_walt disney_toy story_mermaid
+229,16,71389.5,0.03367241043897731,entertainment,"{'entertainment': 9, 'gaming': 7}",229_invincible_boys invincible_superhero_invincible hazbin
+212,18,69842.5,0.03838133410076737,gaming,{'gaming': 18},212_cowboy_simulator gameplay_simulator_ranch
+195,20,68569.0,0.01894225406495345,tech,{'tech': 20},195_xbox_rog_xbox xbox_pc gaming
+220,17,67815.0,0.03320282257172562,entertainment,"{'entertainment': 12, 'tech': 4, 'research_science': 1}",220_bowl super_super bowl_bowl halftime_bowl 2026
+251,14,67669.0,0.03984836335517079,research_science,"{'research_science': 7, 'tech': 6, 'entertainment': 1}",251_3d printed_3d printing_3d printers_3d print
+231,16,66867.0,0.016838423317841314,entertainment,{'entertainment': 16},231_rachel_monica_wears prada_work life
+183,22,66201.0,0.0621368005720237,tech,{'tech': 22},183_indigenous_native_indian_american history
+81,50,66094.0,0.021152462501126,food,{'food': 50},81_chicken_chefs_street food_korean
+151,29,63899.0,0.026698383386281475,entertainment,{'entertainment': 29},151_stranger things_things finale_trailer stranger_things stranger
+223,17,63870.0,0.03806764341424302,entertainment,{'entertainment': 17},223_swim_adult_favorite shows_hbo max
+257,13,62851.0,0.039168463557258164,entertainment,{'entertainment': 13},257_daredevil born_daredevil_season trailer_spider man
+44,76,62688.0,0.03555145946171477,entertainment,"{'entertainment': 74, 'tech': 1, 'fitness': 1}",44_infringing_viral tiktok_copyright disclaimer_permitted copyright
+18,150,62567.0,0.021741936340501693,gaming,"{'gaming': 149, 'tech': 1}",18_arc raiders_raiders_raider_arc
+54,62,61877.0,0.037163435786578464,research_science,"{'research_science': 60, 'tech': 2}",54_timelapse_observatory_sky_astronomy
+85,50,61382.5,0.01540820344190997,entertainment,{'entertainment': 50},85_voice_vocal_singer_singing
+163,27,59265.0,0.01741502308015107,entertainment,{'entertainment': 27},163_margot robbie_margot_robbie_superheroes movie
+273,12,57418.0,0.05723453471860833,food,{'food': 12},273_dish_recipe_dishes_meals
+60,57,56192.0,0.021197510925327758,entertainment,{'entertainment': 57},60_hbo max_hbo_new episodes_warner bros
+227,16,55947.0,0.046505417018707376,entertainment,{'entertainment': 16},227_sinners_filmmaking_film_cinema
+248,14,55689.5,0.011602788925513745,entertainment,"{'entertainment': 10, 'research_science': 2, 'gaming': 1, 'tech': 1}",248_iran_usa news_iranian_nuclear
+123,39,55205.0,0.06714971469975546,entertainment,{'entertainment': 39},123_movies mikey_mikey_movies_tournament
+276,11,53350.0,0.0331958762886598,fitness,{'fitness': 11},276_tiktok twitch_instagram tiktok_twitch_tiktok
+253,14,53158.0,0.04547321260898397,entertainment,"{'entertainment': 13, 'gaming': 1}",253_monsters_hunger games_star wars_sea
+14,171,53110.0,0.041405203340758145,tech,"{'tech': 161, 'gaming': 4, 'research_science': 4, 'entertainment': 1, 'fitness': 1}",14_cybersecurity_computer security_malware_hackers
+206,19,52906.0,0.05212949679730261,research_science,{'research_science': 19},206_protons neutrons_neutrons_neutron_atoms
+265,12,52754.0,0.019810364227600206,entertainment,{'entertainment': 12},265_battle_movie review_new movie_best film
+288,10,52217.0,0.05659844456333133,entertainment,"{'entertainment': 6, 'research_science': 3, 'fitness': 1}",288_crying_tears_conversations video_video constitute
+65,55,51585.0,0.007472406937684239,entertainment,"{'entertainment': 54, 'food': 1}",65_nickelodeon_spongebob squarepants_spongebob_spongebob spongebob
+116,40,51463.0,0.033441379670992394,fitness,"{'fitness': 38, 'gaming': 1, 'entertainment': 1}",116_instagram tiktok_tiktok twitch_influencer_tiktok
+283,11,51061.0,0.016749579471028238,gaming,"{'gaming': 9, 'entertainment': 1, 'tech': 1}",283_god war_god_greek_available playstation
+73,52,50033.0,0.016476451161822024,entertainment,{'entertainment': 52},73_hazbin hotel_hotel summer_hotel_hazbin
+125,38,49666.0,0.051972830872226636,tech,"{'tech': 34, 'gaming': 3, 'research_science': 1}",125_privacy_internet security_cybersecurity_telephone
+230,16,46904.5,0.03719356948062801,entertainment,"{'entertainment': 14, 'gaming': 2}",230_super mario_mario_luigi_nintendo
+66,54,45086.0,0.02592795751836282,tech,{'tech': 54},66_samsung galaxy_trifold_galaxy fold_review samsung
+64,56,44787.0,0.03778564003222076,gaming,"{'gaming': 53, 'entertainment': 3}",64_silent hill_hill_games horror_walkthrough gameplay
+252,14,42678.0,0.023849858993151445,tech,"{'tech': 11, 'research_science': 2, 'entertainment': 1}",252_drone_drones_drone footage_antigravity
+190,21,41608.0,0.027954514687965344,entertainment,"{'entertainment': 20, 'research_science': 1}",190_goat_goats_spider man_curry
+156,28,40776.0,0.038190037068073536,gaming,{'gaming': 28},156_elden_ring_dlc_solo
+218,17,38734.0,0.016761234071771453,entertainment,{'entertainment': 17},218_north pole_pole_south pole_national geographic
+0,2516,38123.5,0.0347461671699963,fitness,"{'fitness': 2292, 'research_science': 190, 'tech': 11, 'entertainment': 9, 'food': 8, 'gaming': 6}",0_yoga_routine_exercises_workouts
+107,43,37337.0,0.03212758745849925,tech,"{'tech': 42, 'gaming': 1}",107_favorite tech_tech gadgets_tech best_tech tech
+62,56,34679.5,0.03927028928556067,research_science,{'research_science': 56},62_muon_fermilab physics_101 fermilab_fermilab
+139,32,33291.0,0.033153855182370455,fitness,"{'fitness': 24, 'entertainment': 5, 'food': 1, 'gaming': 1, 'research_science': 1}",139_pregnant_pregnancy_week body_baby
+132,36,33154.0,0.010336614658110558,tech,"{'tech': 34, 'food': 1, 'research_science': 1}",132_vacuum_dyson_carpet_robot
+5,352,33144.0,0.02920665823031247,fitness,"{'fitness': 149, 'entertainment': 75, 'gaming': 72, 'research_science': 28, 'food': 15, 'tech': 13}",5_gratitude_life_say thank_warning don
+68,54,31901.5,0.054780654635468246,research_science,{'research_science': 54},68_neutrinos_neutrino_fermilab scientist_fermilab physics
+133,35,30848.0,0.022637470300459008,tech,{'tech': 35},133_apple watch_watch review_watch series_watch
+55,61,30438.0,0.03666810073799517,gaming,"{'gaming': 60, 'research_science': 1}",55_kingdom_zelda_legend zelda_stampylonghead stampy
+259,13,29833.0,0.017010328520590062,food,{'food': 13},259_toast_breadcrumbs_bread_appliance
+256,13,29797.0,0.058140137959649396,entertainment,"{'entertainment': 12, 'gaming': 1}",256_masculinity_feminism_gender_males
+42,78,28296.5,0.03403659888422468,entertainment,"{'entertainment': 77, 'gaming': 1}",42_bone temple_temple_later bone_bone
+52,63,27562.0,0.034377510040160646,gaming,"{'gaming': 61, 'entertainment': 2}",52_twitch twitter_twitter twitch_twitch_twitch check
+239,15,27316.0,0.015860524244809007,tech,"{'tech': 10, 'fitness': 3, 'entertainment': 1, 'research_science': 1}",239_black friday_friday deals_friday sale_amazon deals
+215,18,26378.5,0.029029275866563658,tech,"{'tech': 12, 'entertainment': 5, 'fitness': 1}",215_las vegas_vegas_las_sphere
+165,26,26126.5,0.026708280940033323,tech,{'tech': 26},165_ipad pro_ipad_10 ipad_laptop ipad
+228,16,25453.5,0.034296489519481756,tech,{'tech': 16},228_p5 js_js p5_p5_js web
+38,81,25360.0,0.014642700569925471,gaming,"{'gaming': 79, 'entertainment': 2}",38_pranks_wife_snl_prank
+233,16,24985.0,0.05917936577640011,tech,"{'tech': 12, 'entertainment': 2, 'gaming': 1, 'research_science': 1}",233_latin america_latin_crash course_crash
+63,56,24379.0,0.032044027788984866,tech,{'tech': 56},63_server_recommended services_setup_cloud
+75,52,23334.0,0.011440741858866347,entertainment,"{'entertainment': 48, 'tech': 2, 'gaming': 1, 'research_science': 1}",75_arsenal_norwich_united_match
+120,40,23241.5,0.017858212636692454,entertainment,"{'entertainment': 39, 'research_science': 1}",120_aliens_extraterrestrials_ufo_ancient
+102,45,21978.0,0.025837792171219374,food,"{'food': 44, 'gaming': 1}",102_pasta_spaghetti_italian_cuisine
+237,15,21756.0,0.022817025010969723,tech,{'tech': 15},237_gmail_emails_email_emailed inbox
+263,12,21737.0,0.00443354257221276,fitness,{'fitness': 12},263_animated series_workouts_joe_fitness
+61,57,20534.0,0.03644452858765619,tech,{'tech': 57},61_great linux_linux linux_learn linux_linux
+167,26,20530.0,0.021081313440809598,tech,{'tech': 26},167_lg_smart tv_samsung_2026 samsung
+221,17,19792.0,0.021213503649635035,fitness,"{'fitness': 14, 'entertainment': 1, 'gaming': 1, 'research_science': 1}",221_dance dance_dancer_dance_dancing
+124,38,19362.5,0.059639268412286534,entertainment,{'entertainment': 38},124_movie review_review movie_review website_review
+277,11,18822.0,0.013358551456875686,entertainment,{'entertainment': 11},277_revenge_theatres_road_theatre
+49,66,18652.0,0.04717939631304592,entertainment,"{'entertainment': 52, 'gaming': 4, 'fitness': 4, 'food': 2, 'research_science': 2, 'tech': 2}",49_new merch_merch_songs_dj
+108,43,18091.0,0.03500693831209789,tech,"{'tech': 42, 'research_science': 1}",108_developers_developer_software engineer_programming
+166,26,17260.0,0.01985922376921354,entertainment,"{'entertainment': 22, 'food': 2, 'fitness': 1, 'tech': 1}",166_bruno_pepe_అన_month
+100,45,17002.0,0.020882304706718417,tech,"{'tech': 41, 'entertainment': 3, 'gaming': 1}",100_technology verge_verge tech_subscribe verge_verge subscribe
+184,22,16977.5,0.013627508431947065,entertainment,{'entertainment': 22},184_actor_birthday_celebrity_hollywood
+86,49,16894.0,0.00868310140780279,entertainment,{'entertainment': 49},86_cartoon_cartoons_animated series_episodes
+216,18,16853.0,0.019796797972740802,tech,"{'tech': 17, 'entertainment': 1}",216_insta360_webcam_360 camera_video camera
+264,12,16713.0,0.01805216977643066,tech,{'tech': 12},264_lenovo_laptops 2025_laptop ultrabook_sony laptop
+162,27,16681.0,0.01583949313621964,tech,{'tech': 27},162_kindle_paper_amazon kindle_tablet
+105,44,16664.0,0.05738278969838091,tech,{'tech': 44},105_analyzer_probe_repair_meter
+57,60,16189.0,0.0268949647728687,tech,"{'tech': 57, 'research_science': 2, 'fitness': 1}",57_airpods pro_airpods_headphones_earbuds
+59,59,14544.0,0.008641975308641974,entertainment,"{'entertainment': 57, 'gaming': 1, 'fitness': 1}",59_kardashian_jennifer lopez_celebrity_kelly
+285,10,14157.5,0.019768122182959334,fitness,"{'fitness': 9, 'tech': 1}",285_juice_game challenge_challenge challenge_prizes
+157,28,13840.0,0.022693456403813476,tech,"{'tech': 22, 'research_science': 2, 'fitness': 2, 'gaming': 1, 'entertainment': 1}",157_tech gifts_gifts_gift_presents
+176,24,13473.0,0.03570999603704667,fitness,"{'fitness': 23, 'food': 1}",176_snack_exercise_abs_fat
+72,53,13270.0,0.053309796999117386,food,{'food': 53},72_bread_dough_baking_bake
+154,29,13127.0,0.021119091272521748,research_science,"{'research_science': 25, 'entertainment': 3, 'gaming': 1}",154_broccoli reviews_broccoli_bobbybroccoli broccoli_reviews best
+155,29,12964.0,0.025791624106230846,tech,"{'tech': 28, 'entertainment': 1}",155_photography_photographers_lens_photoshop
+189,21,10697.0,0.019327980969372584,fitness,{'fitness': 21},189_day eating_eggs_egg_diet
+269,12,8183.0,0.03248193031280813,tech,{'tech': 12},269_purchasing_qualifying purchases_tech deals_retailers
+130,37,8044.0,0.015027634403690678,entertainment,{'entertainment': 37},130_dunk_fortune teller_egg_knight
+232,16,7496.0,0.021879666972684786,entertainment,{'entertainment': 16},232_gilmore_cast_colleen_heartbreak
+191,21,6309.0,0.022230063514467185,entertainment,"{'entertainment': 20, 'tech': 1}",191_billionaire_billionaires_richest_millions money
+173,25,5585.0,0.03101772441395083,entertainment,"{'entertainment': 23, 'gaming': 2}",173_music licensed_new music_hip hop_tunes
+175,24,5550.0,0.03388372195331557,tech,{'tech': 24},175_vlog_homelab_service_affiliate
+205,19,5253.0,0.05092775365179629,fitness,{'fitness': 19},205_yoga_travis_meditation_founder
+126,38,5198.5,0.035095794258097925,fitness,"{'fitness': 30, 'research_science': 5, 'entertainment': 2, 'tech': 1}",126_habits_motivation_habit_fitness
+83,50,5126.0,0.02163473446046077,entertainment,{'entertainment': 50},83_survivor_shows_favorite shows_paramount
+101,45,4946.0,0.07925712791001831,tech,"{'tech': 44, 'research_science': 1}",101_radio_rf_station_antenna
+103,45,3479.0,0.0014017381553125877,entertainment,{'entertainment': 45},103_wars star_star wars_generated youtube_auto generated
+138,32,3363.0,0.014646464646464647,fitness,{'fitness': 32},138_makeover_mommy_surgery_mom
+158,28,2996.0,0.014441155500986031,fitness,"{'fitness': 23, 'research_science': 3, 'entertainment': 2}",158_posture_body_sit_makeover
+224,16,2899.5,0.024583691255950463,tech,"{'tech': 15, 'entertainment': 1}",224_streaming_streams_stream_twitch links
+88,49,2792.0,0.006167129201356768,tech,"{'tech': 48, 'gaming': 1}",88_javascript_html_tutorial_requests
+268,12,2718.0,0.021353104726598703,entertainment,{'entertainment': 12},268_hollywood_actors_actor_blockbuster
+242,15,2498.0,0.05098605098605099,tech,{'tech': 15},242_eevblog_cost eevblog_eevblog patreon_supporting eevblog
+199,19,2265.0,0.06680687863417048,entertainment,"{'entertainment': 18, 'tech': 1}",199_code wendylee10_code wendyleeszany_commission affiliate_wendylee10 jordandeńe
+48,66,2168.5,0.022644536403982247,tech,{'tech': 66},48_gadget 2018_gadget_gadget tech_favourite gadget
+74,52,1728.5,0.007994313734885876,fitness,"{'fitness': 36, 'research_science': 11, 'food': 5}",74_pregnancy_pregnant_nutrients_infant
+70,53,1704.0,0.022020725388601035,food,"{'food': 51, 'research_science': 1, 'entertainment': 1}",70_pig_pigs_hog_bacon
+33,87,1469.0,0.014694508894044857,gaming,"{'gaming': 83, 'entertainment': 2, 'fitness': 2}",33_generated youtube_youtuber_provided youtube_youtube
+279,11,1150.0,0.001644736842105263,tech,{'tech': 11},279_circuits_boards_board_circuit
+136,34,969.0,0.04054561691429314,gaming,{'gaming': 34},136_isle_dinosaur_jurassic_jurassic world
+71,53,964.0,0.039806996381182146,food,"{'food': 51, 'research_science': 2}",71_cheese_making_make_beginners
+209,18,464.5,0.014606572203798613,tech,{'tech': 18},209_kevin stratvert_stratvert_kevin_24
+51,63,128.0,0.04081632653061224,gaming,"{'gaming': 59, 'tech': 2, 'food': 1, 'fitness': 1}",51_trails_trail_ride_music
+187,22,41.0,0.06612021857923497,food,"{'food': 17, 'fitness': 4, 'tech': 1}",187_january 2026_march 2025_2024_2026
+222,17,30.0,0.05555555555555555,food,"{'food': 14, 'fitness': 2, 'gaming': 1}",222_october 2025_2023_2025_2024
+169,26,18.0,0.13333333333333333,entertainment,{'entertainment': 26},169_conversations_episode_conversation_topics
+146,30,9.5,0.0,fitness,"{'fitness': 14, 'food': 9, 'tech': 4, 'gaming': 2, 'entertainment': 1}",146____
+235,16,9.0,0.0,gaming,"{'gaming': 15, 'tech': 1}",235_overwatch_lost_blizzard_heroes
+53,63,0.0,0.0,food,"{'food': 50, 'gaming': 8, 'entertainment': 4, 'fitness': 1}",53_soundtrack_playlist_song_night
+112,42,0.0,0.037914188860197484,entertainment,"{'entertainment': 41, 'tech': 1}",112_subtitles_lyricist_subtitle_translator
