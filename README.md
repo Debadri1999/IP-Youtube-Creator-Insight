@@ -94,12 +94,12 @@ Located in `dashboard/views/ytuber.py`.
 
 Uses live YouTube API pulls for a single channel, rotates across the configured background API-key pools, and exposes:
 
+- AI Studio
 - Overview
 - Channel Audit
 - Keyword Intel
 - Title and SEO Lab
 - Competitor Benchmark
-- Trend Radar
 - Content Planner
 - AI Studio
 

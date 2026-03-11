@@ -46,14 +46,13 @@ POWER_WORDS = {
     "future", "breakthrough", "insane", "new", "critical", "warning", "guide", "explained", "hidden", "top",
 }
 WORKSPACE_MODULES = [
+    "AI Studio",
     "Overview",
     "Channel Audit",
     "Keyword Intel",
     "Title & SEO Lab",
     "Competitor Benchmark",
-    "Trend Radar",
     "Content Planner",
-    "AI Studio",
 ]
 AI_STUDIO_TASKS = [
     "Full Pack (titles + descriptions + scripts + thumbnail concepts)",
@@ -66,36 +65,6 @@ AI_STUDIO_TASKS = [
     "Shorts Ideas",
     "Thumbnail Concepts",
 ]
-QUICK_ACTIONS = [
-    "Audit my channel",
-    "Find niche",
-    "New thumbnail",
-    "Find keywords",
-    "Video ideas",
-    "Write script",
-    "Make clips",
-    "AI Shorts",
-]
-QUICK_ACTION_TO_MODULE = {
-    "Audit my channel": "Channel Audit",
-    "Find niche": "Keyword Intel",
-    "New thumbnail": "AI Studio",
-    "Find keywords": "Keyword Intel",
-    "Video ideas": "AI Studio",
-    "Write script": "AI Studio",
-    "Make clips": "AI Studio",
-    "AI Shorts": "AI Studio",
-}
-QUICK_ACTION_TO_TASK = {
-    "Audit my channel": "Full Pack (titles + descriptions + scripts + thumbnail concepts)",
-    "Find niche": "Niche Expansion",
-    "New thumbnail": "Thumbnail Concepts",
-    "Find keywords": "Titles Only",
-    "Video ideas": "Video Ideas",
-    "Write script": "Scripts Only",
-    "Make clips": "Hooks + CTAs",
-    "AI Shorts": "Shorts Ideas",
-}
 PROVIDER_LABELS = {
     "gemini": "Gemini",
     "openai": "OpenAI / ChatGPT",
@@ -258,127 +227,109 @@ def _inject_ytuber_css() -> None:
         """
         <style>
         .ytuber-hero {
-            max-width: 1080px;
-            margin: 0 auto 1.5rem;
+            max-width: 1180px;
+            margin: 0 auto 1.15rem;
+        }
+        .ytuber-hero-card {
+            border-radius: 28px;
+            padding: 1.4rem 1.45rem;
+            background:
+                radial-gradient(circle at top right, rgba(0, 212, 255, 0.12), transparent 34%),
+                radial-gradient(circle at bottom left, rgba(255, 0, 0, 0.10), transparent 30%),
+                linear-gradient(180deg, rgba(19,25,48,0.95) 0%, rgba(12,16,34,0.98) 100%);
+            border: 1px solid rgba(255,255,255,0.10);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.28);
         }
         .ytuber-brand-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.55rem;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-        .ytuber-brand-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            padding: 0.45rem 0.75rem;
+            gap: 0.55rem;
+            padding: 0.45rem 0.7rem;
             border-radius: 999px;
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.08);
             color: #FFFFFF;
             font-size: 12px;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.10em;
             text-transform: uppercase;
+            margin-bottom: 0.9rem;
         }
-        .ytuber-brand-badge.soft {
-            color: #A8B0CC;
+        .ytuber-brand-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #00D4FF, #FF3B30);
+            box-shadow: 0 0 18px rgba(0, 212, 255, 0.65);
         }
         .ytuber-kicker {
             font-size: 12px;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: #7D8AB1;
-            margin-bottom: 0.6rem;
-            text-align: center;
+            color: #90A0CA;
+            margin-bottom: 0.55rem;
         }
         .ytuber-title {
-            font-size: clamp(38px, 5vw, 64px);
-            line-height: 0.98;
+            font-size: clamp(34px, 4.2vw, 56px);
+            line-height: 1.02;
             font-weight: 800;
             color: #FFFFFF;
+            max-width: 720px;
             margin-bottom: 0.8rem;
-            text-align: center;
         }
         .ytuber-subtitle {
-            font-size: 17px;
-            color: #A8B0CC;
-            max-width: 820px;
-            margin: 0 auto;
-            text-align: center;
+            font-size: 16px;
+            color: #C0C9E4;
+            max-width: 650px;
         }
         .ytuber-feature-row {
             display: flex;
             flex-wrap: wrap;
             gap: 0.65rem;
-            justify-content: center;
-            margin: 1.15rem auto 0;
-            max-width: 900px;
+            margin-top: 1rem;
         }
         .ytuber-feature-pill {
             display: inline-flex;
             align-items: center;
-            padding: 0.55rem 0.85rem;
+            padding: 0.55rem 0.8rem;
             border-radius: 999px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.075);
+            border: 1px solid rgba(255,255,255,0.10);
             color: #E8EBF8;
             font-size: 13px;
         }
         .ytuber-command-card {
-            max-width: 1040px;
-            margin: 0 auto 1.1rem;
-            padding: 1.35rem 1.35rem 1.1rem;
+            padding: 1.2rem 1.2rem 1rem;
             border-radius: 28px;
-            background: linear-gradient(180deg, rgba(20,23,42,0.95) 0%, rgba(11,13,28,0.96) 100%);
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+            background:
+                radial-gradient(circle at top left, rgba(0, 212, 255, 0.10), transparent 36%),
+                linear-gradient(180deg, rgba(24,31,60,0.96) 0%, rgba(15,19,40,0.98) 100%);
+            border: 1px solid rgba(255,255,255,0.11);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.22);
         }
         .ytuber-command-title {
-            font-size: 26px;
-            color: #FFFFFF;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-            text-align: center;
-        }
-        .ytuber-command-subtitle {
-            font-size: 14px;
-            color: #A8B0CC;
-            text-align: center;
-            margin-bottom: 0.95rem;
-        }
-        .ytuber-status-card {
-            min-height: 96px;
-        }
-        .ytuber-status-label {
-            font-size: 11px;
-            color: #7D8AB1;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 0.35rem;
-        }
-        .ytuber-status-value {
             font-size: 24px;
             color: #FFFFFF;
             font-weight: 700;
+            margin-bottom: 0.25rem;
         }
-        .ytuber-status-detail {
-            font-size: 12px;
-            color: #A8B0CC;
-            margin-top: 0.15rem;
+        .ytuber-command-subtitle {
+            font-size: 14px;
+            color: #B7C1DD;
+            margin-bottom: 0.95rem;
         }
         .ytuber-detected {
             font-size: 12px;
-            color: #A8B0CC;
-            margin-top: 0.5rem;
+            color: #B7C1DD;
+            margin-top: 0.45rem;
         }
         .ytuber-banner {
             border-radius: 22px;
             padding: 1rem 1.1rem;
             margin-bottom: 1rem;
-            background: radial-gradient(circle at top left, rgba(255,255,255,0.07) 0%, rgba(22,33,62,0.95) 40%, rgba(6,6,20,0.98) 100%);
-            border: 1px solid rgba(255,255,255,0.10);
-            box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+            background:
+                radial-gradient(circle at top left, rgba(255,255,255,0.08) 0%, rgba(27,39,72,0.96) 44%, rgba(9,13,28,0.98) 100%);
+            border: 1px solid rgba(255,255,255,0.11);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.22);
         }
         .ytuber-banner-title {
             font-size: 20px;
@@ -388,7 +339,7 @@ def _inject_ytuber_css() -> None:
         }
         .ytuber-banner-meta {
             font-size: 13px;
-            color: #A8B0CC;
+            color: #B7C1DD;
         }
         </style>
         """,
@@ -425,6 +376,28 @@ def _render_connection_cards(provider_counts: Optional[Dict[str, int]] = None) -
             )
 
     return provider_counts
+
+
+def _render_pool_footer(provider_counts: Dict[str, int]) -> None:
+    st.markdown("<div style='margin-top:1.25rem;'></div>", unsafe_allow_html=True)
+    cols = st.columns(3)
+    footer_cards = [
+        ("YouTube pool", provider_counts["youtube"], "Live fetch"),
+        ("Gemini pool", provider_counts["gemini"], "AI text/image"),
+        ("OpenAI pool", provider_counts["openai"], "ChatGPT/image"),
+    ]
+    for col, (label, count, detail) in zip(cols, footer_cards):
+        with col:
+            st.markdown(
+                f"""
+                <div style="padding:0.45rem 0.6rem;border-radius:14px;background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#7D8AB1;">{escape(label)}</div>
+                    <div style="font-size:16px;font-weight:700;color:#FFFFFF;line-height:1.2;">{count}</div>
+                    <div style="font-size:11px;color:#A8B0CC;">{escape(detail)}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
 
 def _catalog_map(items: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
@@ -497,6 +470,88 @@ def _estimate_image_cost(
     else:
         per_image = meta["pricing"][quality][size]
     return per_image, per_image * image_count
+
+
+def _build_trend_radar_df(channel_df: pd.DataFrame) -> pd.DataFrame:
+    required_cols = {"video_publishedAt", "video_title"}
+    if channel_df.empty or not required_cols.issubset(channel_df.columns):
+        return pd.DataFrame()
+
+    now = datetime.now(timezone.utc)
+    recent_60 = channel_df[channel_df["video_publishedAt"] >= (now - timedelta(days=60))]
+    prev_60 = channel_df[
+        (channel_df["video_publishedAt"] < (now - timedelta(days=60)))
+        & (channel_df["video_publishedAt"] >= (now - timedelta(days=120)))
+    ]
+
+    def keyword_counter(frame: pd.DataFrame) -> Counter:
+        c = Counter()
+        if frame.empty:
+            return c
+        for title in frame["video_title"].fillna("").astype(str):
+            c.update(set(_tokenize(title)))
+        return c
+
+    c_recent = keyword_counter(recent_60)
+    c_prev = keyword_counter(prev_60)
+
+    rows = []
+    for kw, recent_count in c_recent.items():
+        prev_count = c_prev.get(kw, 0)
+        rows.append(
+            {
+                "keyword": kw,
+                "recent_mentions": recent_count,
+                "previous_mentions": prev_count,
+                "momentum_delta": recent_count - prev_count,
+            }
+        )
+
+    if not rows:
+        return pd.DataFrame()
+
+    return (
+        pd.DataFrame(rows)
+        .sort_values(["momentum_delta", "recent_mentions"], ascending=[False, False])
+        .head(25)
+    )
+
+
+def _generate_competitor_recommendations(
+    channel_title: str,
+    own_stats: Dict[str, Any],
+    benchmark_df: pd.DataFrame,
+    competitor_trend_df: pd.DataFrame,
+    keyword_gap_df: pd.DataFrame,
+) -> str:
+    if get_provider_key_count("gemini") <= 0:
+        return "Add a Gemini API key pool to generate benchmark recommendations."
+
+    top_competitors = benchmark_df.head(5).to_dict(orient="records")
+    trend_rows = competitor_trend_df.head(8).to_dict(orient="records")
+    gap_rows = keyword_gap_df.head(8).to_dict(orient="records")
+
+    prompt = (
+        "You are a senior YouTube growth strategist. "
+        "Compare the user's channel against competitor benchmark data and explain what the channel should do next. "
+        "Keep the tone polished, concise, and specific.\n\n"
+        f"User channel: {channel_title}\n"
+        f"User stats: {own_stats}\n"
+        f"Top competitor rows: {top_competitors}\n"
+        f"Competitor trend radar: {trend_rows}\n"
+        f"Keyword gaps vs competitors: {gap_rows}\n\n"
+        "Return markdown with these sections:\n"
+        "1. What competitors are doing differently\n"
+        "2. Immediate next steps\n"
+        "3. Content angles to test next\n"
+        "4. Risks to avoid\n"
+        "Use short bullets and plain language."
+    )
+    return run_with_provider_keys(
+        "gemini",
+        lambda key: _gemini_generate_text(key, "gemini-2.5-flash", prompt),
+        retryable_error=_is_ai_retryable_error,
+    )
 
 
 def _is_youtube_retryable_error(exc: Exception) -> bool:
@@ -1299,6 +1354,24 @@ def _render_channel_audit(channel_df: pd.DataFrame) -> None:
             unsafe_allow_html=True,
         )
 
+    trend_df = _build_trend_radar_df(channel_df)
+    if not trend_df.empty:
+        st.markdown("**Momentum Radar**")
+        trend_cols = st.columns(2)
+        with trend_cols[0]:
+            styled_dataframe(trend_df.head(10), title=None, precision=1)
+        with trend_cols[1]:
+            rising = trend_df[trend_df["momentum_delta"] > 0].head(12)
+            if not rising.empty:
+                rising_fig = plotly_bar_chart(
+                    rising.sort_values("momentum_delta", ascending=True),
+                    x="keyword",
+                    y="momentum_delta",
+                    title="Rising Topics in the Last 60 Days",
+                    horizontal=True,
+                )
+                st.plotly_chart(rising_fig, use_container_width=True)
+
 
 def _render_keyword_intel(channel_df: pd.DataFrame) -> List[str]:
     section_header("Keyword Intelligence", icon="🔑")
@@ -1366,7 +1439,11 @@ def _render_title_seo_lab(keyword_hints: List[str]) -> None:
             st.markdown(f"- {t}")
 
 
-def _render_competitor_benchmark() -> None:
+def _render_competitor_benchmark(
+    channel_df: pd.DataFrame,
+    channel_title: str,
+    channel_id: str,
+) -> None:
     section_header("Competitor Benchmark", icon="📊")
     handles = st.text_area(
         "Competitor handles (comma separated)",
@@ -1375,57 +1452,120 @@ def _render_competitor_benchmark() -> None:
     )
 
     run = st.button("Run Competitor Benchmark", use_container_width=True)
-    if not run:
+    state_key = f"ytuber_competitor_state_{channel_id}"
+
+    if run:
+        if get_provider_key_count("youtube") <= 0:
+            st.error("No YouTube API keys are configured for competitor benchmarking.")
+            return
+
+        competitors = [h.strip() for h in handles.split(",") if h.strip()]
+        rows = []
+        competitor_frames: List[pd.DataFrame] = []
+        own_keywords = set(_top_keywords(channel_df, 20))
+        keyword_gap_counter: Counter = Counter()
+
+        with st.spinner("Loading competitor channels..."):
+            for handle in competitors:
+                try:
+                    cdf, source, cid, title = _fetch_or_get_cached_channel(
+                        handle,
+                        force_refresh=False,
+                    )
+                    cdf = _ensure_numeric_and_dates(cdf)
+                    competitor_frames.append(cdf.assign(_benchmark_channel=title))
+                    competitor_keywords = _top_keywords(cdf, 12)
+                    for kw in competitor_keywords:
+                        if kw not in own_keywords:
+                            keyword_gap_counter[kw] += 1
+
+                    best_day = "N/A"
+                    if not cdf.empty and cdf["publish_day"].notna().any():
+                        best_day = (
+                            cdf.groupby("publish_day")["views"]
+                            .mean()
+                            .sort_values(ascending=False)
+                            .index[0]
+                        )
+
+                    rows.append(
+                        {
+                            "handle": handle,
+                            "channel_title": title,
+                            "channel_id": cid,
+                            "source": source,
+                            "videos_1y": len(cdf),
+                            "total_views": int(cdf["views"].fillna(0).sum()) if not cdf.empty else 0,
+                            "avg_views": int(cdf["views"].fillna(0).mean()) if not cdf.empty else 0,
+                            "median_engagement": float(cdf["engagement_rate"].median()) if not cdf.empty else 0.0,
+                            "best_day": best_day,
+                            "top_topics": ", ".join(competitor_keywords[:4]),
+                        }
+                    )
+                except Exception as exc:
+                    rows.append(
+                        {
+                            "handle": handle,
+                            "channel_title": "ERROR",
+                            "channel_id": "",
+                            "source": "error",
+                            "videos_1y": 0,
+                            "total_views": 0,
+                            "avg_views": 0,
+                            "median_engagement": 0.0,
+                            "best_day": "N/A",
+                            "top_topics": "",
+                            "error": str(exc),
+                        }
+                    )
+
+        if not rows:
+            st.warning("No competitor data produced.")
+            return
+
+        bdf = pd.DataFrame(rows).sort_values("total_views", ascending=False)
+        combined_competitors = (
+            pd.concat(competitor_frames, ignore_index=True)
+            if competitor_frames
+            else pd.DataFrame()
+        )
+        competitor_trend_df = _build_trend_radar_df(combined_competitors)
+        keyword_gap_df = pd.DataFrame(
+            [
+                {"keyword": keyword, "competitor_count": count}
+                for keyword, count in keyword_gap_counter.most_common(15)
+            ]
+        )
+        own_stats = {
+            "videos_1y": len(channel_df),
+            "total_views": int(channel_df["views"].fillna(0).sum()),
+            "avg_views": int(channel_df["views"].fillna(0).mean()),
+            "median_engagement": float(channel_df["engagement_rate"].median()),
+        }
+
+        insights = _generate_competitor_recommendations(
+            channel_title,
+            own_stats,
+            bdf,
+            competitor_trend_df,
+            keyword_gap_df,
+        )
+
+        st.session_state[state_key] = {
+            "benchmark_rows": bdf.to_dict(orient="records"),
+            "trend_rows": competitor_trend_df.to_dict(orient="records"),
+            "gap_rows": keyword_gap_df.to_dict(orient="records"),
+            "insights": insights,
+        }
+
+    if state_key not in st.session_state:
         st.caption("Enter competitor handles and run benchmark.")
         return
 
-    if get_provider_key_count("youtube") <= 0:
-        st.error("No YouTube API keys are configured for competitor benchmarking.")
-        return
-
-    competitors = [h.strip() for h in handles.split(",") if h.strip()]
-    rows = []
-
-    with st.spinner("Loading competitor channels..."):
-        for handle in competitors:
-            try:
-                cdf, source, cid, title = _fetch_or_get_cached_channel(
-                    handle,
-                    force_refresh=False,
-                )
-                cdf = _ensure_numeric_and_dates(cdf)
-                rows.append(
-                    {
-                        "handle": handle,
-                        "channel_title": title,
-                        "channel_id": cid,
-                        "source": source,
-                        "videos_1y": len(cdf),
-                        "total_views": int(cdf["views"].fillna(0).sum()) if not cdf.empty else 0,
-                        "avg_views": int(cdf["views"].fillna(0).mean()) if not cdf.empty else 0,
-                        "median_engagement": float(cdf["engagement_rate"].median()) if not cdf.empty else 0.0,
-                    }
-                )
-            except Exception as exc:
-                rows.append(
-                    {
-                        "handle": handle,
-                        "channel_title": "ERROR",
-                        "channel_id": "",
-                        "source": "error",
-                        "videos_1y": 0,
-                        "total_views": 0,
-                        "avg_views": 0,
-                        "median_engagement": 0.0,
-                        "error": str(exc),
-                    }
-                )
-
-    if not rows:
-        st.warning("No competitor data produced.")
-        return
-
-    bdf = pd.DataFrame(rows).sort_values("total_views", ascending=False)
+    state = st.session_state[state_key]
+    bdf = pd.DataFrame(state.get("benchmark_rows", []))
+    competitor_trend_df = pd.DataFrame(state.get("trend_rows", []))
+    keyword_gap_df = pd.DataFrame(state.get("gap_rows", []))
     styled_dataframe(bdf, title=None, precision=1)
 
     if not bdf.empty:
@@ -1451,46 +1591,47 @@ def _render_competitor_benchmark() -> None:
         )
         st.plotly_chart(bar_fig, use_container_width=True)
 
+    if not competitor_trend_df.empty:
+        st.markdown("**Competitor Trend Radar**")
+        trend_cols = st.columns(2)
+        with trend_cols[0]:
+            styled_dataframe(competitor_trend_df.head(12), title=None, precision=1)
+        with trend_cols[1]:
+            positive = competitor_trend_df[competitor_trend_df["momentum_delta"] > 0].head(12)
+            if not positive.empty:
+                comp_trend_fig = plotly_bar_chart(
+                    positive.sort_values("momentum_delta", ascending=True),
+                    x="keyword",
+                    y="momentum_delta",
+                    title="Rising Competitor Topics",
+                    horizontal=True,
+                )
+                st.plotly_chart(comp_trend_fig, use_container_width=True)
+
+    if not keyword_gap_df.empty:
+        st.markdown("**Keyword gaps vs competitors**")
+        gap_fig = plotly_bar_chart(
+            keyword_gap_df.sort_values("competitor_count", ascending=True).head(12),
+            x="keyword",
+            y="competitor_count",
+            title="Keywords Competitors Use More Often",
+            horizontal=True,
+        )
+        st.plotly_chart(gap_fig, use_container_width=True)
+        styled_keyword_chips(keyword_gap_df["keyword"].head(8).tolist())
+
+    insights = state.get("insights", "")
+    if insights:
+        st.markdown("**Competitive Recommendations**")
+        st.markdown(insights)
+
 
 def _render_trend_radar(channel_df: pd.DataFrame) -> None:
     section_header("Trend Radar", icon="📡")
-    now = datetime.now(timezone.utc)
-    recent_60 = channel_df[channel_df["video_publishedAt"] >= (now - timedelta(days=60))]
-    prev_60 = channel_df[
-        (channel_df["video_publishedAt"] < (now - timedelta(days=60)))
-        & (channel_df["video_publishedAt"] >= (now - timedelta(days=120)))
-    ]
-
-    def keyword_counter(frame: pd.DataFrame) -> Counter:
-        c = Counter()
-        for title in frame["video_title"].fillna("").astype(str):
-            c.update(set(_tokenize(title)))
-        return c
-
-    c_recent = keyword_counter(recent_60)
-    c_prev = keyword_counter(prev_60)
-
-    rows = []
-    for kw, recent_count in c_recent.items():
-        prev_count = c_prev.get(kw, 0)
-        growth = recent_count - prev_count
-        rows.append(
-            {
-                "keyword": kw,
-                "recent_mentions": recent_count,
-                "previous_mentions": prev_count,
-                "momentum_delta": growth,
-            }
-        )
-
-    tdf = pd.DataFrame(rows)
+    tdf = _build_trend_radar_df(channel_df)
     if tdf.empty:
         st.info("Not enough recent data for trend radar.")
         return
-
-    tdf = tdf.sort_values(
-        ["momentum_delta", "recent_mentions"], ascending=[False, False]
-    ).head(25)
     styled_dataframe(tdf, title=None, precision=1)
 
     rising = tdf[tdf["momentum_delta"] > 0].copy()
@@ -1520,22 +1661,44 @@ def _render_trend_radar(channel_df: pd.DataFrame) -> None:
 def _render_content_planner(channel_df: pd.DataFrame) -> None:
     section_header("Content Planner", icon="🗓️")
 
+    weekday_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     day_perf = (
         channel_df.groupby("publish_day", dropna=False)
-        .agg(avg_views=("views", "mean"), median_engagement=("engagement_rate", "median"), videos=("video_id", "count"))
+        .agg(
+            avg_views=("views", "mean"),
+            median_engagement=("engagement_rate", "median"),
+            videos=("video_id", "count"),
+            total_views=("views", "sum"),
+        )
         .reset_index()
-        .sort_values("avg_views", ascending=False)
+        .set_index("publish_day")
+        .reindex(weekday_order)
+        .dropna(how="all")
+        .reset_index()
     )
 
     hour_perf = (
         channel_df.groupby("publish_hour", dropna=False)
-        .agg(avg_views=("views", "mean"), median_engagement=("engagement_rate", "median"), videos=("video_id", "count"))
+        .agg(
+            avg_views=("views", "mean"),
+            median_engagement=("engagement_rate", "median"),
+            videos=("video_id", "count"),
+            total_views=("views", "sum"),
+        )
         .reset_index()
-        .sort_values("avg_views", ascending=False)
+        .sort_values("publish_hour")
     )
 
-    best_day = day_perf.iloc[0]["publish_day"] if not day_perf.empty else "Wednesday"
-    best_hour = int(hour_perf.iloc[0]["publish_hour"]) if not hour_perf.empty else 15
+    best_day = (
+        day_perf.sort_values("avg_views", ascending=False).iloc[0]["publish_day"]
+        if not day_perf.empty
+        else "Wednesday"
+    )
+    best_hour = (
+        int(hour_perf.sort_values("avg_views", ascending=False).iloc[0]["publish_hour"])
+        if not hour_perf.empty
+        else 15
+    )
 
     kpi_row(
         [
@@ -1548,33 +1711,79 @@ def _render_content_planner(channel_df: pd.DataFrame) -> None:
         ]
     )
 
-    st.markdown("**Day Performance**")
-    day_melt = day_perf.melt(
-        id_vars="publish_day",
-        value_vars=["avg_views", "median_engagement", "videos"],
-        var_name="metric",
-        value_name="value",
-    )
-    fig_day = plotly_heatmap(
-        day_melt, x="publish_day", y="metric", z="value", title="Performance by Day"
-    )
-    st.plotly_chart(fig_day, use_container_width=True)
+    day_cols = st.columns(2)
+    with day_cols[0]:
+        fig_day_views = plotly_bar_chart(
+            day_perf,
+            x="publish_day",
+            y="avg_views",
+            title="Average Views by Day",
+        )
+        st.plotly_chart(fig_day_views, use_container_width=True)
+    with day_cols[1]:
+        fig_day_uploads = plotly_bar_chart(
+            day_perf,
+            x="publish_day",
+            y="videos",
+            title="Uploads by Day",
+        )
+        st.plotly_chart(fig_day_uploads, use_container_width=True)
 
-    st.markdown("**Hour Performance (UTC)**")
-    fig_hour = plotly_bar_chart(
-        hour_perf.head(24),
-        x="publish_hour",
-        y="avg_views",
-        title="Views by Hour (UTC)",
+    hour_cols = st.columns(2)
+    with hour_cols[0]:
+        fig_hour_views = plotly_bar_chart(
+            hour_perf,
+            x="publish_hour",
+            y="avg_views",
+            title="Average Views by Hour (UTC)",
+        )
+        st.plotly_chart(fig_hour_views, use_container_width=True)
+    with hour_cols[1]:
+        fig_hour_uploads = plotly_bar_chart(
+            hour_perf,
+            x="publish_hour",
+            y="videos",
+            title="Uploads by Hour (UTC)",
+        )
+        st.plotly_chart(fig_hour_uploads, use_container_width=True)
+
+    heatmap_source = (
+        channel_df.groupby(["publish_day", "publish_hour"], dropna=False)
+        .agg(avg_views=("views", "mean"), videos=("video_id", "count"))
+        .reset_index()
     )
-    st.plotly_chart(fig_hour, use_container_width=True)
+    heatmap_source["publish_day"] = pd.Categorical(
+        heatmap_source["publish_day"],
+        categories=weekday_order,
+        ordered=True,
+    )
+    heatmap_source = heatmap_source.sort_values(["publish_day", "publish_hour"])
+
+    heat_cols = st.columns(2)
+    with heat_cols[0]:
+        heat_views = plotly_heatmap(
+            heatmap_source,
+            x="publish_hour",
+            y="publish_day",
+            z="avg_views",
+            title="Day x Hour Average Views",
+        )
+        st.plotly_chart(heat_views, use_container_width=True)
+    with heat_cols[1]:
+        heat_uploads = plotly_heatmap(
+            heatmap_source,
+            x="publish_hour",
+            y="publish_day",
+            z="videos",
+            title="Day x Hour Upload Density",
+        )
+        st.plotly_chart(heat_uploads, use_container_width=True)
 
     top_topics = _top_keywords(channel_df, top_n=12)
     if top_topics:
         st.markdown("**Suggested next content angles**")
         styled_keyword_chips(top_topics[:8])
 
-    weekday_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     weekday_map = {d: i for i, d in enumerate(weekday_order)}
     target_weekday = weekday_map.get(best_day, 2)
 
@@ -1981,109 +2190,83 @@ def render() -> None:
 
     if "ytuber_growth_prompt" not in st.session_state:
         st.session_state["ytuber_growth_prompt"] = "@veritasium"
-    if "ytuber_module_selection" not in st.session_state or st.session_state["ytuber_module_selection"] not in WORKSPACE_MODULES:
-        st.session_state["ytuber_module_selection"] = WORKSPACE_MODULES[0]
     provider_counts = {
         "youtube": get_provider_key_count("youtube"),
         "gemini": get_provider_key_count("gemini"),
         "openai": get_provider_key_count("openai"),
     }
 
-    st.markdown(
-        """
-        <div class="ytuber-hero">
-            <div class="ytuber-brand-row">
-                <span class="ytuber-brand-badge">YouTube IP V3</span>
-                <span class="ytuber-brand-badge soft">Creator Intelligence Suite</span>
-            </div>
-            <div class="ytuber-kicker">Live channel intelligence for teams and creators</div>
-            <div class="ytuber-title">Audit channels, uncover keyword gaps, and ship better YouTube strategy faster.</div>
-            <div class="ytuber-subtitle">
-                Use one workspace for live channel audits, competitor benchmarking, content planning, and
-                AI-assisted idea, script, and thumbnail generation while keeping the existing dark product theme.
-            </div>
-            <div class="ytuber-feature-row">
-                <span class="ytuber-feature-pill">Live channel audit</span>
-                <span class="ytuber-feature-pill">Keyword and niche intelligence</span>
-                <span class="ytuber-feature-pill">Competitor benchmarking</span>
-                <span class="ytuber-feature-pill">Publishing planner</span>
-                <span class="ytuber-feature-pill">AI scripts and thumbnails</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown('<div class="ytuber-command-card">', unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class="ytuber-command-title">Start with a channel</div>
-        <div class="ytuber-command-subtitle">
-            Paste a handle, name, or channel ID, pick a quick action, and launch the live workspace.
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    growth_prompt = st.text_input(
-        "How can I help you grow?",
-        key="ytuber_growth_prompt",
-        placeholder="@veritasium or 'Audit @veritasium and find the next niche to own'",
-        label_visibility="collapsed",
-    )
-    detected_channel = _extract_channel_query(growth_prompt)
-    if detected_channel:
+    hero_left, hero_right = st.columns([1.15, 0.95], gap="large")
+    with hero_left:
         st.markdown(
-            f"<div class='ytuber-detected'>Detected channel target: <code>{escape(detected_channel)}</code></div>",
-            unsafe_allow_html=True,
-        )
-    else:
-        st.markdown(
-            "<div class='ytuber-detected'>Paste a channel handle, name, or channel ID to load the live workspace.</div>",
+            """
+            <div class="ytuber-hero">
+                <div class="ytuber-hero-card">
+                    <div class="ytuber-brand-row">
+                        <span class="ytuber-brand-dot"></span>
+                        YouTube IP V3
+                    </div>
+                    <div class="ytuber-kicker">Creator intelligence workspace</div>
+                    <div class="ytuber-title">One place for channel audits, benchmark analysis, planning, and AI production support.</div>
+                    <div class="ytuber-subtitle">
+                        Load any channel, review what is working, compare it against competitors,
+                        and turn the findings into ideas, scripts, and thumbnails.
+                    </div>
+                    <div class="ytuber-feature-row">
+                        <span class="ytuber-feature-pill">Live benchmarking</span>
+                        <span class="ytuber-feature-pill">AI Studio first</span>
+                        <span class="ytuber-feature-pill">Proof-based planner</span>
+                    </div>
+                </div>
+            </div>
+            """,
             unsafe_allow_html=True,
         )
 
-    selected_action = st.pills(
-        "Quick actions",
-        QUICK_ACTIONS,
-        key="ytuber_quick_action",
-        label_visibility="collapsed",
-        selection_mode="single",
-    )
-    last_action = st.session_state.get("ytuber_last_applied_action")
-    if selected_action and selected_action != last_action:
-        st.session_state["ytuber_module_selection"] = QUICK_ACTION_TO_MODULE.get(
-            selected_action,
-            WORKSPACE_MODULES[0],
+    with hero_right:
+        st.markdown('<div class="ytuber-command-card">', unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class="ytuber-command-title">Start with a channel</div>
+            <div class="ytuber-command-subtitle">
+                Enter a handle, channel name, or channel ID to open the live workspace.
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-        mapped_task = QUICK_ACTION_TO_TASK.get(selected_action)
-        if mapped_task:
-            st.session_state["ytuber_ai_task"] = mapped_task
-        st.session_state["ytuber_last_applied_action"] = selected_action
-    elif not selected_action:
-        st.session_state["ytuber_last_applied_action"] = None
+        growth_prompt = st.text_input(
+            "Channel",
+            key="ytuber_growth_prompt",
+            placeholder="@veritasium",
+            label_visibility="collapsed",
+        )
+        detected_channel = _extract_channel_query(growth_prompt)
+        if detected_channel:
+            st.markdown(
+                f"<div class='ytuber-detected'>Channel target: <code>{escape(detected_channel)}</code></div>",
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                "<div class='ytuber-detected'>Paste a channel handle, name, or channel ID.</div>",
+                unsafe_allow_html=True,
+            )
 
-    controls_left, controls_mid, controls_right = st.columns([1.1, 1.1, 1.5])
-    with controls_left:
-        force_refresh = st.toggle(
-            "Force live refresh",
-            key="ytuber_force_refresh",
-            help="Bypass cached rows and pull the last year from the YouTube API again.",
-        )
-    with controls_mid:
-        st.caption(
-            f"YouTube pool: {provider_counts['youtube']} key(s) ready"
-            if provider_counts["youtube"] > 0
-            else "YouTube pool missing"
-        )
-    with controls_right:
-        analyze = st.button(
-            "Load Live Workspace",
-            type="primary",
-            use_container_width=True,
-            disabled=provider_counts["youtube"] <= 0,
-        )
-    st.markdown("</div>", unsafe_allow_html=True)
-    _render_connection_cards(provider_counts)
+        control_cols = st.columns([0.9, 1.3])
+        with control_cols[0]:
+            force_refresh = st.toggle(
+                "Force live refresh",
+                key="ytuber_force_refresh",
+                help="Bypass cached rows and pull the last year from the YouTube API again.",
+            )
+        with control_cols[1]:
+            analyze = st.button(
+                "Load Live Workspace",
+                type="primary",
+                use_container_width=True,
+                disabled=provider_counts["youtube"] <= 0,
+            )
+        st.markdown("</div>", unsafe_allow_html=True)
 
     if provider_counts["youtube"] <= 0:
         st.warning(
@@ -2115,6 +2298,7 @@ def render() -> None:
 
     if "ytuber_channel_df" not in st.session_state:
         st.info("Load a channel to unlock the full Ytuber suite.")
+        _render_pool_footer(provider_counts)
         return
 
     channel_df = st.session_state["ytuber_channel_df"]
@@ -2124,47 +2308,40 @@ def render() -> None:
 
     if channel_df.empty:
         st.warning("No videos available for this channel in the last year.")
+        _render_pool_footer(provider_counts)
         return
 
     channel_df = _ensure_numeric_and_dates(channel_df)
-    focus_text = selected_action or "Explore the workspace"
     st.markdown(
         f"""
         <div class="ytuber-banner">
             <div class="ytuber-banner-title">{escape(channel_title)}</div>
             <div class="ytuber-banner-meta">
                 Loaded from <code>{escape(source)}</code> • Channel ID <code>{escape(channel_id)}</code> •
-                {len(channel_df):,} videos in view • Focus: <strong>{escape(focus_text)}</strong>
+                {len(channel_df):,} videos in view
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    selected_module = st.segmented_control(
-        "Workspace modules",
-        WORKSPACE_MODULES,
-        key="ytuber_module_selection",
-        selection_mode="single",
-        label_visibility="collapsed",
-    )
-
-    if selected_module == "Overview":
-        _render_overview(channel_df)
-    elif selected_module == "Channel Audit":
-        _render_channel_audit(channel_df)
-    elif selected_module == "Keyword Intel":
-        keyword_hints = _render_keyword_intel(channel_df)
-        st.session_state["ytuber_keyword_hints"] = keyword_hints
-    elif selected_module == "Title & SEO Lab":
-        hints = st.session_state.get("ytuber_keyword_hints") or _top_keywords(channel_df, 20)
-        _render_title_seo_lab(hints)
-    elif selected_module == "Competitor Benchmark":
-        _render_competitor_benchmark()
-    elif selected_module == "Trend Radar":
-        _render_trend_radar(channel_df)
-    elif selected_module == "Content Planner":
-        _render_content_planner(channel_df)
-    elif selected_module == "AI Studio":
+    tabs = st.tabs(WORKSPACE_MODULES)
+    with tabs[0]:
         hints = st.session_state.get("ytuber_keyword_hints") or _top_keywords(channel_df, 20)
         _render_ai_studio(channel_df, channel_title, channel_id, hints)
+    with tabs[1]:
+        _render_overview(channel_df)
+    with tabs[2]:
+        _render_channel_audit(channel_df)
+    with tabs[3]:
+        keyword_hints = _render_keyword_intel(channel_df)
+        st.session_state["ytuber_keyword_hints"] = keyword_hints
+    with tabs[4]:
+        hints = st.session_state.get("ytuber_keyword_hints") or _top_keywords(channel_df, 20)
+        _render_title_seo_lab(hints)
+    with tabs[5]:
+        _render_competitor_benchmark(channel_df, channel_title, channel_id)
+    with tabs[6]:
+        _render_content_planner(channel_df)
+
+    _render_pool_footer(provider_counts)
