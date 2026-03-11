@@ -162,6 +162,20 @@ IMAGE_MODEL_CATALOG = {
     ],
     "openai": [
         {
+            "id": "gpt-image-1.5",
+            "label": "GPT Image 1.5",
+            "summary": "Latest OpenAI image model with strongest prompt adherence",
+            "pricing": {
+                "low": {"1024x1024": 0.009, "1024x1536": 0.013, "1536x1024": 0.013},
+                "medium": {"1024x1024": 0.034, "1024x1536": 0.050, "1536x1024": 0.050},
+                "high": {"1024x1024": 0.133, "1024x1536": 0.200, "1536x1024": 0.200},
+            },
+            "size_options": ["1024x1024", "1024x1536", "1536x1024"],
+            "quality_options": ["low", "medium", "high"],
+            "background_options": ["opaque", "transparent"],
+            "format_options": ["png", "webp", "jpeg"],
+        },
+        {
             "id": "gpt-image-1-mini",
             "label": "GPT Image 1 Mini",
             "summary": "Lower-cost thumbnail generation",
@@ -172,6 +186,8 @@ IMAGE_MODEL_CATALOG = {
             },
             "size_options": ["1024x1024", "1024x1536", "1536x1024"],
             "quality_options": ["low", "medium", "high"],
+            "background_options": ["opaque", "transparent"],
+            "format_options": ["png", "webp", "jpeg"],
         },
         {
             "id": "gpt-image-1",
@@ -184,6 +200,8 @@ IMAGE_MODEL_CATALOG = {
             },
             "size_options": ["1024x1024", "1024x1536", "1536x1024"],
             "quality_options": ["low", "medium", "high"],
+            "background_options": ["opaque", "transparent"],
+            "format_options": ["png", "webp", "jpeg"],
         },
     ],
 }
@@ -552,6 +570,8 @@ def _generate_images_with_provider_pool(
     count: int,
     size: str,
     quality: str,
+    output_format: str,
+    background: str,
 ) -> List[Any]:
     provider_name = provider.lower().strip()
     def _run_generate(key: str) -> List[Any]:
@@ -569,9 +589,12 @@ def _generate_images_with_provider_pool(
                 count=count,
                 size=size,
                 quality=quality,
+                output_format=output_format,
+                background=background,
             )
         except TypeError as exc:
-            if "unexpected keyword argument 'quality'" not in str(exc):
+            text = str(exc)
+            if "unexpected keyword argument 'quality'" not in text and "unexpected keyword argument 'output_format'" not in text and "unexpected keyword argument 'background'" not in text:
                 raise
             return generator.generate(
                 title=title,
@@ -1704,6 +1727,34 @@ def _render_ai_studio(
             disabled=len(image_model_meta["quality_options"]) == 1,
         )
 
+    image_background = "opaque"
+    image_output_format = "png"
+    if image_provider == "openai":
+        if (
+            "ytuber_image_background" not in st.session_state
+            or st.session_state["ytuber_image_background"] not in image_model_meta.get("background_options", ["opaque"])
+        ):
+            st.session_state["ytuber_image_background"] = image_model_meta.get("background_options", ["opaque"])[0]
+        if (
+            "ytuber_image_output_format" not in st.session_state
+            or st.session_state["ytuber_image_output_format"] not in image_model_meta.get("format_options", ["png"])
+        ):
+            st.session_state["ytuber_image_output_format"] = image_model_meta.get("format_options", ["png"])[0]
+
+        openai_image_col1, openai_image_col2 = st.columns(2)
+        with openai_image_col1:
+            image_background = st.selectbox(
+                "Background",
+                image_model_meta.get("background_options", ["opaque"]),
+                key="ytuber_image_background",
+            )
+        with openai_image_col2:
+            image_output_format = st.selectbox(
+                "Output format",
+                image_model_meta.get("format_options", ["png"]),
+                key="ytuber_image_output_format",
+            )
+
     quantity_col1, quantity_col2, quantity_col3 = st.columns(3)
     with quantity_col1:
         idea_count = st.slider("Video ideas", min_value=1, max_value=12, value=5)
@@ -1890,6 +1941,8 @@ def _render_ai_studio(
                     count=thumbnail_count,
                     size=image_size,
                     quality=image_quality,
+                    output_format=image_output_format,
+                    background=image_background,
                 )
                 out_dir = os.path.join("outputs", "thumbnails")
                 os.makedirs(out_dir, exist_ok=True)

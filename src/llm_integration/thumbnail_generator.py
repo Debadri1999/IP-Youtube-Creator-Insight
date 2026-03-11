@@ -34,6 +34,8 @@ class ThumbnailGenerator:
         count: int = 1,
         size: str = "1536x1024",
         quality: Optional[str] = None,
+        output_format: Optional[str] = None,
+        background: Optional[str] = None,
     ) -> List[GeneratedImage]:
         prompt = self._build_prompt(title, context, style, negative_prompt)
         if self.provider == "gemini":
@@ -44,6 +46,8 @@ class ThumbnailGenerator:
                 count=count,
                 size=size,
                 quality=quality,
+                output_format=output_format,
+                background=background,
             )
         raise ValueError(f"Unsupported provider: {self.provider}")
 
@@ -118,12 +122,18 @@ class ThumbnailGenerator:
         count: int,
         size: str,
         quality: Optional[str],
+        output_format: Optional[str],
+        background: Optional[str],
     ) -> List[GeneratedImage]:
         endpoint = "https://api.openai.com/v1/images/generations"
         headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
         payload = {"model": self.model, "prompt": prompt, "n": count, "size": size}
         if quality:
             payload["quality"] = quality
+        if output_format:
+            payload["output_format"] = output_format
+        if background:
+            payload["background"] = background
         response = requests.post(endpoint, headers=headers, json=payload, timeout=90)
         if response.status_code >= 400:
             raise RuntimeError(
@@ -135,10 +145,11 @@ class ThumbnailGenerator:
             b64 = item.get("b64_json")
             if not b64:
                 continue
+            mime_type = f"image/{output_format}" if output_format else "image/png"
             out.append(
                 GeneratedImage(
                     image_bytes=base64.b64decode(b64),
-                    mime_type="image/png",
+                    mime_type=mime_type,
                     provider="openai",
                     model=self.model,
                     prompt_used=prompt,

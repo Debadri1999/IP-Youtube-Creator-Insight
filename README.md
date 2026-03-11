@@ -133,6 +133,7 @@ You can copy `.streamlit/secrets.toml.example` for local reference.
 - Channel Analysis and Recommendations work from the committed datasets.
 - The Ytuber page uses the configured key pools to serve live channel data without exposing raw keys in the UI.
 - Thumbnail and text generation features use the configured Gemini and/or OpenAI key pools.
+- OpenAI thumbnail generation uses the official Images API flow and now exposes model, size, quality, background, and output-format controls in AI Studio.
 
 ## Supporting Files
 
