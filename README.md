@@ -2,6 +2,10 @@
 
 YouTube IP V3 is a Streamlit application for YouTube research, benchmarking, live channel analysis, outlier discovery, and AI-assisted planning. It combines bundled CSV datasets with live YouTube Data API requests and optional Gemini/OpenAI generation so one app can cover historical benchmarking, channel diagnostics, idea research, and creative asset prototyping.
 
+Live app:
+
+- https://youtube-ip-v3.streamlit.app/
+
 This README documents the current deployed app as it exists in this repository, including:
 
 - what the product does
@@ -421,6 +425,10 @@ streamlit run dashboard/app.py
 ## Streamlit Community Cloud Deployment
 
 This repo is structured to deploy directly from GitHub to Streamlit Community Cloud.
+
+Current deployed app:
+
+- https://youtube-ip-v3.streamlit.app/
 
 ### Streamlit app settings
 
