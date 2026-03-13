@@ -185,19 +185,26 @@ def build_topic_metrics(channel_df: pd.DataFrame) -> pd.DataFrame:
         else:
             trend_score = recent_median / max(float(topic_df["views_per_day"].median()), 1.0)
 
-        rows.append(
-            {
-                "topic_label": str(topic).replace("_", " ").title(),
-                "topic_key": topic,
-                "video_count": int(len(topic_df)),
-                "median_views_per_day": float(topic_df["views_per_day"].median()),
-                "median_views": float(topic_df["views"].median()),
-                "avg_engagement": float(topic_df["engagement_rate"].mean()),
-                "outlier_count": int((topic_df["performance_score"] >= 75).sum()) if "performance_score" in topic_df.columns else 0,
-                "trend_score": float(trend_score),
-                "recent_video_count": int(len(recent_df)),
-            }
-        )
+        row = {
+            "topic_label": str(topic).replace("_", " ").title(),
+            "topic_key": topic,
+            "video_count": int(len(topic_df)),
+            "median_views_per_day": float(topic_df["views_per_day"].median()),
+            "median_views": float(topic_df["views"].median()),
+            "avg_engagement": float(topic_df["engagement_rate"].mean()),
+            "outlier_count": int((topic_df["performance_score"] >= 75).sum()) if "performance_score" in topic_df.columns else 0,
+            "trend_score": float(trend_score),
+            "recent_video_count": int(len(recent_df)),
+        }
+        if "owner_video_thumbnail_impressions_click_rate" in topic_df.columns:
+            row["avg_thumbnail_ctr"] = float(
+                pd.to_numeric(topic_df["owner_video_thumbnail_impressions_click_rate"], errors="coerce").fillna(0).mean()
+            )
+        if "owner_average_view_percentage" in topic_df.columns:
+            row["avg_view_percentage"] = float(
+                pd.to_numeric(topic_df["owner_average_view_percentage"], errors="coerce").fillna(0).mean()
+            )
+        rows.append(row)
 
     topic_metrics = pd.DataFrame(rows)
     if topic_metrics.empty:
@@ -208,13 +215,18 @@ def build_topic_metrics(channel_df: pd.DataFrame) -> pd.DataFrame:
 def build_title_pattern_metrics(channel_df: pd.DataFrame) -> pd.DataFrame:
     if channel_df.empty:
         return pd.DataFrame()
+    agg_map: Dict[str, Any] = {
+        "videos": ("video_id", "count"),
+        "median_views_per_day": ("views_per_day", "median"),
+        "avg_engagement": ("engagement_rate", "mean"),
+    }
+    if "owner_video_thumbnail_impressions_click_rate" in channel_df.columns:
+        agg_map["avg_thumbnail_ctr"] = ("owner_video_thumbnail_impressions_click_rate", "mean")
+    if "owner_average_view_percentage" in channel_df.columns:
+        agg_map["avg_view_percentage"] = ("owner_average_view_percentage", "mean")
     return (
         channel_df.groupby("title_pattern", dropna=False)
-        .agg(
-            videos=("video_id", "count"),
-            median_views_per_day=("views_per_day", "median"),
-            avg_engagement=("engagement_rate", "mean"),
-        )
+        .agg(**agg_map)
         .reset_index()
         .sort_values(["median_views_per_day", "videos"], ascending=[False, False])
     )
@@ -223,13 +235,18 @@ def build_title_pattern_metrics(channel_df: pd.DataFrame) -> pd.DataFrame:
 def build_duration_metrics(channel_df: pd.DataFrame) -> pd.DataFrame:
     if channel_df.empty:
         return pd.DataFrame()
+    agg_map: Dict[str, Any] = {
+        "videos": ("video_id", "count"),
+        "median_views_per_day": ("views_per_day", "median"),
+        "avg_engagement": ("engagement_rate", "mean"),
+    }
+    if "owner_video_thumbnail_impressions_click_rate" in channel_df.columns:
+        agg_map["avg_thumbnail_ctr"] = ("owner_video_thumbnail_impressions_click_rate", "mean")
+    if "owner_average_view_percentage" in channel_df.columns:
+        agg_map["avg_view_percentage"] = ("owner_average_view_percentage", "mean")
     return (
         channel_df.groupby("duration_bucket", dropna=False)
-        .agg(
-            videos=("video_id", "count"),
-            median_views_per_day=("views_per_day", "median"),
-            avg_engagement=("engagement_rate", "mean"),
-        )
+        .agg(**agg_map)
         .reset_index()
         .sort_values(["median_views_per_day", "videos"], ascending=[False, False])
     )

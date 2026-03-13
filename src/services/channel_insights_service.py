@@ -26,6 +26,7 @@ from src.services.topic_analysis_service import (
     build_title_pattern_metrics,
     build_topic_metrics,
 )
+from src.services.youtube_owner_analytics_service import OwnerAnalyticsBundle, fetch_owner_channel_analytics
 from src.utils.channel_parser import normalize_channel_input
 
 
@@ -49,8 +50,50 @@ def _score_videos(channel_df: pd.DataFrame) -> pd.DataFrame:
     engagement_rank = df["engagement_rate"].rank(method="average", pct=True).fillna(0)
     recency_raw = 1 / df["age_days"].clip(lower=0.5)
     recency_rank = recency_raw.rank(method="average", pct=True).fillna(0)
-    df["performance_score"] = (views_rank * 60 + engagement_rank * 25 + recency_rank * 15).clip(0, 100)
+    weighted_parts = [
+        (views_rank, 55.0),
+        (engagement_rank, 25.0),
+        (recency_rank, 20.0),
+    ]
+
+    if "owner_video_thumbnail_impressions_click_rate" in df.columns:
+        ctr_rank = pd.to_numeric(
+            df["owner_video_thumbnail_impressions_click_rate"], errors="coerce"
+        ).fillna(0).rank(method="average", pct=True)
+        weighted_parts.append((ctr_rank, 12.0))
+    if "owner_average_view_percentage" in df.columns:
+        retention_rank = pd.to_numeric(
+            df["owner_average_view_percentage"], errors="coerce"
+        ).fillna(0).rank(method="average", pct=True)
+        weighted_parts.append((retention_rank, 8.0))
+
+    total_weight = sum(weight for _, weight in weighted_parts) or 1.0
+    score_series = sum(series * weight for series, weight in weighted_parts) / total_weight * 100
+    df["performance_score"] = score_series.clip(0, 100)
     return df
+
+
+def _merge_owner_video_metrics(channel_df: pd.DataFrame, owner_bundle: OwnerAnalyticsBundle) -> pd.DataFrame:
+    if channel_df.empty or not owner_bundle.available or owner_bundle.video_metrics_df.empty:
+        return channel_df
+
+    owner_df = owner_bundle.video_metrics_df.copy()
+    rename_map = {
+        "views": "owner_window_views",
+        "likes": "owner_window_likes",
+        "comments": "owner_window_comments",
+        "estimatedMinutesWatched": "owner_estimated_minutes_watched",
+        "averageViewDuration": "owner_average_view_duration_seconds",
+        "averageViewPercentage": "owner_average_view_percentage",
+        "videoThumbnailImpressions": "owner_video_thumbnail_impressions",
+        "videoThumbnailImpressionsClickRate": "owner_video_thumbnail_impressions_click_rate",
+    }
+    owner_df = owner_df.rename(columns=rename_map)
+    merge_columns = [column for column in ["video_id", *rename_map.values()] if column in owner_df.columns]
+    if "video_id" not in merge_columns:
+        return channel_df
+    deduped = owner_df[merge_columns].drop_duplicates(subset=["video_id"])
+    return channel_df.merge(deduped, on="video_id", how="left")
 
 
 def _outlier_and_underperformer_tables(channel_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -137,9 +180,10 @@ def _build_summary(
     duration_metrics: pd.DataFrame,
     title_pattern_metrics: pd.DataFrame,
     outliers: pd.DataFrame,
+    owner_bundle: Optional[OwnerAnalyticsBundle] = None,
 ) -> Dict[str, Any]:
     metrics = _format_metrics(topic_metrics, duration_metrics, title_pattern_metrics)
-    return {
+    summary = {
         "channel_id": workspace.channel_id,
         "channel_title": workspace.channel_title,
         "canonical_url": workspace.canonical_url,
@@ -152,6 +196,30 @@ def _build_summary(
         "recent_outlier_count": int(len(outliers)),
         **metrics,
     }
+    if owner_bundle and owner_bundle.available:
+        owner_summary = owner_bundle.summary
+        summary.update(
+            {
+                "owner_metrics_available": True,
+                "owner_window_days": owner_summary.get("window_days", 0),
+                "owner_start_date": owner_summary.get("start_date", ""),
+                "owner_end_date": owner_summary.get("end_date", ""),
+                "owner_window_views": float(owner_summary.get("views", 0) or 0),
+                "owner_watch_hours": float(owner_summary.get("estimated_watch_hours", 0) or 0),
+                "owner_average_view_duration_seconds": float(owner_summary.get("average_view_duration_seconds", 0) or 0),
+                "owner_average_view_percentage": float(owner_summary.get("average_view_percentage", 0) or 0),
+                "owner_thumbnail_impressions": float(owner_summary.get("video_thumbnail_impressions", 0) or 0),
+                "owner_thumbnail_ctr": float(owner_summary.get("video_thumbnail_impressions_click_rate", 0) or 0),
+                "owner_subscribers_gained": float(owner_summary.get("subscribers_gained", 0) or 0),
+                "owner_subscribers_lost": float(owner_summary.get("subscribers_lost", 0) or 0),
+                "owner_missing_metrics": owner_bundle.missing_metrics,
+                "owner_note": owner_bundle.note,
+            }
+        )
+    else:
+        summary["owner_metrics_available"] = False
+        summary["owner_note"] = owner_bundle.note if owner_bundle else ""
+    return summary
 
 
 def _insight_payload(
@@ -166,6 +234,7 @@ def _insight_payload(
     underperformers: pd.DataFrame,
     summary: Dict[str, Any],
     recommendations: Dict[str, Any],
+    owner_bundle: Optional[OwnerAnalyticsBundle] = None,
 ) -> Dict[str, Any]:
     return {
         "summary": summary,
@@ -177,6 +246,11 @@ def _insight_payload(
         "outliers": outliers.to_dict(orient="records"),
         "underperformers": underperformers.to_dict(orient="records"),
         "recommendations": recommendations,
+        "owner_daily_metrics": owner_bundle.daily_metrics_df.to_dict(orient="records") if owner_bundle and owner_bundle.available else [],
+        "owner_video_metrics": owner_bundle.video_metrics_df.to_dict(orient="records") if owner_bundle and owner_bundle.available else [],
+        "owner_available_metrics": owner_bundle.available_metrics if owner_bundle and owner_bundle.available else [],
+        "owner_missing_metrics": owner_bundle.missing_metrics if owner_bundle and owner_bundle.available else [],
+        "owner_note": owner_bundle.note if owner_bundle else "",
     }
 
 
@@ -185,12 +259,27 @@ def refresh_channel_insights(
     *,
     force_refresh: bool = False,
     db_path: Path = DEFAULT_CHANNEL_INSIGHTS_DB,
+    owner_credentials: Any = None,
 ) -> Dict[str, Any]:
     parsed_input = normalize_channel_input(channel_input)
     workspace = load_public_channel_workspace(parsed_input.lookup_value, force_refresh=force_refresh)
     channel_df = ensure_public_channel_frame(workspace.channel_df)
     channel_df = add_channel_video_features(channel_df)
     channel_df = assign_topic_labels(channel_df)
+
+    owner_bundle: Optional[OwnerAnalyticsBundle] = None
+    if owner_credentials is not None:
+        try:
+            owner_bundle = fetch_owner_channel_analytics(
+                owner_credentials,
+                target_channel_id=workspace.channel_id,
+                video_ids=channel_df["video_id"].astype(str).tolist(),
+            )
+        except Exception:
+            owner_bundle = None
+        else:
+            channel_df = _merge_owner_video_metrics(channel_df, owner_bundle)
+
     channel_df = _score_videos(channel_df)
 
     topic_metrics = build_topic_metrics(channel_df)
@@ -207,6 +296,7 @@ def refresh_channel_insights(
         duration_metrics=duration_metrics,
         title_pattern_metrics=title_pattern_metrics,
         outliers=outliers,
+        owner_bundle=owner_bundle,
     )
 
     idea_bundle = build_grounded_idea_bundle(
@@ -263,6 +353,7 @@ def refresh_channel_insights(
             underperformers=underperformers,
             summary=summary,
             recommendations=recommendations,
+            owner_bundle=owner_bundle,
         ),
         db_path=db_path,
     )
@@ -303,6 +394,11 @@ def load_channel_insights(channel_id: str, *, db_path: Path = DEFAULT_CHANNEL_IN
         "publish_hour_metrics_df": pd.DataFrame(insights.get("publish_hour_metrics", [])),
         "outliers_df": pd.DataFrame(insights.get("outliers", [])),
         "underperformers_df": pd.DataFrame(insights.get("underperformers", [])),
+        "owner_daily_metrics_df": pd.DataFrame(insights.get("owner_daily_metrics", [])),
+        "owner_video_metrics_df": pd.DataFrame(insights.get("owner_video_metrics", [])),
+        "owner_available_metrics": insights.get("owner_available_metrics", []),
+        "owner_missing_metrics": insights.get("owner_missing_metrics", []),
+        "owner_note": insights.get("owner_note", ""),
         "recommendations": insights.get("recommendations", {}),
         "history_df": history_df,
     }

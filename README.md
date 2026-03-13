@@ -26,7 +26,7 @@ The app currently exposes seven sidebar destinations:
 | `Channel Analysis` | Portfolio-level analytics across the bundled datasets | `dashboard/views/channel_analysis.py` |
 | `Recommendations` | Dataset-backed publishing guidance and thumbnail generation | `dashboard/views/recommendations.py` |
 | `Ytuber` | Live creator workspace for one channel at a time | `dashboard/views/ytuber.py` |
-| `Channel Insights` | Persisted public-channel snapshots and creator intelligence over time | `dashboard/views/channel_insights.py` |
+| `Channel Insights` | Persisted channel snapshots with public analysis and optional owner-only analytics overlays via Google OAuth | `dashboard/views/channel_insights.py` |
 | `Outlier Finder` | Standalone niche research and outlier-video discovery | `dashboard/views/outlier_finder.py` |
 | `Tools` | Standalone utility workspace for YouTube metadata and asset downloads | `dashboard/views/tools.py` |
 | `Deployment` | Run/deploy notes shown inside the app | `dashboard/app.py` |
@@ -121,14 +121,16 @@ Code:
 
 ### 4. Channel Insights
 
-`Channel Insights` is the new public-channel intelligence workflow for recurring creator analysis.
+`Channel Insights` is the recurring creator-intelligence workflow for tracked channels.
 
 It can:
 
 - add a public channel by URL, handle, or channel ID
+- connect a Google account for owner-only YouTube Analytics access during the session
 - store tracked channels in a local SQLite database
 - persist dated channel snapshots on refresh
 - compare current public performance against prior snapshots
+- blend in owner-only watch time, average percentage viewed, thumbnail impressions, and thumbnail click-through signals when the authenticated account owns the tracked channel
 - surface rising and weak themes from recent public uploads
 - compare Shorts versus long-form and duration buckets
 - identify outliers and underperformers within the channel
@@ -141,13 +143,27 @@ Code:
 - `src/services/public_channel_service.py`
 - `src/services/channel_snapshot_store.py`
 - `src/services/channel_insights_service.py`
+- `src/services/google_oauth_service.py`
 - `src/services/topic_analysis_service.py`
+- `src/services/youtube_owner_analytics_service.py`
 - `src/services/channel_idea_service.py`
 - `src/utils/channel_parser.py`
 
 Storage:
 
 - `outputs/channel_insights/channel_insights.db`
+
+Google OAuth setup for owner metrics:
+
+- `GOOGLE_OAUTH_CLIENT_ID`
+- `GOOGLE_OAUTH_CLIENT_SECRET`
+- `GOOGLE_OAUTH_REDIRECT_URI`
+
+Scopes requested:
+
+- Google Sign-In
+- YouTube Read-Only
+- YouTube Analytics Read-Only
 
 ### 5. Outlier Finder
 
@@ -500,7 +516,9 @@ The Assistant is intentionally retrieval-first to reduce token cost and improve 
 - TF-IDF retrieval is deliberately lightweight and cheaper than embeddings, but it is weaker on heavy paraphrases
 - the strongest context support today is on `Outlier Finder`, `Ytuber`, and `Tools`
 - creator-strategy answers may still require AI fallback when product knowledge is not enough
-- Channel Insights uses public channel data only, so it does not include private owner metrics like impressions, CTR, watch time, or retention
+- Channel Insights supports owner-only analytics only when Google OAuth is configured and the connected Google account actually owns the tracked channel
+- OAuth state is session-scoped in V1, so users may need to reconnect after a Streamlit restart or redeploy
+- There is still no authenticated YouTube Analytics scheduling or background refresh worker in Streamlit alone
 
 ### Present in the repo but only partially used or currently inactive
 
@@ -564,6 +582,29 @@ OPENAI_API_KEYS = ["key_1", "key_2"]
 - `YOUTUBE_API_KEY`
 - `GEMINI_API_KEY`
 - `OPENAI_API_KEY`
+
+### Optional Google OAuth settings for owner analytics
+
+`Channel Insights` can also use session-scoped Google OAuth for owner-only YouTube Analytics metrics.
+
+Set these in environment variables or Streamlit secrets:
+
+- `GOOGLE_OAUTH_CLIENT_ID`
+- `GOOGLE_OAUTH_CLIENT_SECRET`
+- `GOOGLE_OAUTH_REDIRECT_URI`
+
+Example Streamlit secrets:
+
+```toml
+GOOGLE_OAUTH_CLIENT_ID = "your-google-oauth-client-id"
+GOOGLE_OAUTH_CLIENT_SECRET = "your-google-oauth-client-secret"
+GOOGLE_OAUTH_REDIRECT_URI = "https://your-app.streamlit.app/"
+```
+
+Important:
+
+- the redirect URI must exactly match one of the authorized redirect URIs in your Google Cloud OAuth client
+- V1 stores Google OAuth credentials in session state, not a long-lived encrypted credential store
 
 ### How key rotation works
 
@@ -720,7 +761,7 @@ The outlier score is a weighted mix of:
 - YouTube search is ranked and sampled
 - subscriber counts may be hidden or rounded
 - language filtering is heuristic, not guaranteed
-- there is no access to impressions, CTR, watch time, or retention from the public API
+- public-only workflows do not include owner-only metrics like watch time, average percentage viewed, thumbnail impressions, or thumbnail CTR; those require the Channel Insights Google OAuth flow
 
 ### Current cache behavior
 

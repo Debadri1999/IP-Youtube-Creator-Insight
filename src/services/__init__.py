@@ -13,6 +13,19 @@ from src.services.channel_snapshot_store import (
     upsert_tracked_channel,
 )
 from src.services.public_channel_service import PublicChannelWorkspace, ensure_public_channel_frame, load_public_channel_workspace
+from src.services.google_oauth_service import (
+    GOOGLE_OAUTH_SCOPES,
+    build_google_authorization_url,
+    clear_google_oauth_session,
+    complete_google_oauth_callback,
+    fetch_google_profile,
+    get_google_credentials,
+    get_google_oauth_client_config,
+    get_google_oauth_redirect_uri,
+    get_google_profile,
+    oauth_configured,
+    oauth_ready_error,
+)
 from src.services.assistant_knowledge import KnowledgeRecord, get_knowledge_record, get_knowledge_records, get_related_question_titles, load_knowledge_records
 from src.services.assistant_service import AssistantReply, answer_question, extract_page_context, starter_prompts_for_page, submit_feedback
 from src.services.topic_analysis_service import (
@@ -46,6 +59,7 @@ from src.services.outliers_finder import (
 )
 from src.services.retrieval_service import CachedAnswerMatch, KnowledgeMatch, clear_retrieval_caches, search_cached_answers, search_knowledge
 from src.services.transcript_service import TranscriptOption, fetch_transcript_text, list_transcript_options, prepare_transcript_download
+from src.services.youtube_owner_analytics_service import OwnerAnalyticsBundle, fetch_owner_channel_analytics, list_owned_channels
 from src.services.youtube_tools import (
     PLAYLIST_PREVIEW_LIMIT_DEFAULT,
     STREAMLIT_DOWNLOAD_LIMIT_BYTES,
@@ -88,6 +102,17 @@ __all__ = [
     "PublicChannelWorkspace",
     "ensure_public_channel_frame",
     "load_public_channel_workspace",
+    "GOOGLE_OAUTH_SCOPES",
+    "build_google_authorization_url",
+    "clear_google_oauth_session",
+    "complete_google_oauth_callback",
+    "fetch_google_profile",
+    "get_google_credentials",
+    "get_google_oauth_client_config",
+    "get_google_oauth_redirect_uri",
+    "get_google_profile",
+    "oauth_configured",
+    "oauth_ready_error",
     "KnowledgeRecord",
     "get_knowledge_record",
     "get_knowledge_records",
@@ -127,6 +152,9 @@ __all__ = [
     "fetch_transcript_text",
     "list_transcript_options",
     "prepare_transcript_download",
+    "OwnerAnalyticsBundle",
+    "fetch_owner_channel_analytics",
+    "list_owned_channels",
     "add_channel_video_features",
     "assign_topic_labels",
     "build_duration_metrics",

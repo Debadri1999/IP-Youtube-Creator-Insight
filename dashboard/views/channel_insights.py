@@ -19,6 +19,16 @@ from src.services.channel_insights_service import (
     load_channel_insights,
     refresh_channel_insights,
 )
+from src.services.google_oauth_service import (
+    build_google_authorization_url,
+    clear_google_oauth_session,
+    complete_google_oauth_callback,
+    get_google_credentials,
+    get_google_profile,
+    oauth_configured,
+    oauth_ready_error,
+)
+from src.services.youtube_owner_analytics_service import list_owned_channels
 
 
 STATE_KEYS = (
@@ -197,6 +207,28 @@ def _format_pct(value: Any) -> str:
     return f"{float(value or 0) * 100:.1f}%"
 
 
+def _format_ratio_pct(value: Any) -> str:
+    number = float(value or 0)
+    if number <= 1.0:
+        number *= 100
+    return f"{number:.1f}%"
+
+
+def _format_hours(value: Any) -> str:
+    return f"{float(value or 0):,.1f}h"
+
+
+def _format_duration_seconds(value: Any) -> str:
+    total_seconds = int(float(value or 0))
+    minutes, seconds = divmod(total_seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    if hours:
+        return f"{hours}h {minutes}m"
+    if minutes:
+        return f"{minutes}m {seconds}s"
+    return f"{seconds}s"
+
+
 def _history_delta_text(value: float, suffix: str = "") -> str:
     if value > 0:
         return f"+{value:.1f}{suffix}"
@@ -219,10 +251,10 @@ def _render_hero() -> None:
         <div class="channel-insights-page">
             <div class="ci-hero">
                 <div class="ci-kicker"><span class="ci-kicker-dot"></span>Channel Insights</div>
-                <div class="ci-title">Connect A Public Channel And Turn Recent Performance Into Better Topic Decisions.</div>
+                <div class="ci-title">Connect A Channel And Turn Real Performance Signals Into Better Topic Decisions.</div>
                 <div class="ci-subtitle">
                     Track a creator channel over time, persist refresh snapshots, find the themes and formats that are actually working,
-                    and turn those public signals into grounded next-topic recommendations.
+                    and turn those public signals into grounded next-topic recommendations. Connect Google OAuth if you want owner-only watch-time, retention, and thumbnail signal overlays.
                 </div>
             </div>
         </div>
@@ -231,20 +263,45 @@ def _render_hero() -> None:
     )
 
 
+def _handle_oauth_callback() -> None:
+    try:
+        profile = complete_google_oauth_callback()
+    except Exception as exc:
+        st.session_state["channel_insights_error"] = str(exc)
+    else:
+        if profile is not None:
+            st.session_state.pop("channel_insights_error", None)
+
+
+def _owned_channels() -> List[Dict[str, Any]]:
+    credentials = get_google_credentials()
+    if credentials is None:
+        return []
+    try:
+        return list_owned_channels(credentials)
+    except Exception as exc:
+        st.session_state["channel_insights_error"] = f"Google account is connected, but owned channels could not be loaded: {exc}"
+        return []
+
+
 def _render_connect_card(connected_channels: List[Dict[str, Any]]) -> None:
     st.markdown(
         """
         <div class="ci-card">
             <div class="ci-card-title">Connect A Channel</div>
             <div class="ci-card-copy">
-                Add a public channel by URL, handle, or channel ID. Each refresh stores a dated public-data snapshot so the app can compare trends over time.
+                Add any public channel by URL, handle, or channel ID. If you also connect Google OAuth, Channel Insights can layer in owner-only watch time, retention, thumbnail impressions, and thumbnail click-through signal during the same refresh.
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    config_cols = st.columns([1.7, 1], gap="large")
+    credentials = get_google_credentials()
+    profile = get_google_profile()
+    owned_channels = _owned_channels() if credentials is not None else []
+
+    config_cols = st.columns([1.45, 1], gap="large")
     with config_cols[0]:
         with st.form("channel_insights_connect_form"):
             channel_input = st.text_input(
@@ -268,7 +325,11 @@ def _render_connect_card(connected_channels: List[Dict[str, Any]]) -> None:
             else:
                 with st.spinner("Analyzing the channel and storing a fresh snapshot..."):
                     try:
-                        payload = refresh_channel_insights(channel_input.strip(), force_refresh=force_refresh)
+                        payload = refresh_channel_insights(
+                            channel_input.strip(),
+                            force_refresh=force_refresh,
+                            owner_credentials=credentials,
+                        )
                     except Exception as exc:
                         st.session_state["channel_insights_error"] = str(exc)
                     else:
@@ -277,6 +338,61 @@ def _render_connect_card(connected_channels: List[Dict[str, Any]]) -> None:
                         st.rerun()
 
     with config_cols[1]:
+        st.markdown(
+            """
+            <div class="ci-card">
+                <div class="ci-card-title">Connect Google Account</div>
+                <div class="ci-card-copy">
+                    Owner metrics are optional. Connect Google OAuth if you want private channel analytics like watch time, average percentage viewed, and thumbnail impression signals for channels you own.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        if not oauth_configured():
+            st.markdown(f"<div class='ci-empty'>{escape(oauth_ready_error())}</div>", unsafe_allow_html=True)
+        elif credentials is None:
+            try:
+                auth_url = build_google_authorization_url()
+            except Exception as exc:
+                st.markdown(f"<div class='ci-empty'>{escape(str(exc))}</div>", unsafe_allow_html=True)
+            else:
+                st.link_button("Connect Google Account", auth_url, use_container_width=True)
+                st.caption("Scopes: Google Sign-In, YouTube Read-Only, and YouTube Analytics Read-Only.")
+        else:
+            connected_label = profile.get("email") or profile.get("name") or "Connected Google Account"
+            st.success(f"Connected: {connected_label}")
+            metric_cols = st.columns(2, gap="small")
+            with metric_cols[0]:
+                st.metric("Owned Channels", len(owned_channels))
+            with metric_cols[1]:
+                if st.button("Disconnect", use_container_width=True, key="channel_insights_disconnect_google"):
+                    clear_google_oauth_session()
+                    st.rerun()
+
+            if owned_channels:
+                owned_choice = st.selectbox(
+                    "Your YouTube Channels",
+                    owned_channels,
+                    key="channel_insights_owned_channel",
+                    format_func=lambda row: row["channel_title"],
+                )
+                if st.button("Track My Selected Channel", type="primary", use_container_width=True, key="channel_insights_track_owned"):
+                    with st.spinner("Analyzing your owner channel and storing a fresh snapshot..."):
+                        try:
+                            payload = refresh_channel_insights(
+                                owned_choice["channel_id"],
+                                owner_credentials=credentials,
+                            )
+                        except Exception as exc:
+                            st.session_state["channel_insights_error"] = str(exc)
+                        else:
+                            st.session_state["channel_insights_selected_channel"] = payload["channel"]["channel_id"]
+                            st.session_state.pop("channel_insights_error", None)
+                            st.rerun()
+            else:
+                st.info("This Google account did not return any owned YouTube channels.")
+
         tracked_options = connected_channels
         selected_channel_id = st.session_state.get("channel_insights_selected_channel", "")
         if tracked_options and selected_channel_id not in {row["channel_id"] for row in tracked_options}:
@@ -307,8 +423,16 @@ def _render_connect_card(connected_channels: List[Dict[str, Any]]) -> None:
                         <div class="ci-summary-label">Refresh Mode</div>
                         <div class="ci-summary-value">Manual Snapshots</div>
                     </div>
+                    <div class="ci-summary-item">
+                        <div class="ci-summary-label">Owner Access</div>
+                        <div class="ci-summary-value">{'Connected' if credentials is not None else 'Public Only'}</div>
+                    </div>
+                    <div class="ci-summary-item">
+                        <div class="ci-summary-label">OAuth Setup</div>
+                        <div class="ci-summary-value">{'Ready' if oauth_configured() else 'Missing Config'}</div>
+                    </div>
                 </div>
-                <div class="ci-note" style="margin-top:0.85rem;">V1 stores public-data snapshots whenever you refresh. True daily automation needs an external scheduler later.</div>
+                <div class="ci-note" style="margin-top:0.85rem;">V1 stores manual snapshots over time. Google OAuth unlocks owner-only metrics during the current session, but background daily jobs still need an external scheduler later.</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -318,16 +442,18 @@ def _render_connect_card(connected_channels: List[Dict[str, Any]]) -> None:
 def _render_summary_action_row(payload: Dict[str, Any]) -> None:
     channel = payload["channel"]
     summary = payload["summary"]
+    credentials = get_google_credentials()
+    owner_metrics_active = bool(summary.get("owner_metrics_available"))
     action_cols = st.columns([2.2, 1.1, 1], gap="large")
     with action_cols[0]:
         st.markdown(
             f"""
             <div class="ci-card">
-                <div class="ci-source-pill">{escape(payload['source'].replace('_', ' ').title())}</div>
+                <div class="ci-source-pill">{escape('Public + Owner Metrics' if owner_metrics_active else payload['source'].replace('_', ' ').title())}</div>
                 <div class="ci-card-title" style="margin-top:0.65rem;">{escape(channel['channel_title'])}</div>
                 <div class="ci-card-copy">
                     Latest Snapshot: {escape(payload['snapshot_at'])}<br/>
-                    Public channel analytics only. Use refreshes over time to build stronger historical signal.
+                    {'Owner-only metrics were blended into this snapshot using Google OAuth.' if owner_metrics_active else 'Public channel analytics only. Connect Google OAuth if you want owner-only watch-time, retention, and thumbnail signals.'}
                 </div>
             </div>
             """,
@@ -337,7 +463,11 @@ def _render_summary_action_row(payload: Dict[str, Any]) -> None:
         if st.button("Refresh Analysis", type="primary", use_container_width=True):
             with st.spinner("Refreshing channel insights and writing a new snapshot..."):
                 try:
-                    fresh_payload = refresh_channel_insights(channel["channel_id"], force_refresh=False)
+                    fresh_payload = refresh_channel_insights(
+                        channel["channel_id"],
+                        force_refresh=False,
+                        owner_credentials=credentials,
+                    )
                 except Exception as exc:
                     st.session_state["channel_insights_error"] = str(exc)
                 else:
@@ -376,12 +506,40 @@ def _render_summary_action_row(payload: Dict[str, Any]) -> None:
         ]
     )
 
+    if owner_metrics_active:
+        owner_kpis = [
+            {
+                "label": "Thumbnail Impressions",
+                "value": _format_int(summary.get("owner_thumbnail_impressions", 0)),
+            },
+            {
+                "label": "Thumbnail CTR",
+                "value": _format_ratio_pct(summary.get("owner_thumbnail_ctr", 0)),
+            },
+            {
+                "label": "Watch Time",
+                "value": _format_hours(summary.get("owner_watch_hours", 0)),
+            },
+            {
+                "label": "Average Viewed",
+                "value": _format_ratio_pct(summary.get("owner_average_view_percentage", 0)),
+            },
+            {
+                "label": "Avg View Duration",
+                "value": _format_duration_seconds(summary.get("owner_average_view_duration_seconds", 0)),
+            },
+        ]
+        kpi_row(owner_kpis)
+    if summary.get("owner_note"):
+        st.caption(summary["owner_note"])
+
 
 def _render_overview_tab(payload: Dict[str, Any]) -> None:
     summary = payload["summary"]
     recommendations = payload.get("recommendations", {})
     topic_metrics_df = payload.get("topic_metrics_df", pd.DataFrame())
     duration_metrics_df = payload.get("duration_metrics_df", pd.DataFrame())
+    owner_daily_metrics_df = payload.get("owner_daily_metrics_df", pd.DataFrame())
 
     overview_cols = st.columns([1.15, 1], gap="large")
     with overview_cols[0]:
@@ -406,6 +564,14 @@ def _render_overview_tab(payload: Dict[str, Any]) -> None:
                     <div class="ci-summary-item">
                         <div class="ci-summary-label">Median Engagement</div>
                         <div class="ci-summary-value">{_format_pct(summary.get('median_engagement', 0))}</div>
+                    </div>
+                    <div class="ci-summary-item">
+                        <div class="ci-summary-label">Owner Metrics</div>
+                        <div class="ci-summary-value">{'Connected' if summary.get('owner_metrics_available') else 'Public Only'}</div>
+                    </div>
+                    <div class="ci-summary-item">
+                        <div class="ci-summary-label">Thumbnail CTR</div>
+                        <div class="ci-summary-value">{_format_ratio_pct(summary.get('owner_thumbnail_ctr', 0)) if summary.get('owner_metrics_available') else 'Connect OAuth'}</div>
                     </div>
                 </div>
             </div>
@@ -443,6 +609,28 @@ def _render_overview_tab(payload: Dict[str, Any]) -> None:
                 horizontal=True,
             )
             st.plotly_chart(duration_fig, use_container_width=True)
+
+        if not owner_daily_metrics_df.empty:
+            owner_chart = owner_daily_metrics_df.copy()
+            owner_chart["day"] = pd.to_datetime(owner_chart["day"], errors="coerce")
+            if "estimatedMinutesWatched" in owner_chart.columns:
+                owner_chart["estimated_watch_hours"] = pd.to_numeric(owner_chart["estimatedMinutesWatched"], errors="coerce").fillna(0) / 60.0
+            owner_y_cols = [
+                column
+                for column in ["views", "videoThumbnailImpressions", "estimated_watch_hours"]
+                if column in owner_chart.columns
+            ]
+            if owner_y_cols:
+                owner_fig = plotly_line_chart(
+                    owner_chart,
+                    x="day",
+                    y_cols=owner_y_cols,
+                    title="Owner Metrics Trendline",
+                )
+                st.plotly_chart(owner_fig, use_container_width=True)
+
+        if summary.get("owner_note"):
+            st.caption(summary["owner_note"])
 
 
 def _render_topic_trends_tab(payload: Dict[str, Any]) -> None:
@@ -525,14 +713,20 @@ def _render_formats_tab(payload: Dict[str, Any]) -> None:
 def _render_outliers_tab(payload: Dict[str, Any]) -> None:
     outliers_df = payload.get("outliers_df", pd.DataFrame())
     underperformers_df = payload.get("underperformers_df", pd.DataFrame())
+    owner_metrics_active = bool(payload.get("summary", {}).get("owner_metrics_available"))
     outlier_cols = st.columns(2, gap="large")
     with outlier_cols[0]:
         st.markdown("**Recent Outliers**")
         if outliers_df.empty:
             st.markdown("<div class='ci-empty'>No strong outliers have been detected in the current window yet.</div>", unsafe_allow_html=True)
         else:
+            outlier_columns = ["video_title", "primary_topic", "views", "views_per_day", "performance_score", "why_it_worked"]
+            if owner_metrics_active:
+                for extra in ["owner_video_thumbnail_impressions_click_rate", "owner_average_view_percentage"]:
+                    if extra in outliers_df.columns:
+                        outlier_columns.insert(-1, extra)
             styled_dataframe(
-                outliers_df[["video_title", "primary_topic", "views", "views_per_day", "performance_score", "why_it_worked"]],
+                outliers_df[outlier_columns],
                 title=None,
                 precision=2,
             )
@@ -541,8 +735,13 @@ def _render_outliers_tab(payload: Dict[str, Any]) -> None:
         if underperformers_df.empty:
             st.markdown("<div class='ci-empty'>No low-signal videos are available for comparison yet.</div>", unsafe_allow_html=True)
         else:
+            underperformer_columns = ["video_title", "primary_topic", "views", "views_per_day", "performance_score", "why_it_lagged"]
+            if owner_metrics_active:
+                for extra in ["owner_video_thumbnail_impressions_click_rate", "owner_average_view_percentage"]:
+                    if extra in underperformers_df.columns:
+                        underperformer_columns.insert(-1, extra)
             styled_dataframe(
-                underperformers_df[["video_title", "primary_topic", "views", "views_per_day", "performance_score", "why_it_lagged"]],
+                underperformers_df[underperformer_columns],
                 title=None,
                 precision=2,
             )
@@ -624,9 +823,24 @@ def _render_history_tab(payload: Dict[str, Any]) -> None:
             secondary_y=["recent_outlier_count"],
         )
         st.plotly_chart(fig, use_container_width=True)
+        if history_line.get("owner_metrics_available") is not None and history_line["owner_metrics_available"].fillna(False).any():
+            owner_columns = [
+                column
+                for column in ["owner_watch_hours", "owner_average_view_percentage", "owner_thumbnail_ctr"]
+                if column in history_line.columns
+            ]
+            if owner_columns:
+                owner_fig = plotly_line_chart(
+                    history_line,
+                    x="snapshot_at",
+                    y_cols=owner_columns,
+                    title="Owner Metrics Across Snapshots",
+                )
+                st.plotly_chart(owner_fig, use_container_width=True)
 
 
 def render() -> None:
+    _handle_oauth_callback()
     _inject_channel_insights_css()
     _render_hero()
 
@@ -668,4 +882,3 @@ def render() -> None:
         _render_next_topics_tab(payload)
     with tabs[5]:
         _render_history_tab(payload)
-

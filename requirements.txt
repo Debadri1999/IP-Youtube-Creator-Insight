@@ -1,5 +1,6 @@
 bertopic
 google-api-python-client>=2.190.0
+google-auth-oauthlib>=1.2.2
 matplotlib
 numpy>=1.26,<3
 openai

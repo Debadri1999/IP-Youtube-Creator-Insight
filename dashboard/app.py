@@ -85,7 +85,7 @@ else:
         - `streamlit_app.py` is the root-level deployment entrypoint for Streamlit Cloud.
         - Channel Analysis and Recommendations use the committed CSV datasets under `data/youtube api data/`.
         - The Ytuber suite uses live API calls and rotates across the configured key pools.
-        - Channel Insights is a public-channel intelligence workflow that stores dated SQLite snapshots on manual refresh for trend comparison over time.
+        - Channel Insights stores dated SQLite snapshots on manual refresh and can optionally blend in owner-only YouTube Analytics metrics when Google OAuth is configured for the current session.
         - Outlier Finder is a standalone sidebar feature with a results-first flow, breakout snapshot, structured AI research, heuristic language filtering, and one-hour query caching.
         - Tools is a standalone sidebar utility page for metadata preview, thumbnails, transcripts, audio, and video downloads.
         - `packages.txt` installs `ffmpeg` for merged video downloads and MP3 conversion in the Tools page.
