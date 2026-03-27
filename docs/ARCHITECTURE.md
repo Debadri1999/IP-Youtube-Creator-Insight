@@ -17,6 +17,22 @@ Additional runtime pages:
 6. `Tools`
 7. `Deployment`
 
+## Runtime Flow
+
+```mermaid
+flowchart LR
+    A["YouTube Data API v3"] --> B["Active Service Layer"]
+    B --> C["Streamlit views"]
+    D["Gemini / OpenAI"] --> B
+    E["Optional BERTopic artifact"] --> B
+    C --> F["Channel Analysis"]
+    C --> G["Channel Insights"]
+    C --> H["Thumbnails"]
+    C --> I["Outlier Finder"]
+    C --> J["Ytuber"]
+    C --> K["Tools"]
+```
+
 The Streamlit entrypoint remains:
 
 - `streamlit_app.py`
@@ -95,6 +111,20 @@ Thumbnail image generation continues to use:
 - BERTopic artifact manifest for experimental model-backed topic clustering in `Channel Insights`
 
 BERTopic artifacts are never committed into the repo and are never loaded during app boot. If the artifact is missing or unavailable, the app falls back to heuristic topic analysis.
+
+## Model-Backed Topic Flow
+
+```mermaid
+flowchart LR
+    A["Streamlit secrets"] --> B["MODEL_ARTIFACTS_MANIFEST_URL"]
+    B --> C["src/services/model_artifact_service.py"]
+    C --> D["Manifest JSON"]
+    D --> E["Artifact URL + checksum"]
+    E --> F["outputs/models/runtime/<bundle_version>/"]
+    F --> G["src/services/topic_model_runtime.py"]
+    G --> H["src/services/channel_insights_service.py"]
+    H --> I["dashboard/views/channel_insights.py"]
+```
 
 ## Deployment Rules
 

@@ -1,10 +1,32 @@
-# YouTube IP V4
+# YouTube IP V5
 
 YouTube IP V4 is a lighter Streamlit app for YouTube benchmarking, public channel intelligence, thumbnail work, and outlier research.
 
 Live app:
 
 - [youtube-ip-v4.streamlit.app](https://youtube-ip-v4.streamlit.app/)
+
+## Branch Tag And Deploy Targets
+
+- Original repo branch tag: `youtube-ip-v5`
+- Original repo: `matt-foor/purdue-youtube-ip`
+- Deploy repo: `royayushkr/Youtube-IP-V5`
+- Deploy branch: `main`
+- PR branch reference: [youtube-ip-v5](https://github.com/matt-foor/purdue-youtube-ip/tree/youtube-ip-v5)
+
+## V5 Positioning
+
+V5 keeps the AI suite pages that still matter to the workflow, but trims the app shell:
+
+- Assistant removed
+- Google OAuth removed
+- Channel Insights is public-only
+- `Recommendations` is renamed in-app to `Thumbnails`
+
+For the full branch comparison and the model-backed deployment notes, see:
+
+- [Deployment And Versions](docs/DEPLOYMENT_AND_VERSIONS.md)
+- [Architecture](docs/ARCHITECTURE.md)
 
 ## App Surface
 
@@ -227,13 +249,15 @@ If you want the experimental model-backed topic flow:
 
 ```toml
 MODEL_ARTIFACTS_ENABLED = true
-MODEL_ARTIFACTS_MANIFEST_URL = "https://raw.githubusercontent.com/royayushkr/Youtube-IP-V4/main/data/model_manifests/bertopic_manifest_2026.03.27.json"
+MODEL_ARTIFACTS_MANIFEST_URL = "https://raw.githubusercontent.com/royayushkr/Youtube-IP-V5/main/data/model_manifests/bertopic_manifest_2026.03.27.json"
 MODEL_ARTIFACTS_CACHE_DIR = "outputs/models/runtime"
 MODEL_ARTIFACTS_DOWNLOAD_TIMEOUT_SECONDS = 300
 MODEL_ARTIFACTS_MAX_SIZE_MB = 512
 ```
 
 Without those settings, `Channel Insights` stays on heuristic topics.
+
+The secret points to a manifest file in the deploy repo. That manifest then points to the external BERTopic artifact URL and checksum used by the lazy on-demand runtime load.
 
 ## Data And Storage Notes
 
