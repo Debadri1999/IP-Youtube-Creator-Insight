@@ -109,11 +109,11 @@ def _inject_tools_css() -> None:
             width: 8px;
             height: 8px;
             border-radius: 999px;
-            background: linear-gradient(180deg, #A855F7, #8B5CF6);
-            box-shadow: 0 0 16px rgba(139, 92, 246, 0.45);
+            background: linear-gradient(180deg, #FF0000, #00D4FF);
+            box-shadow: 0 0 16px rgba(255, 0, 0, 0.45);
         }
         .tools-title {
-            font-family: "Space Grotesk", "Plus Jakarta Sans", system-ui, sans-serif;
+            font-family: "Inter", system-ui, sans-serif;
             font-size: clamp(36px, 3.8vw, 52px);
             line-height: 1.02;
             font-weight: 700;
@@ -147,14 +147,15 @@ def _inject_tools_css() -> None:
             border-radius: 24px;
             border: 1px solid rgba(255,255,255,0.08);
             background:
-                radial-gradient(circle at top left, rgba(139, 92, 246, 0.10) 0%, transparent 30%),
-                linear-gradient(180deg, rgba(26, 33, 64, 0.95) 0%, rgba(15, 19, 36, 0.98) 100%);
+                radial-gradient(circle at top left, rgba(255, 0, 0, 0.12) 0%, transparent 32%),
+                radial-gradient(circle at top right, rgba(0, 212, 255, 0.08) 0%, transparent 28%),
+                linear-gradient(180deg, rgba(22, 33, 62, 0.95) 0%, rgba(15, 15, 35, 0.98) 100%);
             box-shadow: 0 20px 46px rgba(3, 6, 20, 0.40);
             padding: 1.2rem 1.25rem;
             margin-bottom: 1rem;
         }
         .tools-card-title {
-            font-family: "Space Grotesk", "Plus Jakarta Sans", system-ui, sans-serif;
+            font-family: "Inter", system-ui, sans-serif;
             color: #F7F8FC;
             font-size: 20px;
             font-weight: 700;
@@ -310,9 +311,8 @@ def _render_hero() -> None:
         (
             '<div class="tools-page">'
             '<div class="tools-hero">'
-            '<div class="tools-kicker"><span class="tools-kicker-dot"></span>Tools</div>'
-            '<div class="tools-title">Download YouTube Assets Without Leaving The Workspace</div>'
-            '<div class="tools-subtitle">Preview metadata, export thumbnails and transcripts, and prepare audio or video downloads with clear format choices. All assets stay temporary, and all utilities live in one standalone tools page.</div>'
+            '<div class="tools-kicker"><span class="tools-kicker-dot"></span>Utilities</div>'
+            '<div class="tools-subtitle">Metadata, thumbnails, transcripts, and downloads — outputs are temporary; see each tool for ffmpeg or key requirements.</div>'
             '<div class="tools-pill-row">'
             '<span class="tools-pill">Single Videos</span>'
             '<span class="tools-pill">Batch Operations</span>'

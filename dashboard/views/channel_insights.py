@@ -11,6 +11,7 @@ from dashboard.components.visualizations import (
     plotly_bar_chart,
     plotly_line_chart,
     section_header,
+    show_plotly_chart,
     styled_dataframe,
     styled_keyword_chips,
 )
@@ -52,9 +53,9 @@ def _inject_channel_insights_css() -> None:
             gap: 0.5rem;
             padding: 0.45rem 0.78rem;
             border-radius: 999px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: #F7F8FC;
+            background: rgba(255, 0, 0, 0.12);
+            border: 1px solid rgba(255, 0, 0, 0.35);
+            color: #FF8888;
             font-size: 12px;
             letter-spacing: 0.1em;
             text-transform: uppercase;
@@ -64,37 +65,39 @@ def _inject_channel_insights_css() -> None:
             width: 8px;
             height: 8px;
             border-radius: 999px;
-            background: linear-gradient(180deg, #A855F7, #8B5CF6);
-            box-shadow: 0 0 16px rgba(139, 92, 246, 0.45);
+            background: #FF0000;
+            box-shadow: 0 0 14px rgba(255, 0, 0, 0.5);
         }
         .ci-title {
-            font-family: "Space Grotesk", "Plus Jakarta Sans", system-ui, sans-serif;
+            font-family: "Inter", system-ui, sans-serif;
             font-size: clamp(34px, 3.8vw, 50px);
             line-height: 1.02;
-            font-weight: 700;
-            color: #F7F8FC;
+            font-weight: 800;
+            color: #FFFFFF;
             letter-spacing: -0.04em;
             margin-bottom: 0.8rem;
         }
         .ci-subtitle {
-            color: #B8C1DA;
+            color: #B0B0B0;
             font-size: 16px;
             line-height: 1.62;
             max-width: 760px;
             margin: 0 auto;
+            font-weight: 500;
         }
         .ci-card {
             border-radius: 24px;
             border: 1px solid rgba(255,255,255,0.08);
             background:
-                radial-gradient(circle at top left, rgba(139, 92, 246, 0.10) 0%, transparent 30%),
-                linear-gradient(180deg, rgba(26, 33, 64, 0.95) 0%, rgba(15, 19, 36, 0.98) 100%);
+                radial-gradient(circle at top left, rgba(255, 0, 0, 0.10) 0%, transparent 30%),
+                radial-gradient(circle at top right, rgba(0, 212, 255, 0.08) 0%, transparent 26%),
+                linear-gradient(180deg, rgba(22, 33, 62, 0.95) 0%, rgba(15, 15, 35, 0.98) 100%);
             box-shadow: 0 20px 46px rgba(3, 6, 20, 0.40);
             padding: 1.2rem 1.25rem;
             margin-bottom: 1rem;
         }
         .ci-card-title {
-            font-family: "Space Grotesk", "Plus Jakarta Sans", system-ui, sans-serif;
+            font-family: "Inter", system-ui, sans-serif;
             color: #F7F8FC;
             font-size: 20px;
             font-weight: 700;
@@ -210,11 +213,13 @@ def _history_delta_text(value: float, suffix: str = "") -> str:
 
 
 def _queue_outlier_finder_theme(theme: str, channel_title: str) -> None:
-    st.session_state["app_page"] = "Outlier Finder"
     st.session_state["outlier_page_query"] = theme
     st.session_state["outlier_page_prefill_note"] = (
         f"Suggested from {channel_title}'s latest channel insights. Use this theme as a niche seed and refine it before scanning."
     )
+    from dashboard.navigation_support import switch_to_outlier_finder
+
+    switch_to_outlier_finder()
 
 
 def _topic_mode_label(topic_mode: str) -> str:
@@ -241,11 +246,9 @@ def _render_hero() -> None:
         """
         <div class="channel-insights-page">
             <div class="ci-hero">
-                <div class="ci-kicker"><span class="ci-kicker-dot"></span>Channel Insights</div>
-                <div class="ci-title">Track public channel snapshots and turn real performance signals into better topic decisions.</div>
+                <div class="ci-kicker"><span class="ci-kicker-dot"></span>Snapshot workflow</div>
                 <div class="ci-subtitle">
-                    Add a public channel by URL, handle, or channel ID. Channel Insights stores manual snapshots over time,
-                    highlights the themes and formats that are actually working, and turns those signals into grounded next-topic ideas.
+                    Public channels only — refresh to save dated SQLite snapshots, topic views, and next-topic ideas.
                 </div>
             </div>
         </div>
@@ -541,7 +544,7 @@ def _render_overview_tab(payload: Dict[str, Any]) -> None:
                 title="Rising Themes In The Current Window",
                 horizontal=True,
             )
-            st.plotly_chart(topic_fig, use_container_width=True)
+            show_plotly_chart(topic_fig)
 
         if not duration_metrics_df.empty:
             duration_fig = plotly_bar_chart(
@@ -551,7 +554,7 @@ def _render_overview_tab(payload: Dict[str, Any]) -> None:
                 title="Winning Duration Buckets",
                 horizontal=True,
             )
-            st.plotly_chart(duration_fig, use_container_width=True)
+            show_plotly_chart(duration_fig)
 
         if summary.get("topic_mode_requested") == TOPIC_MODE_BERTOPIC_OPTIONAL and summary.get("topic_mode_used") != TOPIC_MODE_BERTOPIC_OPTIONAL:
             st.caption(summary.get("topic_model_failure_reason") or "BERTopic beta mode fell back to the heuristic topic flow.")
@@ -580,7 +583,7 @@ def _render_topic_trends_tab(payload: Dict[str, Any]) -> None:
             title="Theme Momentum",
             horizontal=True,
         )
-        st.plotly_chart(trend_fig, use_container_width=True)
+        show_plotly_chart(trend_fig)
     with chart_cols[1]:
         views_fig = plotly_bar_chart(
             topic_metrics_df.head(10).sort_values("median_views_per_day", ascending=True),
@@ -589,7 +592,7 @@ def _render_topic_trends_tab(payload: Dict[str, Any]) -> None:
             title="Median Views / Day By Theme",
             horizontal=True,
         )
-        st.plotly_chart(views_fig, use_container_width=True)
+        show_plotly_chart(views_fig)
 
     top_topics = topic_metrics_df["topic_label"].head(10).tolist()
     if top_topics:
@@ -621,7 +624,7 @@ def _render_formats_tab(payload: Dict[str, Any]) -> None:
                 title="Best Publish Days",
                 horizontal=True,
             )
-            st.plotly_chart(day_fig, use_container_width=True)
+            show_plotly_chart(day_fig)
     with bottom_cols[1]:
         if not publish_hour_metrics_df.empty:
             hour_fig = plotly_line_chart(
@@ -631,7 +634,7 @@ def _render_formats_tab(payload: Dict[str, Any]) -> None:
                 title="Publish Hour Signal",
                 secondary_y=["videos"],
             )
-            st.plotly_chart(hour_fig, use_container_width=True)
+            show_plotly_chart(hour_fig)
 
 
 def _render_outliers_tab(payload: Dict[str, Any]) -> None:
@@ -682,7 +685,6 @@ def _render_theme_cards(title: str, rows: Iterable[Dict[str, Any]], channel_titl
         if theme:
             if st.button(f"Send '{theme}' To Outlier Finder", key=f"channel_insights_theme_{title}_{theme}", use_container_width=True):
                 _queue_outlier_finder_theme(theme, channel_title)
-                st.rerun()
 
 
 def _render_next_topics_tab(payload: Dict[str, Any]) -> None:
@@ -735,7 +737,7 @@ def _render_history_tab(payload: Dict[str, Any]) -> None:
             title="Snapshot Trendline",
             secondary_y=["recent_outlier_count"],
         )
-        st.plotly_chart(fig, use_container_width=True)
+        show_plotly_chart(fig)
 
 
 def render() -> None:

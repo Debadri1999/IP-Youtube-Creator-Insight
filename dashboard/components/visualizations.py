@@ -9,52 +9,89 @@ from plotly.subplots import make_subplots
 import streamlit as st
 
 
-PLOTLY_DARK_TEMPLATE: Dict[str, Any] = {
+# Creator Insights palette (red + cyan lead, matches dashboard theme / Youtube-Optmization)
+YT_COLORWAY: List[str] = [
+    "#FF0000",
+    "#00D4FF",
+    "#00E676",
+    "#FFB300",
+    "#FF6090",
+    "#7C4DFF",
+    "#FF9100",
+]
+
+PLOTLY_INTERACTIVE_CONFIG: Dict[str, Any] = {
+    "scrollZoom": True,
+    "displayModeBar": True,
+    "displaylogo": False,
+    "doubleClick": "reset",
+    "modeBarButtonsToRemove": ["lasso2d", "select2d"],
+}
+
+PLOTLY_DASHBOARD_TEMPLATE: Dict[str, Any] = {
     "layout": {
         "paper_bgcolor": "rgba(0,0,0,0)",
-        "plot_bgcolor": "rgba(0,0,0,0)",
-        "font": {"color": "#B8C1DA", "family": "Plus Jakarta Sans, Inter, system-ui"},
+        "plot_bgcolor": "rgba(22,33,62,0.25)",
+        "font": {
+            "color": "#B0B0B0",
+            "family": "Inter, system-ui, sans-serif",
+        },
         "xaxis": {
             "gridcolor": "rgba(255,255,255,0.06)",
-            "zerolinecolor": "rgba(255,255,255,0.06)",
-            "title": {"font": {"color": "#D7DDF0"}},
+            "zerolinecolor": "rgba(255,255,255,0.08)",
+            "title": {"font": {"color": "#FFFFFF"}},
+            "tickfont": {"color": "#B0B0B0"},
         },
         "yaxis": {
             "gridcolor": "rgba(255,255,255,0.06)",
-            "zerolinecolor": "rgba(255,255,255,0.06)",
-            "title": {"font": {"color": "#D7DDF0"}},
+            "zerolinecolor": "rgba(255,255,255,0.08)",
+            "title": {"font": {"color": "#FFFFFF"}},
+            "tickfont": {"color": "#B0B0B0"},
         },
-        "colorway": [
-            "#8B5CF6",
-            "#A855F7",
-            "#C4B5FD",
-            "#60A5FA",
-            "#34D399",
-            "#FBBF24",
-            "#F472B6",
-        ],
+        "colorway": YT_COLORWAY,
         "hoverlabel": {
-            "bgcolor": "#141A31",
+            "bgcolor": "#1A1A2E",
             "font": {"color": "#FFFFFF"},
-            "bordercolor": "#8B5CF6",
+            "bordercolor": "#FF0000",
         },
     }
 }
 
+# Back-compat alias
+PLOTLY_LIGHT_TEMPLATE = PLOTLY_DASHBOARD_TEMPLATE
 
-def _apply_dark_template(fig: go.Figure) -> go.Figure:
-    """Apply the shared dark template to a Plotly figure."""
-    fig.update_layout(**PLOTLY_DARK_TEMPLATE["layout"])
+
+def apply_dashboard_chart_theme(fig: go.Figure) -> go.Figure:
+    """Apply shared dark analytics template for dashboard Plotly figures."""
+    fig.update_layout(**PLOTLY_DASHBOARD_TEMPLATE["layout"])
     fig.update_layout(
-        title_font=dict(size=18, family="Space Grotesk, Plus Jakarta Sans, system-ui", color="#F7F8FC"),
+        title_font=dict(
+            size=17,
+            family="Inter, system-ui, sans-serif",
+            color="#FFFFFF",
+        ),
         legend=dict(
-            bgcolor="rgba(20, 26, 49, 0.74)",
-            bordercolor="rgba(255,255,255,0.06)",
+            bgcolor="rgba(22,33,62,0.92)",
+            bordercolor="rgba(255,255,255,0.12)",
             borderwidth=1,
-            font=dict(color="#D7DDF0"),
+            font=dict(color="#B0B0B0"),
         ),
     )
     return fig
+
+
+def show_plotly_chart(fig: go.Figure, *, config: Optional[Dict[str, Any]] = None) -> None:
+    """Render Plotly with pan/zoom toolbar and scroll-wheel zoom enabled."""
+    merged = dict(PLOTLY_INTERACTIVE_CONFIG)
+    if config:
+        merged.update(config)
+    st.plotly_chart(fig, use_container_width=True, config=merged)
+
+
+def graph_insight_expander(chart_title: str, body_md: str) -> None:
+    """Collapsed inference / interpretation text (dropdown) below analytics visuals."""
+    with st.expander(f"How to read this chart — {chart_title}", expanded=False):
+        st.markdown(body_md)
 
 
 def styled_metric_card(
@@ -117,7 +154,10 @@ def section_header(title: str, subtitle: Optional[str] = None, icon: Optional[st
     )
     st.markdown('<div class="yt-section-underline"></div>', unsafe_allow_html=True)
     if subtitle:
-        st.markdown(f"<p style='color:#B8C1DA;font-size:13px;'>{subtitle}</p>", unsafe_allow_html=True)
+        st.markdown(
+            "<p style='color:#B0B0B0;font-size:13px;line-height:1.55;font-weight:500;'>" + subtitle + "</p>",
+            unsafe_allow_html=True,
+        )
 
 
 def animated_counter(value: float, label: str) -> None:
@@ -176,7 +216,7 @@ def plotly_line_chart(
         fig.update_yaxes(title_text=", ".join(y_cols))
 
     fig.update_layout(title=title)
-    _apply_dark_template(fig)
+    apply_dashboard_chart_theme(fig)
     return fig
 
 
@@ -187,18 +227,16 @@ def plotly_bar_chart(
     title: str,
     horizontal: bool = False,
 ) -> go.Figure:
-    """Create a bar chart with gradient bars."""
+    """Create a bar chart with red → cyan emphasis (Creator Insights charts)."""
+    bar_line = dict(color="rgba(255,255,255,0.12)", width=0.8)
+    _bar_cs = [[0, "rgba(255,0,0,0.35)"], [0.5, "#FF0000"], [1, "#00D4FF"]]
     if horizontal:
         fig = go.Figure(
             go.Bar(
                 x=df[y],
                 y=df[x],
                 orientation="h",
-                marker=dict(
-                    color=df[y],
-                    colorscale="Purples",
-                    line=dict(color="rgba(255,255,255,0.4)", width=0.5),
-                ),
+                marker=dict(color=df[y], colorscale=_bar_cs, line=bar_line),
             )
         )
     else:
@@ -206,15 +244,11 @@ def plotly_bar_chart(
             go.Bar(
                 x=df[x],
                 y=df[y],
-                marker=dict(
-                    color=df[y],
-                    colorscale="Purples",
-                    line=dict(color="rgba(255,255,255,0.4)", width=0.5),
-                ),
+                marker=dict(color=df[y], colorscale=_bar_cs, line=bar_line),
             )
         )
     fig.update_layout(title=title)
-    _apply_dark_template(fig)
+    apply_dashboard_chart_theme(fig)
     return fig
 
 
@@ -230,10 +264,11 @@ def plotly_donut_chart(
         names=names,
         values=values,
         hole=0.55,
+        color_discrete_sequence=YT_COLORWAY,
     )
     fig.update_traces(textposition="inside", textinfo="percent+label")
     fig.update_layout(title=title)
-    _apply_dark_template(fig)
+    apply_dashboard_chart_theme(fig)
     return fig
 
 
@@ -251,12 +286,16 @@ def plotly_heatmap(
             z=pivot.values,
             x=pivot.columns,
             y=pivot.index,
-            colorscale="Purples",
-            colorbar=dict(title=z),
+            colorscale="Viridis",
+            colorbar=dict(
+                title=z,
+                tickfont=dict(color="#B0B0B0"),
+                title_font=dict(color="#FFFFFF"),
+            ),
         )
     )
     fig.update_layout(title=title)
-    _apply_dark_template(fig)
+    apply_dashboard_chart_theme(fig)
     return fig
 
 
@@ -276,7 +315,7 @@ def plotly_radar_chart(
             cats.append(cats[0])
         fig.add_trace(go.Scatterpolar(r=vals, theta=cats, fill="toself", name=name))
     fig.update_layout(polar=dict(radialaxis=dict(visible=True)), title=title)
-    _apply_dark_template(fig)
+    apply_dashboard_chart_theme(fig)
     return fig
 
 
@@ -292,17 +331,17 @@ def plotly_gauge_chart(
             value=value,
             gauge={
                 "axis": {"range": [0, max_val]},
-                "bar": {"color": "#8B5CF6"},
+                "bar": {"color": "#FF0000"},
                 "steps": [
-                    {"range": [0, max_val * 0.5], "color": "#25193f"},
-                    {"range": [max_val * 0.5, max_val * 0.8], "color": "#3b2466"},
-                    {"range": [max_val * 0.8, max_val], "color": "#1e4c47"},
+                    {"range": [0, max_val * 0.5], "color": "rgba(22,33,62,0.85)"},
+                    {"range": [max_val * 0.5, max_val * 0.8], "color": "rgba(0,212,255,0.15)"},
+                    {"range": [max_val * 0.8, max_val], "color": "rgba(255,0,0,0.25)"},
                 ],
             },
             title={"text": title},
         )
     )
-    _apply_dark_template(fig)
+    apply_dashboard_chart_theme(fig)
     return fig
 
 
@@ -313,18 +352,32 @@ def plotly_scatter(
     size: Optional[str],
     color: Optional[str],
     title: str,
+    *,
+    log_x: bool = False,
+    enhanced_markers: bool = False,
 ) -> go.Figure:
-    """Create a bubble scatter plot."""
+    """Create a scatter plot with optional log-scaled X and clearer markers."""
+    hover_cols = [c for c in ("channel_title", "video_title") if c in df.columns]
+    color_kw: Dict[str, Any] = {}
+    if color and color in df.columns:
+        color_kw["color"] = color
+        color_kw["color_discrete_sequence"] = YT_COLORWAY
     fig = px.scatter(
         df,
         x=x,
         y=y,
         size=size if size in df.columns else None,
-        color=color if color in df.columns else None,
-        hover_data=["channel_title", "video_title"] if "video_title" in df.columns else None,
+        hover_data=hover_cols if hover_cols else None,
+        **color_kw,
     )
     fig.update_layout(title=title)
-    _apply_dark_template(fig)
+    apply_dashboard_chart_theme(fig)
+    if log_x:
+        fig.update_xaxes(type="log", title=f"{x} (log scale)")
+    if enhanced_markers:
+        fig.update_traces(
+            marker=dict(size=12, opacity=0.9, line=dict(width=1.2, color="rgba(255,255,255,0.25)")),
+        )
     return fig
 
 
@@ -335,9 +388,15 @@ def plotly_treemap(
     title: str,
 ) -> go.Figure:
     """Create a treemap for keyword intelligence."""
-    fig = px.treemap(df, path=path, values=values)
+    fig = px.treemap(
+        df,
+        path=path,
+        values=values,
+        color=values,
+        color_continuous_scale=["rgba(255,0,0,0.2)", "#FF0000", "#00D4FF"],
+    )
     fig.update_layout(title=title)
-    _apply_dark_template(fig)
+    apply_dashboard_chart_theme(fig)
     return fig
 
 
@@ -355,7 +414,7 @@ def plotly_funnel_chart(
         )
     )
     fig.update_layout(title=title)
-    _apply_dark_template(fig)
+    apply_dashboard_chart_theme(fig)
     return fig
 
 
@@ -384,7 +443,7 @@ def styled_dataframe(
     styler = df.style.format(precision=precision)
     if len(numeric_cols) > 0:
         styler = styler.background_gradient(
-            subset=numeric_cols, cmap="Purples", low=0.0, high=0.6
+            subset=numeric_cols, cmap="YlGnBu", low=0.2, high=0.85
         )
 
     # Use Streamlit's native image column config when requested
@@ -394,12 +453,21 @@ def styled_dataframe(
             if col in df.columns:
                 column_config[col] = st.column_config.ImageColumn(col)
 
-    st.dataframe(
-        styler,
-        use_container_width=True,
-        hide_index=True,
-        column_config=column_config or None,
-    )
+    try:
+        st.dataframe(
+            styler,
+            use_container_width=True,
+            hide_index=True,
+            column_config=column_config or None,
+        )
+    except Exception:
+        # Styled DataFrames use Arrow; a broken/missing pyarrow install (common on Windows) still shows data.
+        st.dataframe(
+            df,
+            use_container_width=True,
+            hide_index=True,
+            column_config=column_config or None,
+        )
 
 
 def styled_keyword_chips(keywords: Sequence[str]) -> None:
