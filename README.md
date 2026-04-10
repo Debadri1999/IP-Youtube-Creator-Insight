@@ -15,6 +15,7 @@ Quick jump:
 | current runtime and page flows | [Architecture](docs/ARCHITECTURE.md) |
 | deployment targets, secrets, and version mapping | [Deployment And Versions](docs/DEPLOYMENT_AND_VERSIONS.md) |
 | the full project story from V1 through V5 and into V6 | [Project Brief](docs/PROJECT_BRIEF.md) |
+| how to explain Outlier Finder in a demo or presentation | [Outlier Finder Presentation Notes](docs/OUTLIER_FINDER_PRESENTATION_NOTES.md) |
 | a GCP-friendly env template | [`.env.gcp.example`](.env.gcp.example) |
 
 ## At A Glance
@@ -206,6 +207,7 @@ For the detailed tab-by-tab and module-by-module behavior, see:
 - [Architecture: Channel Insights](docs/ARCHITECTURE.md#channel-insights)
 - [Architecture: Thumbnails](docs/ARCHITECTURE.md#thumbnails)
 - [Architecture: Outlier Finder](docs/ARCHITECTURE.md#outlier-finder)
+- [Outlier Finder Presentation Notes](docs/OUTLIER_FINDER_PRESENTATION_NOTES.md)
 - [Architecture: Ytuber](docs/ARCHITECTURE.md#ytuber)
 - [Architecture: Tools](docs/ARCHITECTURE.md#tools)
 
