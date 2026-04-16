@@ -5,6 +5,9 @@ from typing import Any, Sequence, Tuple
 
 import streamlit as st
 
+# Fixed card height so every Control Centre feature reads as the same symmetric glass tile.
+_CC_CARD_HEIGHT_PX = 280
+
 
 def _inject_control_centre_css() -> None:
     st.markdown(
@@ -38,44 +41,67 @@ def _inject_control_centre_css() -> None:
             margin-bottom: 0.75rem;
             max-width: 920px;
         }
-        .control-centre-card-stack {
-            margin-bottom: 1.15rem;
-        }
-        .control-centre-card-panel {
-            border-radius: 18px;
-            padding: 1rem 1.05rem 0.95rem;
-            margin-bottom: 0.65rem;
+        /* Uniform glass cards: only this page injects this stylesheet (Control Centre). */
+        section[data-testid="stMain"] [data-testid="column"] [data-testid="stVerticalBlockBorderWrapper"] {
+            margin-bottom: 0.9rem !important;
+            box-sizing: border-box !important;
+            min-height: """
+        + f"{_CC_CARD_HEIGHT_PX}px !important;\n            height: {_CC_CARD_HEIGHT_PX}px !important;\n"
+        + """
+            display: flex !important;
+            flex-direction: column !important;
+            padding: 1rem 1.05rem 1rem !important;
+            border-radius: 18px !important;
             background: linear-gradient(
                 165deg,
                 rgba(246, 251, 255, 0.96),
                 rgba(228, 240, 252, 0.9)
-            );
-            border: 1px solid rgba(0, 113, 227, 0.38);
+            ) !important;
+            border: 1px solid rgba(0, 113, 227, 0.38) !important;
             box-shadow:
                 0 10px 32px rgba(0, 113, 227, 0.14),
-                inset 0 1px 0 rgba(255, 255, 255, 0.98);
+                inset 0 1px 0 rgba(255, 255, 255, 0.98) !important;
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .control-centre-card-panel:hover {
-            border-color: rgba(0, 113, 227, 0.55);
+        section[data-testid="stMain"] [data-testid="column"] [data-testid="stVerticalBlockBorderWrapper"]:hover {
+            border-color: rgba(0, 113, 227, 0.55) !important;
             box-shadow:
                 0 14px 40px rgba(0, 113, 227, 0.18),
-                inset 0 1px 0 rgba(255, 255, 255, 1);
+                inset 0 1px 0 rgba(255, 255, 255, 1) !important;
         }
-        .control-centre-card-panel-title {
-            font-weight: 800;
-            font-size: 1.06rem;
-            color: #14161b;
-            margin: 0 0 0.4rem;
+        section[data-testid="stMain"] [data-testid="column"] [data-testid="stVerticalBlockBorderWrapper"] > div {
+            flex: 1 1 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            min-height: 0 !important;
+        }
+        section[data-testid="stMain"] [data-testid="column"] [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlock"] {
+            flex: 1 1 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.35rem !important;
+        }
+        /* Pin primary action to bottom of the card */
+        section[data-testid="stMain"] [data-testid="column"] [data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:last-child {
+            margin-top: auto !important;
+        }
+        .cc-feature-card-title {
             font-family: var(--app-font-display);
+            font-size: 1.12rem;
+            font-weight: 800;
+            color: #14161b;
+            margin: 0 0 0.35rem;
+            line-height: 1.25;
         }
-        .control-centre-card-panel-desc {
+        .cc-feature-card-desc {
             font-size: 0.93rem;
             color: #4e5563;
             line-height: 1.48;
             margin: 0;
+            flex: 1 1 auto;
+            min-height: 4.5em;
         }
         </style>
         """,
@@ -108,22 +134,20 @@ def render(nav_targets: Sequence[Tuple[str, str, Any, str]]) -> None:
     cols = st.columns(2, gap="medium")
     for idx, (title, description, page_obj, icon) in enumerate(nav_targets):
         with cols[idx % 2]:
-            st.markdown(
-                f"""
-                <div class="control-centre-card-stack">
-                    <div class="control-centre-card-panel">
-                        <div class="control-centre-card-panel-title">{escape(title)}</div>
-                        <p class="control-centre-card-panel-desc">{escape(description)}</p>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            if st.button(
-                f"Open {title}",
-                type="primary",
-                icon=icon,
-                use_container_width=True,
-                key=f"cc_workspace_open_{idx}",
-            ):
-                st.switch_page(page_obj)
+            with st.container(height=_CC_CARD_HEIGHT_PX, border=True):
+                st.markdown(
+                    f'<div class="cc-feature-card-title">{escape(title)}</div>',
+                    unsafe_allow_html=True,
+                )
+                st.markdown(
+                    f'<p class="cc-feature-card-desc">{escape(description)}</p>',
+                    unsafe_allow_html=True,
+                )
+                if st.button(
+                    f"Open {title}",
+                    type="primary",
+                    icon=icon,
+                    use_container_width=True,
+                    key=f"cc_workspace_open_{idx}",
+                ):
+                    st.switch_page(page_obj)
