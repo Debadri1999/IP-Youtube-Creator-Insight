@@ -25,7 +25,7 @@ def _normalize_page_name(value: str) -> str:
 
 
 def render_sidebar_header() -> None:
-    """Premium YouTube Creator mark + nav label (matches intro styling)."""
+    """Premium YCreator mark + nav label (matches intro styling)."""
     st.markdown(
         """
         <div class="sidebar-brand-mast">
@@ -42,7 +42,7 @@ def render_sidebar_header() -> None:
                 </div>
                 <div class="sidebar-brand-copy">
                     <div class="sidebar-brand-yt">
-                        <span class="sidebar-brand-yt-gradient">Creator</span>
+                        <span class="sidebar-brand-yt-gradient">YCreator</span>
                     </div>
                     <div class="sidebar-brand-ci">YouTube Insights</div>
                     <div class="sidebar-brand-line" aria-hidden="true"></div>
@@ -72,7 +72,7 @@ def render_sidebar_footer() -> None:
         <div style="font-size:10px;color:#86868b;margin-top:0.6rem;line-height:1.45;">
             <strong style="color:#1d1d1f;">Purdue University × Google</strong><br/>
             Daniels School of Business — MS BAIM Capstone<br/>
-            <span style="opacity:0.9;">YouTube Creator Insights</span>
+            <span style="opacity:0.9;">YCreator</span>
         </div>
         """,
         unsafe_allow_html=True,
