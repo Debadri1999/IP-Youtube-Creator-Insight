@@ -5,8 +5,8 @@ import pandas as pd
 import streamlit as st
 
 from dashboard.components.visualizations import (
+    chart_formula_insight_expanders,
     format_compact_int,
-    graph_insight_expander,
     kpi_row,
     plotly_bar_chart,
     plotly_donut_chart,
@@ -26,6 +26,24 @@ CATEGORY_FILES = {
     "Entertainment": "entertainment_channels_videos.csv",
 }
 ALL_LABEL = "All Categories"
+
+_CHANNEL_SUMMARY_HELP = {
+    "channel_title": "Channel name from the filtered dataset.",
+    "videos": "Count of videos after category, channel, and date filters.",
+    "total_views": "Sum of public view counts for those videos.",
+    "avg_views": "Mean views per video (total_views ÷ videos).",
+    "typical_engagement_rate": "Median engagement_rate: (likes + comments) ÷ max(views, 1) per video.",
+}
+
+_TOP_VIDEOS_HELP = {
+    "channel_title": "Channel that published the video.",
+    "video_title": "Public video title.",
+    "views": "Total public views in the dataset row.",
+    "likes": "Like count at extract time.",
+    "comments": "Comment count at extract time.",
+    "engagement_rate": "(likes + comments) ÷ max(views, 1) — interaction per view.",
+    "video_publishedAt": "Publish timestamp from metadata.",
+}
 
 
 def _coerce_publish_date_range(
@@ -283,18 +301,27 @@ def render() -> None:
             channel_summary, x="channel_title", y="total_views", title="Top 15 Channels"
         )
         show_plotly_chart(fig)
-        graph_insight_expander(
+        chart_formula_insight_expanders(
             "Top channels chart",
-            """
-**What you are looking at:** each bar is **total views** for one channel in your current filters (category, channels, date range).
-
-**How to use it:** longer bars mean more **cumulative reach** in this window—not necessarily “better,” since a channel with fewer uploads can still have a tall bar if those videos went viral.
-
-**Next step:** pair this with the **Channel Summary** table for upload counts and typical engagement so you do not confuse “few mega-hits” with “steady catalog strength.”
-            """,
-            for_insights=True,
+            formula_lines=[
+                "Rows = one row per **channel_title** after filters.",
+                "**total_views** = sum of **views** for all videos from that channel in the window.",
+                "Chart shows the **top 15** channels by total_views (descending).",
+            ],
+            insights=[
+                "Tall bars = more cumulative reach in this filter window, not necessarily “better” per upload.",
+                "Pair with **Channel Summary** to see upload counts and typical engagement so mega-hits do not mask thin catalogs.",
+            ],
         )
-        styled_dataframe(channel_summary, title="Channel Summary")
+        styled_dataframe(
+            channel_summary,
+            title="Channel Summary",
+            column_help=_CHANNEL_SUMMARY_HELP,
+            table_insights=[
+                "Sort mentally by **videos** vs **total_views** — a channel with few uploads can still rank high on views.",
+                "**typical_engagement_rate** is a median, so it resists one viral outlier.",
+            ],
+        )
 
     with right:
         section_header("Monthly Upload Trend", icon="📆")
@@ -312,17 +339,19 @@ def render() -> None:
             secondary_y=["views"],
         )
         show_plotly_chart(fig)
-        graph_insight_expander(
+        chart_formula_insight_expanders(
             "Uploads & views over time",
-            """
-**Red line (left scale):** how many videos were **published** each month.  
-**Blue line (right scale):** **total views** attributed to uploads in that month (stack of catalog performance, not a single video’s lifetime).
-
-**Patterns:** uploads up but views flat can mean packaging or topic fatigue; uploads down but views steady can mean older videos still pull watch time.
-
-**Tip:** use the chart toolbar (top-right) to zoom a busy stretch of months.
-            """,
-            for_insights=True,
+            formula_lines=[
+                "Group videos by **publish_month** (month of video_publishedAt).",
+                "**videos** = count of video_id in that month.",
+                "**views** = sum of views for those videos (catalog total in data, not lifetime YouTube Studio).",
+                "Dual axis: left = videos, right = views.",
+            ],
+            insights=[
+                "Uploads up but views flat can mean packaging or topic fatigue.",
+                "Uploads down but views steady can mean older videos still earn impressions.",
+                "Use the chart toolbar to zoom dense periods.",
+            ],
         )
 
     section_header("Best Performing Videos", icon="⭐")
@@ -341,6 +370,11 @@ def render() -> None:
         top_videos.head(50),
         title="Top Videos by Views",
         precision=2,
+        column_help=_TOP_VIDEOS_HELP,
+        table_insights=[
+            "Sorted by **views** descending — the list is snapshot data, not live YouTube.",
+            "Compare **engagement_rate** across similar view tiers to spot packaging winners.",
+        ],
     )
     _render_engagement_formula_block()
 
@@ -376,16 +410,17 @@ def render() -> None:
             title="Average Views by Day",
         )
         show_plotly_chart(fig_views)
-        graph_insight_expander(
+        chart_formula_insight_expanders(
             "Average views by weekday",
-            """
-Each bar is the **mean (average) views** for videos whose **publish day** was that weekday.
-
-**Caveat:** some weekdays have fewer uploads, so averages can jump around—treat this as a **hypothesis** for scheduling tests, not a guarantee Monday beats Friday.
-
-**Pair with:** the engagement-by-day chart so you do not optimize for “high average views” on a day that actually has thin data.
-            """,
-            for_insights=True,
+            formula_lines=[
+                "Group by **publish_day** (weekday name).",
+                "**avg_views** = mean of **views** for videos published on that weekday.",
+                "Reindexed to Mon–Sun so missing days may be omitted.",
+            ],
+            insights=[
+                "Sparse weekdays make averages noisy — treat as a scheduling hypothesis.",
+                "Pair with engagement-by-day so high average views are not from tiny samples.",
+            ],
         )
     with col_day2:
         fig_eng = plotly_bar_chart(
@@ -395,16 +430,17 @@ Each bar is the **mean (average) views** for videos whose **publish day** was th
             title="Typical Engagement Rate by Day",
         )
         show_plotly_chart(fig_eng)
-        graph_insight_expander(
+        chart_formula_insight_expanders(
             "Engagement by weekday",
-            """
-Each bar is the **median** engagement rate (likes + comments per view) for videos published on that weekday—**not** the same as watch time or CTR.
-
-**How to read it:** a taller bar means “typical” videos that day earned **more interaction per view** in this filtered dataset.
-
-**Use with:** the average-views chart—a day can look great on engagement but have very few uploads, so read both together.
-            """,
-            for_insights=True,
+            formula_lines=[
+                "Group by **publish_day**.",
+                "**typical_engagement_rate** = median of **engagement_rate** = (likes + comments) ÷ max(views, 1).",
+                "Median resists outliers; not the same as watch time or CTR.",
+            ],
+            insights=[
+                "Taller bar = higher typical interaction per view on that weekday.",
+                "Read together with average views — few uploads can skew both metrics.",
+            ],
         )
 
     section_header("Views vs Engagement", icon="📉")
@@ -421,18 +457,17 @@ Each bar is the **median** engagement rate (likes + comments per view) for video
     fig_scatter.update_xaxes(type="log", title="Views (log scale)")
     fig_scatter.update_yaxes(title="Engagement Rate")
     show_plotly_chart(fig_scatter)
-    graph_insight_expander(
+    chart_formula_insight_expanders(
         "Views vs engagement scatter",
-        """
-**Each dot** is one video. **Horizontal position** is view count on a **log** scale so both small creators and mega-hits fit on the same chart. **Height** is engagement rate (interaction per view).
-
-**Color** is channel—compare how clusters separate.
-
-**Quadrants (informal):** upper-left often means **strong engagement on modest reach** (niche or breakout candidates); lower-right can mean **huge reach with lighter interaction per view** (broad entertainment patterns).
-
-**Reminder:** engagement here is likes + comments only; it is **not** YouTube Studio watch time or impressions.
-        """,
-        for_insights=True,
+        formula_lines=[
+            "Each point = one video after filters.",
+            "X = **views** on a **log** scale; Y = **engagement_rate** = (likes + comments) ÷ max(views, 1).",
+            "Color = **channel_title**.",
+        ],
+        insights=[
+            "Upper-left often means strong engagement on modest reach; lower-right can mean huge reach with lighter interaction per view.",
+            "Engagement is likes + comments only — not Studio watch time or impressions.",
+        ],
     )
 
     section_header("Engagement Distribution", icon="🥧")
@@ -458,14 +493,14 @@ Each bar is the **median** engagement rate (likes + comments per view) for video
             title="Engagement Rate Buckets",
         )
         show_plotly_chart(fig_donut)
-        graph_insight_expander(
+        chart_formula_insight_expanders(
             "Engagement distribution (donut)",
-            """
-Slices show the **share of videos** that fall into each engagement band: **Low** (under 2%), **Medium** (2–8%), **High** (over 8%)—using the same likes+comments÷views definition as elsewhere on this page.
-
-**This is not “share of views.”** A thin High slice can still include some of your biggest view-getters; it only counts how many **videos** sit in each band.
-
-**Use it:** if Low dominates, titles/thumbnails/topics may be attracting clicks without community payoff; if High grows, double down on what those videos have in common.
-            """,
-            for_insights=True,
+            formula_lines=[
+                "Bucket **engagement_rate** per video: Low < 2%, Medium 2–8%, High > 8% (after ×100 to percent).",
+                "Donut counts **videos** in each bucket, not share of views.",
+            ],
+            insights=[
+                "A thin High slice can still include some of your biggest view-getters.",
+                "If Low dominates, packaging may earn clicks without interaction payoff.",
+            ],
         )

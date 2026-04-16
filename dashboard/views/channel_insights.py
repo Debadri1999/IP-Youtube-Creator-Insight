@@ -11,7 +11,9 @@ import requests
 import streamlit as st
 
 from dashboard.components.visualizations import (
+    chart_formula_insight_expanders,
     format_compact_int,
+    format_inline_markdown_bold,
     plotly_bar_chart,
     plotly_line_chart,
     show_plotly_chart,
@@ -54,6 +56,66 @@ _TOPIC_LABEL_NOISE = {
     "summary",
     "explained",
 }
+_TOPIC_CLUSTER_COLUMN_HELP: Dict[str, str] = {
+    "topic_label": "Label for this topic cluster (heuristic keywords or model-backed topic name).",
+    "video_count": "Number of public videos assigned to this topic in the current snapshot.",
+    "median_views_per_day": "Median of views_per_day = views ÷ max(video age in days, 1) across videos in this topic.",
+    "outlier_count": "Videos in this topic with performance_score ≥ 75 (strong performers vs the channel mix).",
+    "trend_score": "Topic momentum: (recent 90d median views/day − prior 90d median) ÷ prior median when that baseline exists; otherwise recent 90d median ÷ max(topic median views/day, 1).",
+    "avg_engagement": "Mean engagement_rate = (likes + comments) ÷ max(views, 1) for videos in this topic.",
+}
+
+_DURATION_TABLE_HELP: Dict[str, str] = {
+    "duration_bucket": "Video length bucket (e.g. Shorts, 1–4 min) from runtime metadata.",
+    "videos": "Count of videos in that duration bucket.",
+    "median_views_per_day": "Median views_per_day within the bucket (velocity per day of life).",
+    "avg_engagement": "Mean engagement_rate for videos in the bucket.",
+    "avg_thumbnail_ctr": "Mean thumbnail CTR when Studio fields exist (may be sparse).",
+    "avg_view_percentage": "Mean average view percentage when Studio fields exist.",
+}
+
+_TITLE_PATTERN_TABLE_HELP: Dict[str, str] = {
+    "title_pattern": "Packaging pattern inferred from title text (e.g. listicle, question).",
+    "videos": "Count of videos sharing this title pattern.",
+    "median_views_per_day": "Median views_per_day for this pattern.",
+    "avg_engagement": "Mean engagement_rate for this pattern.",
+    "avg_thumbnail_ctr": "Mean thumbnail CTR when available.",
+    "avg_view_percentage": "Mean average view percentage when available.",
+}
+
+_PUBLISH_DAY_TABLE_HELP: Dict[str, str] = {
+    "publish_day": "Weekday name in the channel’s timezone context (from publish timestamp).",
+    "videos": "Upload count on that weekday.",
+    "median_views_per_day": "Median views_per_day for videos published on that weekday.",
+}
+
+_PUBLISH_HOUR_TABLE_HELP: Dict[str, str] = {
+    "publish_hour": "Hour of day (0–23) from publish timestamp (UTC unless noted in pipeline).",
+    "videos": "Upload count in that hour.",
+    "median_views_per_day": "Median views_per_day for videos published in that hour.",
+}
+
+_OUTLIER_VIDEO_COL_HELP: Dict[str, str] = {
+    "video_title": "Public title of the video.",
+    "primary_topic": "Topic cluster assigned to the video.",
+    "views": "Total public view count at snapshot time.",
+    "views_per_day": "views ÷ max(video age in days, 1) — daily velocity.",
+    "performance_score": "0–100 score: 55% views percentile + 25% engagement percentile + 20% recency percentile vs channel.",
+    "why_it_worked": "Short narrative why this outlier stands out vs channel baseline.",
+    "why_it_lagged": "Short narrative why this video underperformed vs channel baseline.",
+}
+
+_HISTORY_TABLE_HELP: Dict[str, str] = {
+    "snapshot_at": "UTC timestamp when this manual snapshot was stored.",
+    "source": "dataset_cache or live API — where rows were sourced.",
+    "video_count": "Videos included in that snapshot.",
+    "median_views_per_day": "Channel-level median views_per_day across videos in the snapshot.",
+    "recent_outlier_count": "Count of videos scoring as strong outliers (performance_score ≥ 75) in that snapshot.",
+    "strongest_theme": "Topic with best median_views_per_day in that snapshot.",
+    "weakest_theme": "Topic with lowest median_views_per_day in that snapshot.",
+    "upload_gap_days": "Mean days between uploads computed from publish dates in the snapshot.",
+}
+
 _TOPIC_THEME_RULES = (
     ("Packaging Strategy", {"packaging", "thumbnail", "thumbnails", "ctr", "hook", "hooks", "title", "titles"}),
     ("COVID Coverage", {"covid", "vaccine", "vaccines", "coronavirus", "virus", "pandemic"}),
@@ -703,9 +765,12 @@ def _render_ai_card(title: str, body: str, *, empty_message: str = "") -> None:
             if not line:
                 continue
             if line.startswith(("- ", "* ")):
-                bullet_items.append(f"<li>{escape(line[2:].strip())}</li>")
+                inner = format_inline_markdown_bold(line[2:].strip())
+                bullet_items.append(f"<li>{inner}</li>")
             else:
-                paragraph_items.append(f"<p class='ci-card-copy' style='margin:0.45rem 0 0;'>{escape(line)}</p>")
+                paragraph_items.append(
+                    f"<p class='ci-card-copy' style='margin:0.45rem 0 0;'>{format_inline_markdown_bold(line)}</p>"
+                )
         if bullet_items:
             html_body += "<div class='ci-markdown-card'><ul>" + "".join(bullet_items) + "</ul></div>"
         if paragraph_items:
@@ -717,16 +782,6 @@ def _render_ai_card(title: str, body: str, *, empty_message: str = "") -> None:
         f'<div class="ci-card"><div class="ci-card-title">{escape(title)}</div>{html_body}</div>',
         unsafe_allow_html=True,
     )
-
-
-def _render_chart_explainers(chart_name: str, formula_lines: Sequence[str], insights: Sequence[str]) -> None:
-    with st.expander(f"{chart_name}: formula", expanded=False):
-        st.markdown("\n".join(f"- {line}" for line in formula_lines))
-    with st.expander(f"{chart_name}: insights", expanded=False):
-        if insights:
-            st.markdown("\n".join(f"- {line}" for line in insights))
-        else:
-            st.caption("Not enough data yet to generate insights for this chart.")
 
 
 def _overview_actions_prompt(payload: Dict[str, Any], display_topic_metrics_df: pd.DataFrame) -> str:
@@ -1093,7 +1148,7 @@ def _render_overview_tab(payload: Dict[str, Any]) -> None:
             )
             show_plotly_chart(topic_fig)
             top_trend_row = topic_metrics_df.sort_values("trend_score", ascending=False).iloc[0]
-            _render_chart_explainers(
+            chart_formula_insight_expanders(
                 "Rising Themes",
                 formula_lines=[
                     "Trend score compares topic momentum between recent and previous 90-day windows.",
@@ -1118,7 +1173,7 @@ def _render_overview_tab(payload: Dict[str, Any]) -> None:
                 horizontal=True,
             )
             show_plotly_chart(duration_fig)
-            _render_chart_explainers(
+            chart_formula_insight_expanders(
                 "Winning Duration Buckets",
                 formula_lines=[
                     "For each duration bucket, videos are grouped by length range.",
@@ -1147,12 +1202,22 @@ def _render_topic_trends_tab(payload: Dict[str, Any]) -> None:
     if topic_insight_text:
         _render_ai_card("AI Topic Trend Insights", topic_insight_text)
 
+    top_momentum = topic_metrics_df.sort_values("trend_score", ascending=False).iloc[0]
+    top_median = topic_metrics_df.sort_values("median_views_per_day", ascending=False).iloc[0]
     styled_dataframe(
         topic_metrics_df[
             ["topic_label", "video_count", "median_views_per_day", "outlier_count", "trend_score", "avg_engagement"]
         ],
         title="Topic Cluster Performance",
         precision=2,
+        column_help=_TOPIC_CLUSTER_COLUMN_HELP,
+        table_insights=[
+            f"Highest **trend score**: **{top_momentum.get('topic_label', 'N/A')}** "
+            f"({float(top_momentum.get('trend_score', 0) or 0):.2f}) — fastest momentum in the recent window.",
+            f"Highest **median views/day**: **{top_median.get('topic_label', 'N/A')}** "
+            f"({_format_int(top_median.get('median_views_per_day', 0))}) — strongest typical velocity.",
+            "Use **outlier_count** to see which themes also produce breakout hits, not just averages.",
+        ],
     )
 
     chart_cols = st.columns(2, gap="large")
@@ -1165,6 +1230,20 @@ def _render_topic_trends_tab(payload: Dict[str, Any]) -> None:
             horizontal=True,
         )
         show_plotly_chart(trend_fig)
+        chart_formula_insight_expanders(
+            "Theme Momentum",
+            formula_lines=[
+                "Same **trend_score** as the overview chart: compares each topic’s median views/day in the last 90 days "
+                "vs the prior 90-day window.",
+                "Formula when baseline exists: (recent_median − previous_median) ÷ previous_median.",
+                "Fallback: recent_90d_median ÷ max(all-time topic median views/day, 1).",
+            ],
+            insights=[
+                f"Leader on this chart: **{top_momentum.get('topic_label', 'N/A')}** "
+                f"(score **{float(top_momentum.get('trend_score', 0) or 0):.2f}**).",
+                "Flat bars near zero mean the theme is steady, not accelerating.",
+            ],
+        )
     with chart_cols[1]:
         views_fig = plotly_bar_chart(
             topic_metrics_df.head(10).sort_values("median_views_per_day", ascending=True),
@@ -1174,6 +1253,18 @@ def _render_topic_trends_tab(payload: Dict[str, Any]) -> None:
             horizontal=True,
         )
         show_plotly_chart(views_fig)
+        chart_formula_insight_expanders(
+            "Median Views / Day By Theme",
+            formula_lines=[
+                "For each topic, take every assigned video’s **views_per_day** = views ÷ max(age in days, 1).",
+                "The bar shows the **median** of those values (resistant to one viral outlier).",
+            ],
+            insights=[
+                f"Strongest typical velocity: **{top_median.get('topic_label', 'N/A')}** "
+                f"(~**{_format_int(top_median.get('median_views_per_day', 0))}** views/day).",
+                "Compare with Theme Momentum — a theme can have huge medians but cooling momentum (or the reverse).",
+            ],
+        )
 
     top_topics = topic_metrics_df["topic_label"].head(10).tolist()
     if top_topics:
@@ -1194,14 +1285,35 @@ def _render_formats_tab(payload: Dict[str, Any]) -> None:
     top_cols = st.columns(2, gap="large")
     with top_cols[0]:
         if not duration_metrics_df.empty:
-            styled_dataframe(duration_metrics_df, title="Duration Performance", precision=2)
+            best_dur = duration_metrics_df.sort_values("median_views_per_day", ascending=False).iloc[0]
+            styled_dataframe(
+                duration_metrics_df,
+                title="Duration Performance",
+                precision=2,
+                column_help=_DURATION_TABLE_HELP,
+                table_insights=[
+                    f"Strongest runtime bucket by median velocity: **{best_dur.get('duration_bucket', 'N/A')}**.",
+                    "Pair duration with title pattern table — packaging often matters as much as length.",
+                ],
+            )
     with top_cols[1]:
         if not title_pattern_metrics_df.empty:
-            styled_dataframe(title_pattern_metrics_df, title="Title Pattern Performance", precision=2)
+            best_tp = title_pattern_metrics_df.sort_values("median_views_per_day", ascending=False).iloc[0]
+            styled_dataframe(
+                title_pattern_metrics_df,
+                title="Title Pattern Performance",
+                precision=2,
+                column_help=_TITLE_PATTERN_TABLE_HELP,
+                table_insights=[
+                    f"Best-performing title pattern here: **{best_tp.get('title_pattern', 'N/A')}**.",
+                    "Low **videos** count on a pattern means read the median cautiously (small sample).",
+                ],
+            )
 
     bottom_cols = st.columns(2, gap="large")
     with bottom_cols[0]:
         if not publish_day_metrics_df.empty:
+            best_day = publish_day_metrics_df.sort_values("median_views_per_day", ascending=False).iloc[0]
             day_fig = plotly_bar_chart(
                 publish_day_metrics_df.sort_values("median_views_per_day", ascending=True),
                 x="publish_day",
@@ -1210,6 +1322,18 @@ def _render_formats_tab(payload: Dict[str, Any]) -> None:
                 horizontal=True,
             )
             show_plotly_chart(day_fig)
+            chart_formula_insight_expanders(
+                "Best Publish Days",
+                formula_lines=[
+                    "Each weekday bucket aggregates videos whose publish timestamp falls on that day.",
+                    "Bar height = **median views_per_day** for videos published on that weekday.",
+                    "Sparse weekdays (few uploads) can make medians noisy.",
+                ],
+                insights=[
+                    f"Best weekday by median velocity: **{best_day.get('publish_day', 'N/A')}**.",
+                    "Use as a hypothesis for scheduling tests, not a guarantee.",
+                ],
+            )
     with bottom_cols[1]:
         if not publish_hour_metrics_df.empty:
             hour_fig = plotly_line_chart(
@@ -1220,6 +1344,18 @@ def _render_formats_tab(payload: Dict[str, Any]) -> None:
                 secondary_y=["videos"],
             )
             show_plotly_chart(hour_fig)
+            chart_formula_insight_expanders(
+                "Publish Hour Signal",
+                formula_lines=[
+                    "X-axis: hour of day (0–23) from publish time.",
+                    "Blue line (left axis): median **views_per_day** for uploads in that hour.",
+                    "Orange line (right axis): **videos** count in that hour — read both together.",
+                ],
+                insights=[
+                    "A spike in median views with **low** upload volume can be a thin sample.",
+                    "Compare peaks here with weekday chart to plan batch production windows.",
+                ],
+            )
 
 
 def _render_outliers_tab(payload: Dict[str, Any]) -> None:
@@ -1235,6 +1371,11 @@ def _render_outliers_tab(payload: Dict[str, Any]) -> None:
                 outliers_df[["video_title", "primary_topic", "views", "views_per_day", "performance_score", "why_it_worked"]],
                 title=None,
                 precision=2,
+                column_help=_OUTLIER_VIDEO_COL_HELP,
+                table_insights=[
+                    f"**{len(outliers_df)}** videos meet the strong-outlier threshold (score ≥ 75).",
+                    "Study **why_it_worked** for repeatable hooks, then test variations on similar topics.",
+                ],
             )
     with outlier_cols[1]:
         st.markdown("**Underperformers**")
@@ -1245,6 +1386,11 @@ def _render_outliers_tab(payload: Dict[str, Any]) -> None:
                 underperformers_df[["video_title", "primary_topic", "views", "views_per_day", "performance_score", "why_it_lagged"]],
                 title=None,
                 precision=2,
+                column_help=_OUTLIER_VIDEO_COL_HELP,
+                table_insights=[
+                    f"**{len(underperformers_df)}** lower-signal videos flagged for packaging or topic review.",
+                    "Compare **performance_score** with outliers on the left to see the spread.",
+                ],
             )
 
 
@@ -1307,7 +1453,16 @@ def _render_history_tab(payload: Dict[str, Any]) -> None:
         st.markdown("<div class='ci-empty'>Refresh the connected channel again later to unlock historical comparison.</div>", unsafe_allow_html=True)
         return
 
-    styled_dataframe(history_df, title="Snapshot History", precision=2)
+    styled_dataframe(
+        history_df,
+        title="Snapshot History",
+        precision=2,
+        column_help=_HISTORY_TABLE_HELP,
+        table_insights=[
+            "Rows are ordered newest-first; compare **median_views_per_day** and **recent_outlier_count** run-over-run.",
+            "**upload_gap_days** shows whether cadence is tightening or stretching between snapshots.",
+        ],
+    )
     if len(history_df) > 1:
         history_line = history_df.sort_values("snapshot_at").copy()
         history_line["snapshot_at"] = pd.to_datetime(history_line["snapshot_at"], errors="coerce")
@@ -1319,6 +1474,18 @@ def _render_history_tab(payload: Dict[str, Any]) -> None:
             secondary_y=["recent_outlier_count"],
         )
         show_plotly_chart(fig)
+        chart_formula_insight_expanders(
+            "Snapshot Trendline",
+            formula_lines=[
+                "X-axis: **snapshot_at** for each stored manual refresh.",
+                "Primary line: **median_views_per_day** for the channel in that snapshot.",
+                "Secondary line: **recent_outlier_count** (videos with performance_score ≥ 75).",
+            ],
+            insights=[
+                "Rising median with stable outlier count → healthier typical performance.",
+                "Falling median with rising outliers → a few hits masking a weaker baseline.",
+            ],
+        )
 
 
 def render() -> None:

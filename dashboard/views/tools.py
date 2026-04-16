@@ -494,7 +494,22 @@ def _render_results_table(results: list[BatchItemResult], *, title: str) -> None
                 "Artifacts": len(result.artifacts),
             }
         )
-    styled_dataframe(pd.DataFrame(rows), title=title, precision=0)
+    styled_dataframe(
+        pd.DataFrame(rows),
+        title=title,
+        precision=0,
+        column_help={
+            "Title": "Resolved video title from metadata when the job succeeded or partially resolved.",
+            "Channel": "Channel label from metadata (may be empty for failed early fetches).",
+            "Status": "Pipeline status for that URL: Ready, Failed, Skipped, etc.",
+            "Message": "Human-readable detail: errors, paths, or skip reasons.",
+            "Artifacts": "Count of files produced (thumbnail, transcript, audio, video, …).",
+        },
+        table_insights=[
+            "Expand rows below for per-item artifact cards and download links.",
+            "A **Failed** status still may include partial metadata — read **Message**.",
+        ],
+    )
 
 
 def _render_batch_result_cards(results: list[BatchItemResult], *, key_prefix: str) -> None:
