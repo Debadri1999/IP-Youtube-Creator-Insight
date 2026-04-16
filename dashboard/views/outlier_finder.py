@@ -373,7 +373,14 @@ def _inject_outlier_css() -> None:
         .outlier-score-band {
             margin-top: 0.26rem;
             font-size: 10px;
-            color: #FF7777;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 0.14rem 0.42rem;
+            border-radius: 999px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
         }
         .outlier-metric-row {
             display: flex;
@@ -1089,6 +1096,41 @@ def _render_metadata_cluster(result, result_frame: pd.DataFrame) -> None:
     )
 
 
+def _outlier_score_visual(score: float) -> Dict[str, str]:
+    score_n = max(0.0, min(float(score), 100.0))
+    if score_n >= 80:
+        return {
+            "badge_bg": "linear-gradient(160deg, rgba(255, 224, 230, 0.96), rgba(255, 173, 191, 0.94))",
+            "badge_border": "rgba(184, 0, 22, 0.58)",
+            "value_color": "#8f0012",
+            "band_bg": "rgba(143, 0, 18, 0.16)",
+            "band_color": "#8f0012",
+        }
+    if score_n >= 60:
+        return {
+            "badge_bg": "linear-gradient(160deg, rgba(255, 236, 218, 0.96), rgba(255, 208, 170, 0.94))",
+            "badge_border": "rgba(170, 84, 0, 0.52)",
+            "value_color": "#995000",
+            "band_bg": "rgba(170, 84, 0, 0.14)",
+            "band_color": "#995000",
+        }
+    if score_n >= 40:
+        return {
+            "badge_bg": "linear-gradient(160deg, rgba(233, 244, 255, 0.97), rgba(194, 222, 255, 0.94))",
+            "badge_border": "rgba(0, 113, 227, 0.44)",
+            "value_color": "#005ab0",
+            "band_bg": "rgba(0, 113, 227, 0.13)",
+            "band_color": "#005ab0",
+        }
+    return {
+        "badge_bg": "linear-gradient(160deg, rgba(242, 245, 252, 0.96), rgba(224, 231, 246, 0.93))",
+        "badge_border": "rgba(85, 99, 131, 0.45)",
+        "value_color": "#4f5e7e",
+        "band_bg": "rgba(85, 99, 131, 0.12)",
+        "band_color": "#4f5e7e",
+    }
+
+
 def _render_result_card(row: pd.Series) -> None:
     thumb_html = (
         f'<img src="{escape(str(row.get("thumbnail_url", "")))}" alt="{escape(str(row.get("video_title", "")))}" />'
@@ -1096,6 +1138,7 @@ def _render_result_card(row: pd.Series) -> None:
         else ""
     )
     score = float(row.get("outlier_score", 0) or 0)
+    visual = _outlier_score_visual(score)
     why = f"<strong>Why It Stands Out:</strong> {escape(str(row.get('why_outlier', '')))}"
     cue = f"<strong>Research Cue:</strong> {escape(str(row.get('research_cue', '')))}"
     st.markdown(
@@ -1108,10 +1151,10 @@ def _render_result_card(row: pd.Series) -> None:
             f'<div class="outlier-result-title">{escape(str(row.get("video_title", "")))}</div>'
             f'<div class="outlier-result-channel">{escape(str(row.get("channel_title", "")))}</div>'
             '</div>'
-            '<div class="outlier-score-pill">'
-            f'<div class="outlier-score-value">{score:.1f}</div>'
+            f'<div class="outlier-score-pill" style="background:{visual["badge_bg"]};border-color:{visual["badge_border"]};">'
+            f'<div class="outlier-score-value" style="color:{visual["value_color"]};">{score:.1f}</div>'
             '<div class="outlier-score-label">Outlier Score</div>'
-            f'<div class="outlier-score-band">{escape(score_band_for_value(score))}</div>'
+            f'<div class="outlier-score-band" style="background:{visual["band_bg"]};color:{visual["band_color"]};">{escape(score_band_for_value(score))}</div>'
             '</div>'
             '</div>'
             '<div class="outlier-metric-row">'
@@ -1771,6 +1814,13 @@ def render() -> None:
     sort_column, ascending = SORT_OPTIONS[sort_label]
     sorted_frame = result_frame.sort_values(sort_column, ascending=ascending).reset_index(drop=True)
     _render_metadata_cluster(result, sorted_frame)
+    with st.expander("How outlier score is calculated and how to use these results", expanded=False):
+        st.markdown(
+            "- **Score intent**: a 0-100 relative score for this scan cohort, where higher values signal stronger breakout behavior.\n"
+            "- **Core inputs**: velocity (`views/day`), engagement efficiency, channel-size context, and recency.\n"
+            "- **How to read tiers**: stronger tiers indicate candidates to reverse-engineer first (title format, thumbnail packaging, angle).\n"
+            "- **How this helps analysis**: use these tiles as a shortlist for pattern mining before planning new content experiments."
+        )
 
     _render_result_cards(sorted_frame)
 
