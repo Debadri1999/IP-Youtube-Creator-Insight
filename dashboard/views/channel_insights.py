@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import json
 import re
+from contextlib import contextmanager
 from html import escape
-from typing import Any, Dict, Iterable, List, Sequence
+from typing import Any, Dict, Iterable, Iterator, List, Sequence
 
 import pandas as pd
 import requests
@@ -358,29 +359,88 @@ def _inject_channel_insights_css() -> None:
             background: linear-gradient(165deg, #fffbe7, #ffefc6) !important;
             border-color: rgba(230, 0, 18, 0.55) !important;
         }
-        /* Glass primary / secondary actions (Channel Insights only — this CSS is injected on this page) */
+        /* Glass primary / secondary (YouTube-inspired red glass primary, cool glass secondary) */
         button[data-testid="baseButton-primary"] {
             font-weight: 700 !important;
-            background: linear-gradient(180deg, rgba(232, 248, 255, 0.98), rgba(200, 230, 255, 0.88)) !important;
-            color: #0a2540 !important;
-            border: 1px solid rgba(0, 113, 227, 0.38) !important;
-            box-shadow: 0 4px 18px rgba(0, 113, 227, 0.14) !important;
+            background: linear-gradient(
+                165deg,
+                rgba(255, 252, 252, 0.98) 0%,
+                rgba(255, 228, 228, 0.9) 45%,
+                rgba(255, 210, 210, 0.88) 100%
+            ) !important;
+            color: #6b0f0f !important;
+            border: 1px solid rgba(230, 0, 18, 0.32) !important;
+            box-shadow: 0 4px 20px rgba(230, 0, 18, 0.12), 0 1px 0 rgba(255, 255, 255, 0.75) inset !important;
         }
         button[data-testid="baseButton-primary"]:hover {
-            background: linear-gradient(180deg, rgba(210, 240, 255, 1), rgba(175, 220, 255, 0.92)) !important;
-            border-color: rgba(0, 113, 227, 0.55) !important;
-            color: #061a2e !important;
+            background: linear-gradient(
+                165deg,
+                rgba(255, 248, 248, 1) 0%,
+                rgba(255, 218, 218, 0.95) 50%,
+                rgba(255, 198, 198, 0.92) 100%
+            ) !important;
+            border-color: rgba(230, 0, 18, 0.48) !important;
+            color: #4a0a0a !important;
         }
         button[data-testid="baseButton-secondary"] {
             font-weight: 700 !important;
-            background: rgba(255, 255, 255, 0.72) !important;
+            background: linear-gradient(180deg, rgba(248, 252, 255, 0.95), rgba(232, 242, 255, 0.85)) !important;
             color: #0a2540 !important;
-            border: 1px solid rgba(0, 113, 227, 0.3) !important;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
+            border: 1px solid rgba(0, 113, 227, 0.28) !important;
+            box-shadow: 0 2px 12px rgba(0, 113, 227, 0.08) !important;
         }
         button[data-testid="baseButton-secondary"]:hover {
-            background: rgba(240, 248, 255, 0.95) !important;
-            border-color: rgba(0, 113, 227, 0.45) !important;
+            background: linear-gradient(180deg, rgba(235, 246, 255, 1), rgba(215, 235, 255, 0.92)) !important;
+            border-color: rgba(0, 113, 227, 0.42) !important;
+        }
+        /* Keep UI readable while Streamlit marks outputs stale (avoids full-page grey “glitch”) */
+        [data-testid="stAppViewContainer"] [data-stale="true"] {
+            opacity: 1 !important;
+            filter: none !important;
+        }
+        /* Centered glass panel for st.spinner — message + loader, no dimming */
+        div[data-testid="stSpinner"] {
+            position: fixed !important;
+            left: 50% !important;
+            top: 40% !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 1000020 !important;
+            background: rgba(255, 255, 255, 0.97) !important;
+            border: 1px solid rgba(230, 0, 18, 0.2) !important;
+            border-radius: 18px !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12) !important;
+            padding: 1.25rem 1.6rem !important;
+            min-width: min(320px, 92vw) !important;
+            max-width: 420px !important;
+            text-align: center !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+        }
+        div[data-testid="stSpinner"] > div {
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+            gap: 0.65rem !important;
+        }
+        /* YouTube-accent loader: tint default spinner / progress red */
+        div[data-testid="stSpinner"] svg,
+        div[data-testid="stSpinner"] [class*="Spinner"] {
+            color: #e60012 !important;
+        }
+        @keyframes ci-yt-pulse {
+            0%, 100% { transform: scale(0.94); opacity: 0.82; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+        /* Compact red “tile” cue above spinner text (YouTube-accent, not a logo) */
+        div[data-testid="stSpinner"]::before {
+            content: "";
+            display: block;
+            width: 42px;
+            height: 30px;
+            margin: 0 auto 0.85rem;
+            border-radius: 8px;
+            background: linear-gradient(155deg, #ff1a1a 0%, #c5000d 55%, #9e000a 100%);
+            box-shadow: 0 4px 16px rgba(230, 0, 18, 0.22);
+            animation: ci-yt-pulse 1.05s ease-in-out infinite;
         }
         .ci-kpi-delta-hint {
             display: block;
@@ -395,6 +455,12 @@ def _inject_channel_insights_css() -> None:
         """,
         unsafe_allow_html=True,
     )
+
+
+@contextmanager
+def _channel_insights_analysis_spinner() -> Iterator[None]:
+    with st.spinner("Your analysis is on the way — hang tight. We're building your snapshot."):
+        yield
 
 
 def _format_int(value: Any) -> str:
@@ -820,20 +886,41 @@ def _artifact_status_label(state: str) -> str:
 
 def _render_connect_card(connected_channels: list[dict[str, Any]]) -> None:
     artifact_status = get_bertopic_artifact_status()
+    tracked_options = connected_channels
+    selected_channel_id = st.session_state.get("channel_insights_selected_channel", "")
+    if tracked_options and selected_channel_id not in {row["channel_id"] for row in tracked_options}:
+        selected_channel_id = tracked_options[0]["channel_id"]
+        st.session_state["channel_insights_selected_channel"] = selected_channel_id
+
     st.markdown(
         '<div class="ci-card">'
-        '<div class="ci-card-title">Connect a public channel</div>'
+        '<div class="ci-card-title">Channel analysis</div>'
         '<div class="ci-card-copy">'
-        "Add a URL, @handle, or channel ID. Optionally force a live API refresh, then choose how topics are labeled "
-        "before you tap <strong>Start analysis</strong>. Public-only; each run saves a snapshot."
+        "Pick who you are viewing, optionally paste a <strong>different</strong> URL or @handle, choose topic mode and refresh options, "
+        "then use <strong>Run analysis</strong> — one button adds someone new or re-runs the current channel with the settings you picked."
         "</div>",
         unsafe_allow_html=True,
     )
+    if tracked_options:
+        choice = st.selectbox(
+            "Tracked channel",
+            tracked_options,
+            index=next((i for i, row in enumerate(tracked_options) if row["channel_id"] == selected_channel_id), 0),
+            format_func=lambda row: row["channel_title"],
+            help="Updates the tabs below immediately. Leave the next field blank to refresh this channel.",
+        )
+        st.session_state["channel_insights_selected_channel"] = choice["channel_id"]
+    else:
+        st.markdown(
+            "<div class='ci-empty' style='margin-bottom:0.75rem;'>No tracked channels yet — paste a public URL or @handle below and run analysis once.</div>",
+            unsafe_allow_html=True,
+        )
+
     with st.form("channel_insights_connect_form"):
         channel_input = st.text_input(
-            "Channel URL, handle, or channel ID",
+            "New channel URL, @handle, or ID (optional)",
             key="channel_insights_input",
-            placeholder="https://www.youtube.com/@veritasium or @veritasium",
+            placeholder="Leave blank to analyze / refresh the tracked channel above",
         )
         force_refresh = st.toggle(
             "Force live refresh",
@@ -845,9 +932,9 @@ def _render_connect_card(connected_channels: list[dict[str, Any]]) -> None:
             options=[TOPIC_MODE_HEURISTIC, TOPIC_MODE_BERTOPIC_OPTIONAL],
             key="channel_insights_topic_mode",
             format_func=_topic_mode_label,
-            help="Pick before starting: heuristic is fastest; model-backed (beta) uses BERTopic when the bundle is ready.",
+            help="Same run applies to new and existing channels — switch modes here, then Run analysis.",
         )
-        connect_clicked = st.form_submit_button("Start analysis", type="primary", use_container_width=True)
+        connect_clicked = st.form_submit_button("Run analysis", type="primary", use_container_width=True)
 
     st.caption(f"Artifact status: {_artifact_status_label(artifact_status.state)}")
     if artifact_status.state == "ready":
@@ -863,47 +950,6 @@ def _render_connect_card(connected_channels: list[dict[str, Any]]) -> None:
     else:
         st.caption(artifact_status.message or "Heuristic mode is the default until artifact configuration is complete.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    if connect_clicked:
-        if not channel_input.strip():
-            st.session_state["channel_insights_error"] = "Enter a public channel URL, handle, or channel ID first."
-        else:
-            with st.spinner("Analyzing the channel and storing a fresh snapshot..."):
-                try:
-                    payload = refresh_channel_insights(
-                        channel_input.strip(),
-                        force_refresh=force_refresh,
-                        topic_mode=st.session_state.get("channel_insights_topic_mode", TOPIC_MODE_HEURISTIC),
-                    )
-                except Exception as exc:
-                    st.session_state["channel_insights_error"] = str(exc)
-                else:
-                    st.session_state["channel_insights_selected_channel"] = payload["channel"]["channel_id"]
-                    st.session_state.pop("channel_insights_error", None)
-                    st.rerun()
-
-    tracked_options = connected_channels
-    selected_channel_id = st.session_state.get("channel_insights_selected_channel", "")
-    if tracked_options and selected_channel_id not in {row["channel_id"] for row in tracked_options}:
-        selected_channel_id = tracked_options[0]["channel_id"]
-        st.session_state["channel_insights_selected_channel"] = selected_channel_id
-
-    st.markdown('<div class="ci-card" style="margin-top:1rem;"><div class="ci-card-title">Workspace</div>', unsafe_allow_html=True)
-    if tracked_options:
-        choice = st.selectbox(
-            "Tracked channel",
-            tracked_options,
-            index=next((i for i, row in enumerate(tracked_options) if row["channel_id"] == selected_channel_id), 0),
-            format_func=lambda row: row["channel_title"],
-            help="Switch which stored channel loads in the tabs below.",
-        )
-        st.session_state["channel_insights_selected_channel"] = choice["channel_id"]
-    else:
-        st.markdown(
-            "<div class='ci-empty'>No tracked channels yet. Run <strong>Start analysis</strong> above to add one.</div>",
-            unsafe_allow_html=True,
-        )
     st.markdown(
         f'<div class="ci-summary-grid" style="margin-top:0.75rem;">'
         f'<div class="ci-summary-item"><div class="ci-summary-label">Tracked count</div>'
@@ -914,9 +960,34 @@ def _render_connect_card(connected_channels: list[dict[str, Any]]) -> None:
         '<div class="ci-summary-value">Public only</div></div>'
         "</div>"
         '<div class="ci-note" style="margin-top:0.75rem;">'
-        "Topic trends, outliers, and recommendations update when you refresh a channel snapshot.</div></div>",
+        "Topic trends, outliers, and recommendations follow the channel and mode from your last successful run.</div></div>",
         unsafe_allow_html=True,
     )
+
+    if connect_clicked:
+        target: str | None = None
+        if channel_input.strip():
+            target = channel_input.strip()
+        elif tracked_options:
+            target = st.session_state.get("channel_insights_selected_channel") or ""
+        if not target:
+            st.session_state["channel_insights_error"] = (
+                "Enter a public channel URL or @handle, or add a tracked channel first."
+            )
+        else:
+            with _channel_insights_analysis_spinner():
+                try:
+                    payload = refresh_channel_insights(
+                        target,
+                        force_refresh=force_refresh,
+                        topic_mode=st.session_state.get("channel_insights_topic_mode", TOPIC_MODE_HEURISTIC),
+                    )
+                except Exception as exc:
+                    st.session_state["channel_insights_error"] = str(exc)
+                else:
+                    st.session_state["channel_insights_selected_channel"] = payload["channel"]["channel_id"]
+                    st.session_state.pop("channel_insights_error", None)
+                    st.rerun()
 
 
 def _render_summary_action_row(payload: Dict[str, Any]) -> None:
@@ -939,24 +1010,8 @@ def _render_summary_action_row(payload: Dict[str, Any]) -> None:
         unsafe_allow_html=True,
     )
 
-    action_row = st.columns(2, gap="small")
-    with action_row[0]:
-        if st.button("Refresh snapshot", type="secondary", use_container_width=True):
-            with st.spinner("Refreshing channel insights and writing a new snapshot..."):
-                try:
-                    fresh_payload = refresh_channel_insights(
-                        channel["channel_id"],
-                        force_refresh=False,
-                        topic_mode=st.session_state.get("channel_insights_topic_mode", TOPIC_MODE_HEURISTIC),
-                    )
-                except Exception as exc:
-                    st.session_state["channel_insights_error"] = str(exc)
-                else:
-                    st.session_state["channel_insights_selected_channel"] = fresh_payload["channel"]["channel_id"]
-                    st.session_state.pop("channel_insights_error", None)
-                    st.rerun()
-    with action_row[1]:
-        st.link_button("Open channel", channel["canonical_url"], use_container_width=True)
+    st.caption("Re-run or change topic mode from **Run analysis** at the top — one control for every refresh.")
+    st.link_button("Open channel on YouTube", channel["canonical_url"], use_container_width=True)
 
     with st.expander("Topic model details (requested vs applied)", expanded=False):
         st.markdown(
