@@ -1098,36 +1098,57 @@ def _render_metadata_cluster(result, result_frame: pd.DataFrame) -> None:
 
 def _outlier_score_visual(score: float) -> Dict[str, str]:
     score_n = max(0.0, min(float(score), 100.0))
-    if score_n >= 80:
-        return {
-            "badge_bg": "linear-gradient(160deg, rgba(255, 224, 230, 0.96), rgba(255, 173, 191, 0.94))",
-            "badge_border": "rgba(184, 0, 22, 0.58)",
-            "value_color": "#8f0012",
-            "band_bg": "rgba(143, 0, 18, 0.16)",
-            "band_color": "#8f0012",
-        }
-    if score_n >= 60:
-        return {
-            "badge_bg": "linear-gradient(160deg, rgba(255, 236, 218, 0.96), rgba(255, 208, 170, 0.94))",
-            "badge_border": "rgba(170, 84, 0, 0.52)",
-            "value_color": "#995000",
-            "band_bg": "rgba(170, 84, 0, 0.14)",
-            "band_color": "#995000",
-        }
-    if score_n >= 40:
-        return {
-            "badge_bg": "linear-gradient(160deg, rgba(233, 244, 255, 0.97), rgba(194, 222, 255, 0.94))",
-            "badge_border": "rgba(0, 113, 227, 0.44)",
-            "value_color": "#005ab0",
-            "band_bg": "rgba(0, 113, 227, 0.13)",
-            "band_color": "#005ab0",
-        }
+    palette = [
+        (0.0, (82, 98, 132)),
+        (40.0, (0, 92, 182)),
+        (60.0, (158, 78, 0)),
+        (80.0, (150, 0, 18)),
+        (100.0, (118, 0, 16)),
+    ]
+
+    def _lerp(a: float, b: float, t: float) -> float:
+        return a + (b - a) * t
+
+    def _interpolate_color(value: float) -> Tuple[int, int, int]:
+        for idx in range(len(palette) - 1):
+            left_stop, left_rgb = palette[idx]
+            right_stop, right_rgb = palette[idx + 1]
+            if value <= right_stop:
+                span = max(right_stop - left_stop, 1e-9)
+                ratio = (value - left_stop) / span
+                return (
+                    int(round(_lerp(left_rgb[0], right_rgb[0], ratio))),
+                    int(round(_lerp(left_rgb[1], right_rgb[1], ratio))),
+                    int(round(_lerp(left_rgb[2], right_rgb[2], ratio))),
+                )
+        return palette[-1][1]
+
+    def _mix(rgb: Tuple[int, int, int], target: Tuple[int, int, int], weight: float) -> Tuple[int, int, int]:
+        return (
+            int(round(_lerp(rgb[0], target[0], weight))),
+            int(round(_lerp(rgb[1], target[1], weight))),
+            int(round(_lerp(rgb[2], target[2], weight))),
+        )
+
+    def _rgba(rgb: Tuple[int, int, int], alpha: float) -> str:
+        return f"rgba({rgb[0]}, {rgb[1]}, {rgb[2]}, {alpha:.3f})"
+
+    def _hex(rgb: Tuple[int, int, int]) -> str:
+        return f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
+
+    base = _interpolate_color(score_n)
+    bg_top = _mix(base, (255, 255, 255), 0.80)
+    bg_bottom = _mix(base, (255, 255, 255), 0.56)
+    text_color = _mix(base, (20, 24, 34), 0.14)
+    border_alpha = 0.30 + (score_n / 100.0) * 0.30
+    band_alpha = 0.09 + (score_n / 100.0) * 0.16
+
     return {
-        "badge_bg": "linear-gradient(160deg, rgba(242, 245, 252, 0.96), rgba(224, 231, 246, 0.93))",
-        "badge_border": "rgba(85, 99, 131, 0.45)",
-        "value_color": "#4f5e7e",
-        "band_bg": "rgba(85, 99, 131, 0.12)",
-        "band_color": "#4f5e7e",
+        "badge_bg": f"linear-gradient(160deg, {_rgba(bg_top, 0.97)}, {_rgba(bg_bottom, 0.94)})",
+        "badge_border": _rgba(base, border_alpha),
+        "value_color": _hex(text_color),
+        "band_bg": _rgba(base, band_alpha),
+        "band_color": _hex(text_color),
     }
 
 
