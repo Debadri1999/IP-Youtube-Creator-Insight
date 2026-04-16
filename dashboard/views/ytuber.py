@@ -459,6 +459,18 @@ def _inject_ytuber_css() -> None:
             color: #8b8ba8;
             margin-top: 0.15rem;
         }
+        .outlier-score-tier {
+            margin-top: 0.2rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
         .outlier-metrics {
             display: flex;
             flex-wrap: wrap;
@@ -2019,6 +2031,45 @@ def _format_subscriber_label(
     return f"{value}"
 
 
+def _outlier_score_visual(score: float) -> Dict[str, str]:
+    score_n = max(0.0, min(float(score), 100.0))
+    if score_n >= 70:
+        return {
+            "tier": "High Signal",
+            "badge_bg": "linear-gradient(160deg, rgba(255, 229, 234, 0.96), rgba(255, 192, 204, 0.94))",
+            "badge_border": "rgba(200, 0, 20, 0.55)",
+            "value_color": "#970012",
+            "tier_bg": "rgba(151, 0, 18, 0.14)",
+            "tier_color": "#970012",
+        }
+    if score_n >= 55:
+        return {
+            "tier": "Promising",
+            "badge_bg": "linear-gradient(160deg, rgba(255, 236, 222, 0.96), rgba(255, 211, 182, 0.94))",
+            "badge_border": "rgba(181, 92, 0, 0.5)",
+            "value_color": "#9b4e00",
+            "tier_bg": "rgba(181, 92, 0, 0.13)",
+            "tier_color": "#9b4e00",
+        }
+    if score_n >= 40:
+        return {
+            "tier": "Watchlist",
+            "badge_bg": "linear-gradient(160deg, rgba(234, 244, 255, 0.97), rgba(202, 226, 255, 0.94))",
+            "badge_border": "rgba(0, 113, 227, 0.42)",
+            "value_color": "#005db7",
+            "tier_bg": "rgba(0, 113, 227, 0.12)",
+            "tier_color": "#005db7",
+        }
+    return {
+        "tier": "Early Signal",
+        "badge_bg": "linear-gradient(160deg, rgba(242, 245, 252, 0.96), rgba(225, 232, 246, 0.93))",
+        "badge_border": "rgba(85, 99, 131, 0.42)",
+        "value_color": "#4f5e7e",
+        "tier_bg": "rgba(85, 99, 131, 0.12)",
+        "tier_color": "#4f5e7e",
+    }
+
+
 def _render_outlier_cards(result_frame: pd.DataFrame) -> None:
     if result_frame.empty:
         return
@@ -2038,6 +2089,8 @@ def _render_outlier_cards(result_frame: pd.DataFrame) -> None:
             if str(row.get("thumbnail_url", "")).strip()
             else ""
         )
+        score_value = float(row.get("outlier_score", 0) or 0)
+        visual = _outlier_score_visual(score_value)
         with cols[idx % 3]:
             st.markdown(
                 f"""
@@ -2049,9 +2102,10 @@ def _render_outlier_cards(result_frame: pd.DataFrame) -> None:
                                 <div class="outlier-card-title">{escape(str(row.get("video_title", "")))}</div>
                                 <div class="outlier-card-channel">{escape(str(row.get("channel_title", "")))}</div>
                             </div>
-                            <div class="outlier-score-badge">
-                                <div class="outlier-score-value">{float(row.get("outlier_score", 0)):.1f}</div>
-                                <div class="outlier-score-label">Score</div>
+                            <div class="outlier-score-badge" style="background:{visual["badge_bg"]};border-color:{visual["badge_border"]};">
+                                <div class="outlier-score-value" style="color:{visual["value_color"]};">{score_value:.1f}</div>
+                                <div class="outlier-score-label">Outlier Score</div>
+                                <div class="outlier-score-tier" style="background:{visual["tier_bg"]};color:{visual["tier_color"]};">{escape(visual["tier"])}</div>
                             </div>
                         </div>
                         <div class="outlier-metrics">
@@ -2354,6 +2408,13 @@ def _render_outliers_finder(current_channel_title: str) -> None:
     sorted_frame = result_frame.sort_values(sort_column, ascending=False).reset_index(drop=True)
 
     st.markdown("**Top Outlier Videos**")
+    with st.expander("How outlier score is calculated and how to use these results", expanded=False):
+        st.markdown(
+            "- **Score intent**: 0-100 relative score for this scan cohort, where higher means stronger breakout behavior.\n"
+            "- **Core inputs**: views velocity (`views/day`), engagement efficiency, channel-size context, and recency.\n"
+            "- **Interpretation**: use **High Signal / Promising** first for immediate packaging/topic pattern mining; use **Watchlist / Early Signal** for emerging experiments.\n"
+            "- **Practical workflow**: open top tiles, compare title structure + thumbnail style + topic angle, then port repeated patterns into your next test batch."
+        )
     _render_outlier_cards(sorted_frame)
 
     chart_cols = st.columns(2)
