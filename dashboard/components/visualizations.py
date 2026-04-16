@@ -100,13 +100,21 @@ def _friendly_label(raw: str) -> str:
 
 
 def _compact_number(value: float) -> str:
-    """Format large values into compact user-friendly units (K/M/B/T)."""
+    """Format large values into compact user-friendly units (K/M/B/T).
+
+    For **fractions between 0 and 1** (e.g. engagement rates), use extra decimals so
+    nearby values like 0.028 vs 0.034 are not all rounded to the same ``0.03`` on bar labels.
+    """
     try:
         num = float(value)
     except (TypeError, ValueError):
         return str(value)
+    if math.isnan(num) or math.isinf(num):
+        return str(value)
     sign = "-" if num < 0 else ""
     n = abs(num)
+    if n == 0:
+        return "0"
     if n >= 1_000_000_000_000:
         return f"{sign}{n / 1_000_000_000_000:.1f}T"
     if n >= 1_000_000_000:
@@ -115,6 +123,11 @@ def _compact_number(value: float) -> str:
         return f"{sign}{n / 1_000_000:.1f}M"
     if n >= 1_000:
         return f"{sign}{n / 1_000:.1f}K"
+    if n < 1:
+        body = f"{n:.4f}".rstrip("0").rstrip(".")
+        if not body or body == ".":
+            body = "0"
+        return f"{sign}{body}"
     if n.is_integer():
         return f"{int(num)}"
     return f"{num:.2f}"
