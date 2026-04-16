@@ -359,28 +359,28 @@ def _inject_channel_insights_css() -> None:
             background: linear-gradient(165deg, #fffbe7, #ffefc6) !important;
             border-color: rgba(230, 0, 18, 0.55) !important;
         }
-        /* Glass primary / secondary (YouTube-inspired red glass primary, cool glass secondary) */
+        /* Glass primary / secondary (blue primary to match UI) */
         button[data-testid="baseButton-primary"] {
             font-weight: 700 !important;
             background: linear-gradient(
                 165deg,
-                rgba(255, 252, 252, 0.98) 0%,
-                rgba(255, 228, 228, 0.9) 45%,
-                rgba(255, 210, 210, 0.88) 100%
+                rgba(246, 251, 255, 0.98) 0%,
+                rgba(224, 240, 255, 0.92) 45%,
+                rgba(201, 229, 255, 0.88) 100%
             ) !important;
-            color: #6b0f0f !important;
-            border: 1px solid rgba(230, 0, 18, 0.32) !important;
-            box-shadow: 0 4px 20px rgba(230, 0, 18, 0.12), 0 1px 0 rgba(255, 255, 255, 0.75) inset !important;
+            color: #0a2540 !important;
+            border: 1px solid rgba(0, 113, 227, 0.34) !important;
+            box-shadow: 0 4px 20px rgba(0, 113, 227, 0.14), 0 1px 0 rgba(255, 255, 255, 0.75) inset !important;
         }
         button[data-testid="baseButton-primary"]:hover {
             background: linear-gradient(
                 165deg,
-                rgba(255, 248, 248, 1) 0%,
-                rgba(255, 218, 218, 0.95) 50%,
-                rgba(255, 198, 198, 0.92) 100%
+                rgba(238, 248, 255, 1) 0%,
+                rgba(212, 235, 255, 0.95) 50%,
+                rgba(187, 221, 255, 0.92) 100%
             ) !important;
-            border-color: rgba(230, 0, 18, 0.48) !important;
-            color: #4a0a0a !important;
+            border-color: rgba(0, 113, 227, 0.52) !important;
+            color: #061a2e !important;
         }
         button[data-testid="baseButton-secondary"] {
             font-weight: 700 !important;
@@ -717,6 +717,16 @@ def _render_ai_card(title: str, body: str, *, empty_message: str = "") -> None:
         f'<div class="ci-card"><div class="ci-card-title">{escape(title)}</div>{html_body}</div>',
         unsafe_allow_html=True,
     )
+
+
+def _render_chart_explainers(chart_name: str, formula_lines: Sequence[str], insights: Sequence[str]) -> None:
+    with st.expander(f"{chart_name}: formula", expanded=False):
+        st.markdown("\n".join(f"- {line}" for line in formula_lines))
+    with st.expander(f"{chart_name}: insights", expanded=False):
+        if insights:
+            st.markdown("\n".join(f"- {line}" for line in insights))
+        else:
+            st.caption("Not enough data yet to generate insights for this chart.")
 
 
 def _overview_actions_prompt(payload: Dict[str, Any], display_topic_metrics_df: pd.DataFrame) -> str:
@@ -1073,16 +1083,33 @@ def _render_overview_tab(payload: Dict[str, Any]) -> None:
 
     with overview_cols[1]:
         if not topic_metrics_df.empty:
+            topic_window = topic_metrics_df.head(8).sort_values("trend_score", ascending=True)
             topic_fig = plotly_bar_chart(
-                topic_metrics_df.head(8).sort_values("trend_score", ascending=True),
+                topic_window,
                 x="topic_label",
                 y="trend_score",
                 title="Rising Themes In The Current Window",
                 horizontal=True,
             )
             show_plotly_chart(topic_fig)
+            top_trend_row = topic_metrics_df.sort_values("trend_score", ascending=False).iloc[0]
+            _render_chart_explainers(
+                "Rising Themes",
+                formula_lines=[
+                    "Trend score compares topic momentum between recent and previous 90-day windows.",
+                    "If previous median views/day > 0: trend_score = (recent_median - previous_median) / previous_median",
+                    "Fallback when no previous baseline: trend_score = recent_median / max(topic_median_views_per_day, 1)",
+                    "Positive score = growing momentum; near 0 = flat; negative = cooling topic.",
+                ],
+                insights=[
+                    f"Top momentum topic right now is **{top_trend_row.get('topic_label', 'N/A')}**.",
+                    f"Its trend score is **{float(top_trend_row.get('trend_score', 0) or 0):.2f}**.",
+                    "Use this chart to prioritize themes gaining speed before they peak.",
+                ],
+            )
 
         if not duration_metrics_df.empty:
+            best_duration_row = duration_metrics_df.sort_values("median_views_per_day", ascending=False).iloc[0]
             duration_fig = plotly_bar_chart(
                 duration_metrics_df.sort_values("median_views_per_day", ascending=True),
                 x="duration_bucket",
@@ -1091,6 +1118,20 @@ def _render_overview_tab(payload: Dict[str, Any]) -> None:
                 horizontal=True,
             )
             show_plotly_chart(duration_fig)
+            _render_chart_explainers(
+                "Winning Duration Buckets",
+                formula_lines=[
+                    "For each duration bucket, videos are grouped by length range.",
+                    "Bucket score = median views_per_day across videos in that bucket.",
+                    "views_per_day = total views / max(video age in days, 1)",
+                    "Median (not average) is used to reduce outlier bias.",
+                ],
+                insights=[
+                    f"Current strongest bucket is **{best_duration_row.get('duration_bucket', 'N/A')}**.",
+                    f"It delivers about **{_format_int(best_duration_row.get('median_views_per_day', 0))}** median views/day.",
+                    "Use this to choose the default runtime when planning your next uploads.",
+                ],
+            )
 
         if summary.get("topic_mode_requested") == TOPIC_MODE_BERTOPIC_OPTIONAL and summary.get("topic_mode_used") != TOPIC_MODE_BERTOPIC_OPTIONAL:
             st.caption(summary.get("topic_model_failure_reason") or "BERTopic beta mode fell back to the heuristic topic flow.")
