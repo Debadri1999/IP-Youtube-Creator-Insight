@@ -11,11 +11,29 @@ import streamlit as st
 
 from dashboard.components.visualizations import (
     apply_dashboard_chart_theme,
+    chart_formula_insight_expanders,
     graph_insight_expander,
     show_plotly_chart,
     styled_dataframe,
     styled_keyword_chips,
 )
+
+_OUTLIER_RESULTS_TABLE_HELP = {
+    "Thumbnail": "Static thumbnail image loaded from the public URL in the scan row.",
+    "Title": "Video title at scan time.",
+    "Channel": "Channel display name.",
+    "Outlier Score": (
+        "0–100 blend: when channel baseline exists — 45% baseline vs channel medians "
+        "(views/day, engagement, views/subscriber ratios), 30% peer percentile in scan, "
+        "15% engagement percentile, 10% recency boost; otherwise 55/25/20 on peer, engagement, recency."
+    ),
+    "Views": "Public view count in the dataset.",
+    "Views / Day": "views ÷ max(age in days, 1).",
+    "Duration": "Runtime bucket (e.g. Shorts, 8–15 min) from video metadata.",
+    "Language Confidence": "How confident the scan is that title/metadata matches the requested language filter.",
+    "Why It Stands Out": "Structured reasons from baseline ratios, peer percentiles, and recency heuristics.",
+    "Research Cue": "Suggested follow-up angle or keyword seed for deeper research.",
+}
 from src.services.outlier_ai import InsightCard, OutlierAIReport, generate_outlier_ai_report
 from src.services.outliers_finder import (
     DURATION_BUCKET_ORDER,
@@ -1776,6 +1794,11 @@ def render() -> None:
         title="All Results In This Scan",
         precision=2,
         image_columns=["Thumbnail"],
+        column_help=_OUTLIER_RESULTS_TABLE_HELP,
+        table_insights=[
+            "Sort in the table UI or re-run with different filters — scores are **relative to this scan**.",
+            "Hover column headers (?) for formulas; read **Why It Stands Out** for plain-language drivers.",
+        ],
     )
 
     _render_section_intro(
@@ -1804,10 +1827,15 @@ def render() -> None:
             breakout_fig = _breakout_scatter(sorted_frame)
             breakout_fig.update_layout(height=400)
             show_plotly_chart(breakout_fig)
-            graph_insight_expander(
+            chart_formula_insight_expanders(
                 "Breakout map",
-                "Each point is a surfaced video. Axes combine **outlier score**, **views per day**, and **channel size** (see chart labels). "
-                "Look for clusters away from the bulk — those are unusual performances for their context.",
+                formula_lines=[
+                    "Each point = one video in the filtered scan results.",
+                    "Axes encode **outlier score**, **views/day**, and **channel size** (log-scale where noted on the chart).",
+                ],
+                insights=[
+                    "Clusters far from the bulk are unusual vs peers — validate with title, niche, and age before copying.",
+                ],
             )
     with chart_top[1]:
         with st.container(border=True):
@@ -1818,10 +1846,15 @@ def render() -> None:
             age_fig = _age_bucket_chart(sorted_frame)
             age_fig.update_layout(height=400)
             show_plotly_chart(age_fig)
-            graph_insight_expander(
+            chart_formula_insight_expanders(
                 "Score by publish age",
-                "Shows whether high scores concentrate on **fresh uploads** vs **older catalog** wins. "
-                "A spike on recent ages can mean a fast-moving trend; spread across ages can mean evergreen demand.",
+                formula_lines=[
+                    "Buckets videos by **age_bucket** (time since publish).",
+                    "Bars summarize **outlier_score** distribution or central tendency per bucket (see axis labels).",
+                ],
+                insights=[
+                    "Spikes on recent ages can mean trend velocity; spread across ages can mean evergreen demand.",
+                ],
             )
 
     chart_bottom = st.columns(3, gap="medium")
@@ -1834,10 +1867,15 @@ def render() -> None:
             duration_fig = _duration_chart(sorted_frame)
             duration_fig.update_layout(height=320)
             show_plotly_chart(duration_fig)
-            graph_insight_expander(
+            chart_formula_insight_expanders(
                 "Winning lengths",
-                "Bars show how **outlier scores** stack up by **duration bucket** in this scan only. "
-                "Use it to guess runtime tests — always validate against your audience and production cost.",
+                formula_lines=[
+                    "Groups surfaced videos by **duration_bucket** (runtime metadata).",
+                    "Height reflects aggregated **outlier_score** for that bucket in this scan.",
+                ],
+                insights=[
+                    "Use as a hypothesis for runtime tests — validate with audience fit and production cost.",
+                ],
             )
     with chart_bottom[1]:
         with st.container(border=True):
@@ -1848,10 +1886,15 @@ def render() -> None:
             title_pattern_fig = _title_pattern_chart(sorted_frame)
             title_pattern_fig.update_layout(height=320)
             show_plotly_chart(title_pattern_fig)
-            graph_insight_expander(
+            chart_formula_insight_expanders(
                 "Title structures",
-                "Summarizes **recurring packaging patterns** (e.g., listicle vs story vs challenge) among top results. "
-                "Pairs well with the keyword chips and the AI **Title Pattern** cards below.",
+                formula_lines=[
+                    "Clusters or bars summarize **title_pattern** labels derived from titles in the scan.",
+                    "Y-axis shows how **outlier_score** or counts concentrate by pattern (per chart subtitle).",
+                ],
+                insights=[
+                    "Pair with keyword chips and AI title cards to turn patterns into testable hooks.",
+                ],
             )
     with chart_bottom[2]:
         with st.container(border=True):

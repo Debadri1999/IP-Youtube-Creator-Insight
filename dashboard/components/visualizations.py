@@ -224,6 +224,84 @@ def show_plotly_chart(fig: go.Figure, *, config: Optional[Dict[str, Any]] = None
     st.plotly_chart(fig, use_container_width=True, config=merged)
 
 
+def format_inline_markdown_bold(text: str) -> str:
+    """Escape HTML but render ``**segments**`` as <strong>…</strong> (single-line safe)."""
+    raw = str(text or "")
+    parts = re.split(r"(\*\*.+?\*\*)", raw)
+    out: List[str] = []
+    for part in parts:
+        if len(part) >= 4 and part.startswith("**") and part.endswith("**"):
+            inner = part[2:-2]
+            out.append(f"<strong>{html.escape(inner)}</strong>")
+        else:
+            out.append(html.escape(part))
+    return "".join(out)
+
+
+def ensure_dashboard_explainer_css() -> None:
+    """One-shot glass-style expanders for formula / insights (shared across dashboard pages)."""
+    if st.session_state.get("_dashboard_explainer_css"):
+        return
+    st.session_state["_dashboard_explainer_css"] = True
+    st.markdown(
+        """
+        <style>
+        div[data-testid="stExpander"] {
+            background: linear-gradient(
+                165deg,
+                rgba(255, 255, 255, 0.82) 0%,
+                rgba(236, 246, 255, 0.78) 100%
+            ) !important;
+            border: 1px solid rgba(0, 113, 227, 0.2) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 4px 18px rgba(0, 113, 227, 0.06) !important;
+            margin-bottom: 0.45rem !important;
+        }
+        div[data-testid="stExpander"] details {
+            border: none !important;
+        }
+        div[data-testid="stExpander"] summary {
+            font-weight: 600 !important;
+            color: #0a2540 !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def chart_formula_insight_expanders(
+    chart_name: str,
+    formula_lines: Sequence[str],
+    insights: Sequence[str],
+) -> None:
+    """Collapsed formula + insights pair under a chart (consistent UX)."""
+    ensure_dashboard_explainer_css()
+    with st.expander(f"{chart_name} — formula", expanded=False):
+        st.markdown("\n".join(f"- {line}" for line in formula_lines))
+    with st.expander(f"{chart_name} — insights", expanded=False):
+        if insights:
+            st.markdown("\n".join(f"- {line}" for line in insights))
+        else:
+            st.caption("Not enough data yet to summarize insights for this chart.")
+
+
+def table_formula_insight_expanders(
+    table_title: str,
+    column_help: Dict[str, str],
+    insights: Sequence[str],
+) -> None:
+    """Column glossary + table-level insights (header tooltips via column_config.help where supported)."""
+    ensure_dashboard_explainer_css()
+    if column_help:
+        with st.expander(f"{table_title} — column definitions", expanded=False):
+            lines = [f"**{_friendly_label(col)}:** {help_text}" for col, help_text in column_help.items()]
+            st.markdown("\n\n".join(lines))
+    if insights:
+        with st.expander(f"{table_title} — insights", expanded=False):
+            st.markdown("\n".join(f"- {line}" for line in insights))
+
+
 def graph_insight_expander(
     chart_title: str,
     body_md: str,
@@ -672,6 +750,8 @@ def styled_dataframe(
     title: Optional[str] = None,
     precision: int = 1,
     image_columns: Optional[Sequence[str]] = None,
+    column_help: Optional[Dict[str, str]] = None,
+    table_insights: Optional[Sequence[str]] = None,
 ) -> None:
     """Render a styled dataframe with gradients on numeric columns.
 
@@ -680,6 +760,8 @@ def styled_dataframe(
         title: Optional title shown above the table.
         precision: Decimal precision for numeric columns.
         image_columns: Optional list of columns that should display images if URLs.
+        column_help: Per-column help text (shown in header tooltips via Streamlit column_config).
+        table_insights: Optional bullet lines for a collapsed insights expander below the table.
     """
     if df.empty:
         st.info("No rows to display.")
@@ -724,12 +806,7 @@ def styled_dataframe(
         # Subtle in-cell magnitude cue that keeps the steel-glass background light.
         styler = styler.bar(subset=numeric_cols, color="#dbe6ff", align="left")
 
-    # Use Streamlit's native image column config when requested
-    column_config: Dict[str, Any] = {}
-    if image_columns:
-        for col in image_columns:
-            if col in df.columns:
-                column_config[col] = st.column_config.ImageColumn(col)
+    column_config = _build_dataframe_column_config(df, precision=precision, column_help=column_help, image_columns=image_columns)
 
     try:
         st.dataframe(
@@ -746,6 +823,47 @@ def styled_dataframe(
             hide_index=True,
             column_config=column_config or None,
         )
+
+    if column_help or table_insights:
+        label = title or "This table"
+        table_formula_insight_expanders(label, column_help or {}, table_insights or [])
+
+
+def _build_dataframe_column_config(
+    df: pd.DataFrame,
+    *,
+    precision: int,
+    column_help: Optional[Dict[str, str]],
+    image_columns: Optional[Sequence[str]],
+) -> Optional[Dict[str, Any]]:
+    """Build Streamlit column_config with optional header help tooltips."""
+    images = set(image_columns or [])
+    help_keys = set(column_help or {})
+    cols_to_configure = images | help_keys
+    if not cols_to_configure:
+        return None
+    cfg: Dict[str, Any] = {}
+    for col in df.columns:
+        if col not in cols_to_configure:
+            continue
+        friendly = _friendly_label(col)
+        help_text = (column_help or {}).get(col)
+        if col in images:
+            cfg[col] = st.column_config.ImageColumn(friendly, help=help_text)
+            continue
+        if pd.api.types.is_bool_dtype(df[col]):
+            cfg[col] = st.column_config.TextColumn(friendly, help=help_text)
+        elif pd.api.types.is_numeric_dtype(df[col]):
+            cfg[col] = st.column_config.NumberColumn(
+                friendly,
+                help=help_text,
+                format=f"%.{precision}f",
+            )
+        elif pd.api.types.is_datetime64_any_dtype(df[col]):
+            cfg[col] = st.column_config.DatetimeColumn(friendly, help=help_text)
+        else:
+            cfg[col] = st.column_config.TextColumn(friendly, help=help_text)
+    return cfg or None
 
 
 def styled_keyword_chips(keywords: Sequence[str]) -> None:

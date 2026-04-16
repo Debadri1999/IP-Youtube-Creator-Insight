@@ -20,6 +20,7 @@ except (ImportError, ModuleNotFoundError, OSError):
     HttpError = Exception
 
 from dashboard.components.visualizations import (
+    chart_formula_insight_expanders,
     kpi_row,
     plotly_bar_chart,
     plotly_heatmap,
@@ -32,6 +33,31 @@ from dashboard.components.visualizations import (
     styled_dataframe,
     styled_keyword_chips,
 )
+
+_YT_TOP_VIDEOS_HELP = {
+    "video_title": "Public video title.",
+    "views": "Total views in the workspace dataset.",
+    "likes": "Like count.",
+    "comments": "Comment count.",
+    "engagement_rate": "(likes + comments) ÷ max(views, 1).",
+    "video_publishedAt": "Publish timestamp.",
+    "video_id": "YouTube video ID.",
+}
+
+_YT_OUTLIER_SCAN_HELP = {
+    "Thumbnail": "Thumbnail URL from the scan row.",
+    "Title": "Video title.",
+    "Channel": "Channel name.",
+    "Outlier Score": (
+        "0–100 contextual score: blends peer percentiles, engagement, recency, and channel baseline when available."
+    ),
+    "Views": "View count in dataset.",
+    "Views / Day": "views ÷ max(age in days, 1).",
+    "Engagement %": "Engagement as percent of views (pipeline definition).",
+    "Subscribers": "Channel subscriber count for size context.",
+    "Age (Days)": "Days since publish at scan time.",
+    "Why It Is An Outlier": "Explanation text from the outlier finder heuristics.",
+}
 from src.llm_integration.thumbnail_generator import ThumbnailGenerator
 from src.services.public_channel_service import load_public_channel_workspace
 from src.services.outliers_finder import (
@@ -1701,6 +1727,18 @@ def _render_overview(channel_df: pd.DataFrame) -> None:
             hovertemplate="Month: %{x|%b %Y}<br>Views: %{y:~s}<extra></extra>",
         )
         show_plotly_chart(fig)
+        chart_formula_insight_expanders(
+            "Monthly Video + Views Trend",
+            formula_lines=[
+                "Videos grouped by **publish month**.",
+                "**Videos** line = count of uploads; **Views** line = sum of view counts (dataset snapshot).",
+                "Dual Y-axes: left for upload volume, right for cumulative views in-month.",
+            ],
+            insights=[
+                "Diverging lines (uploads up, views flat) often signal packaging or topic fatigue.",
+                "Use the Plotly toolbar to zoom specific quarters.",
+            ],
+        )
 
     with right:
         section_header("Top 12 Videos", icon="⭐")
@@ -1715,7 +1753,16 @@ def _render_overview(channel_df: pd.DataFrame) -> None:
                 "video_id",
             ]
         ].sort_values("views", ascending=False).head(12)
-        styled_dataframe(top_videos, title=None, precision=2)
+        styled_dataframe(
+            top_videos,
+            title=None,
+            precision=2,
+            column_help=_YT_TOP_VIDEOS_HELP,
+            table_insights=[
+                "Sorted by **views** on the loaded workspace — not live YouTube Studio.",
+                "Compare **engagement_rate** across similar view counts to spot packaging winners.",
+            ],
+        )
 
 
 def _render_channel_audit(channel_df: pd.DataFrame) -> None:
@@ -1775,7 +1822,18 @@ def _render_channel_audit(channel_df: pd.DataFrame) -> None:
         st.markdown("**Momentum Radar**")
         trend_cols = st.columns(2)
         with trend_cols[0]:
-            styled_dataframe(trend_df.head(10), title=None, precision=1)
+            styled_dataframe(
+                trend_df.head(10),
+                title=None,
+                precision=1,
+                column_help={
+                    "keyword": "Title token tracked in 60d vs prior 60d windows.",
+                    "recent_mentions": "Videos in the last 60 days mentioning this token.",
+                    "previous_mentions": "Videos in days 60–120 ago mentioning this token.",
+                    "momentum_delta": "recent_mentions − previous_mentions.",
+                },
+                table_insights=["Shown with **Momentum Radar** mini-chart — same logic as the full Trend Radar tab."],
+            )
         with trend_cols[1]:
             rising = trend_df[trend_df["momentum_delta"] > 0].head(12)
             if not rising.empty:
@@ -1787,6 +1845,16 @@ def _render_channel_audit(channel_df: pd.DataFrame) -> None:
                     horizontal=True,
                 )
                 show_plotly_chart(rising_fig)
+                chart_formula_insight_expanders(
+                    "Rising Topics in the Last 60 Days",
+                    formula_lines=[
+                        "Keywords with positive **momentum_delta** (recent vs prior window in channel audit).",
+                        "Bar length = size of that delta for the keyword.",
+                    ],
+                    insights=[
+                        "Rising keywords are hypotheses for titles or series — validate with search intent.",
+                    ],
+                )
 
 
 def _render_keyword_intel(channel_df: pd.DataFrame) -> List[str]:
@@ -1796,7 +1864,25 @@ def _render_keyword_intel(channel_df: pd.DataFrame) -> List[str]:
         st.info("Not enough text data to compute keyword insights.")
         return []
 
-    styled_dataframe(intel, title=None, precision=2)
+    styled_dataframe(
+        intel,
+        title=None,
+        precision=2,
+        column_help={
+            "keyword": "Title token (word) aggregated across videos that used it.",
+            "videos": "Number of video rows where this token appeared in the title.",
+            "avg_views": "Mean view count across those videos.",
+            "avg_engagement": "Mean engagement_rate (likes + comments per view) for those videos.",
+            "momentum": "Mean recency weight — newer uploads push this higher.",
+            "score": (
+                "40×(avg_views/max_views) + 30×(avg_engagement/max_eng) + 20×(momentum/max_momentum) "
+                "+ 10×(1 − competition_proxy); competition_proxy = videos ÷ max(videos in table)."
+            ),
+        },
+        table_insights=[
+            "**Score** is a channel-local opportunity index, not a global SEO difficulty metric.",
+        ],
+    )
 
     top10 = intel.head(10)["keyword"].tolist()
     st.markdown("**High-opportunity keywords:**")
@@ -1811,6 +1897,16 @@ def _render_keyword_intel(channel_df: pd.DataFrame) -> List[str]:
             title="Keyword Opportunity Treemap",
         )
         show_plotly_chart(tree_fig)
+        chart_formula_insight_expanders(
+            "Keyword Opportunity Treemap",
+            formula_lines=[
+                "Cell area ∝ **score** from keyword_intel (composite of frequency, views lift, and engagement cues).",
+                "Labels show keyword text; color also encodes score.",
+            ],
+            insights=[
+                "Large tiles are high-opportunity seeds — still check relevance before scripting.",
+            ],
+        )
 
         bar_fig = plotly_bar_chart(
             intel.head(20).sort_values("score", ascending=False),
@@ -1820,6 +1916,15 @@ def _render_keyword_intel(channel_df: pd.DataFrame) -> List[str]:
             horizontal=True,
         )
         show_plotly_chart(bar_fig)
+        chart_formula_insight_expanders(
+            "Top Keyword Opportunities",
+            formula_lines=[
+                "Horizontal bars: top keywords by **score** (same scoring as treemap).",
+            ],
+            insights=[
+                "Cross-check top keywords against your channel positioning so you do not chase irrelevant trends.",
+            ],
+        )
     return intel["keyword"].tolist()
 
 
@@ -2210,6 +2315,16 @@ def _render_outliers_finder(current_channel_title: str) -> None:
             title="Outlier Score vs Channel Size (log scale)",
         )
         show_plotly_chart(scatter_fig)
+        chart_formula_insight_expanders(
+            "Outlier Score vs Channel Size",
+            formula_lines=[
+                "X = **log10_subscribers** (channel size); Y = **outlier_score** from the finder.",
+                "Marker size ∝ **views**; color = **age_bucket**.",
+            ],
+            insights=[
+                "Points far above the bulk are strong vs peers — confirm niche fit before copying angles.",
+            ],
+        )
     with chart_cols[1]:
         channel_breakout = (
             sorted_frame.groupby("channel_title", dropna=False)
@@ -2226,6 +2341,15 @@ def _render_outliers_finder(current_channel_title: str) -> None:
             horizontal=True,
         )
         show_plotly_chart(channel_fig)
+        chart_formula_insight_expanders(
+            "Channels Producing the Most Outliers",
+            formula_lines=[
+                "Group scan results by **channel_title**; bar = count of surfaced outlier rows per channel (top 12).",
+            ],
+            insights=[
+                "High counts can mean a niche is hot or that one channel dominates your filter — read titles for context.",
+            ],
+        )
 
     keyword_counter: Counter = Counter()
     for title in sorted_frame.head(20)["video_title"].tolist():
@@ -2268,6 +2392,11 @@ def _render_outliers_finder(current_channel_title: str) -> None:
         title="Scanned Cohort Results",
         precision=2,
         image_columns=["Thumbnail"],
+        column_help=_YT_OUTLIER_SCAN_HELP,
+        table_insights=[
+            "Scores are **relative to this scan** — change filters and rescan to widen or narrow the cohort.",
+            "Use header (?) tooltips for column formulas.",
+        ],
     )
 
     st.markdown("**AI Layer**")
@@ -2470,7 +2599,22 @@ def _render_competitor_benchmark(
     bdf = pd.DataFrame(state.get("benchmark_rows", []))
     competitor_trend_df = pd.DataFrame(state.get("trend_rows", []))
     keyword_gap_df = pd.DataFrame(state.get("gap_rows", []))
-    styled_dataframe(bdf, title=None, precision=1)
+    styled_dataframe(
+        bdf,
+        title=None,
+        precision=1,
+        column_help={
+            "channel_title": "Competitor channel name.",
+            "videos_1y": "Estimated uploads in the last year in the benchmark window.",
+            "total_views": "Sum of views across sampled videos.",
+            "avg_views": "Mean views per video.",
+            "median_engagement": "Median engagement rate in the competitor sample.",
+        },
+        table_insights=[
+            "Benchmark rows are computed from the handles you entered — refresh after new runs.",
+            "Radar and bars below use these same aggregates.",
+        ],
+    )
 
     if not bdf.empty:
         radar_series = {
@@ -2485,6 +2629,16 @@ def _render_competitor_benchmark(
         cats = ["Videos", "Total Views", "Avg Views", "Median Engagement"]
         radar_fig = plotly_radar_chart(cats, radar_series, "Competitor Shape")
         show_plotly_chart(radar_fig)
+        chart_formula_insight_expanders(
+            "Competitor Shape (radar)",
+            formula_lines=[
+                "Each spoke: **Videos (1y)**, **Total Views**, **Avg Views**, **Median Engagement** per channel.",
+                "Values are normalized for shape comparison — read the table for raw scale.",
+            ],
+            insights=[
+                "Bulges show where a competitor is disproportionately strong vs others in the set.",
+            ],
+        )
 
         bar_fig = plotly_bar_chart(
             bdf.head(10),
@@ -2494,12 +2648,34 @@ def _render_competitor_benchmark(
             horizontal=True,
         )
         show_plotly_chart(bar_fig)
+        chart_formula_insight_expanders(
+            "Total Views by Competitor",
+            formula_lines=[
+                "Bars = **total_views** from the benchmark table (top 10 shown).",
+            ],
+            insights=[
+                "Long bars are cumulative reach in your sample — check **videos_1y** so volume vs efficiency is clear.",
+            ],
+        )
 
     if not competitor_trend_df.empty:
         st.markdown("**Competitor Trend Radar**")
         trend_cols = st.columns(2)
         with trend_cols[0]:
-            styled_dataframe(competitor_trend_df.head(12), title=None, precision=1)
+            styled_dataframe(
+                competitor_trend_df.head(12),
+                title=None,
+                precision=1,
+                column_help={
+                    "keyword": "Keyword token from competitor titles (same momentum logic as Trend Radar).",
+                    "recent_mentions": "Mentions in competitors’ recent 60-day window.",
+                    "previous_mentions": "Mentions in the prior 60-day window.",
+                    "momentum_delta": "recent_mentions − previous_mentions.",
+                },
+                table_insights=[
+                    "This table uses the **combined competitor upload set** you benchmarked, not only your channel.",
+                ],
+            )
         with trend_cols[1]:
             positive = competitor_trend_df[competitor_trend_df["momentum_delta"] > 0].head(12)
             if not positive.empty:
@@ -2511,6 +2687,16 @@ def _render_competitor_benchmark(
                     horizontal=True,
                 )
                 show_plotly_chart(comp_trend_fig)
+                chart_formula_insight_expanders(
+                    "Rising Competitor Topics",
+                    formula_lines=[
+                        "Keywords with positive **momentum_delta** in competitor uploads.",
+                        "Bar shows size of momentum change (recent vs prior window).",
+                    ],
+                    insights=[
+                        "Rivals’ rising terms can be inspiration or crowded spaces — check volume before committing.",
+                    ],
+                )
 
     if not keyword_gap_df.empty:
         st.markdown("**Keyword gaps vs competitors**")
@@ -2522,6 +2708,15 @@ def _render_competitor_benchmark(
             horizontal=True,
         )
         show_plotly_chart(gap_fig)
+        chart_formula_insight_expanders(
+            "Keywords Competitors Use More Often",
+            formula_lines=[
+                "Each bar: **competitor_count** — how many competitor channels used that keyword in titles (sample).",
+            ],
+            insights=[
+                "High counts may signal table-stakes language for the niche or a saturated hook pattern.",
+            ],
+        )
         styled_keyword_chips(keyword_gap_df["keyword"].head(8).tolist())
 
     insights = state.get("insights", "")
@@ -2536,7 +2731,20 @@ def _render_trend_radar(channel_df: pd.DataFrame) -> None:
     if tdf.empty:
         st.info("Not enough recent data for trend radar.")
         return
-    styled_dataframe(tdf, title=None, precision=1)
+    styled_dataframe(
+        tdf,
+        title=None,
+        precision=1,
+        column_help={
+            "keyword": "Token from video titles (tokenized) in the last 60 days vs prior 60 days.",
+            "recent_mentions": "Count of videos in the last 60 days whose title contains this keyword (set semantics).",
+            "previous_mentions": "Count in the prior 60-day window (days 60–120 ago).",
+            "momentum_delta": "recent_mentions − previous_mentions (quick rise detector).",
+        },
+        table_insights=[
+            "Positive **momentum_delta** means the keyword is gaining share of titles recently.",
+        ],
+    )
 
     rising = tdf[tdf["momentum_delta"] > 0].copy()
     falling = tdf[tdf["momentum_delta"] <= 0].copy()
@@ -2550,6 +2758,15 @@ def _render_trend_radar(channel_df: pd.DataFrame) -> None:
             horizontal=True,
         )
         show_plotly_chart(rising_fig)
+        chart_formula_insight_expanders(
+            "Rising Keywords",
+            formula_lines=[
+                "Keywords with **momentum_delta > 0**: more title mentions in the last 60 days than the prior 60 days.",
+            ],
+            insights=[
+                "Use rising terms as title tests; confirm they still match your brand and search intent.",
+            ],
+        )
 
     if not falling.empty:
         falling_fig = plotly_bar_chart(
@@ -2560,6 +2777,15 @@ def _render_trend_radar(channel_df: pd.DataFrame) -> None:
             horizontal=True,
         )
         show_plotly_chart(falling_fig)
+        chart_formula_insight_expanders(
+            "Falling Keywords",
+            formula_lines=[
+                "Keywords with **momentum_delta ≤ 0**: flat or fewer mentions vs the prior 60-day window.",
+            ],
+            insights=[
+                "Falling mentions may mean a theme is cooling or you shifted packaging — check upload mix.",
+            ],
+        )
 
 
 def _render_content_planner(channel_df: pd.DataFrame) -> None:
@@ -2624,6 +2850,15 @@ def _render_content_planner(channel_df: pd.DataFrame) -> None:
             title="Average Views by Day",
         )
         show_plotly_chart(fig_day_views)
+        chart_formula_insight_expanders(
+            "Average Views by Day",
+            formula_lines=[
+                "Group by **publish_day**; bar = **mean views** for videos published that weekday.",
+            ],
+            insights=[
+                "Sparse weekdays make means noisy — pair with **Uploads by Day**.",
+            ],
+        )
     with day_cols[1]:
         fig_day_uploads = plotly_bar_chart(
             day_perf,
@@ -2632,6 +2867,15 @@ def _render_content_planner(channel_df: pd.DataFrame) -> None:
             title="Uploads by Day",
         )
         show_plotly_chart(fig_day_uploads)
+        chart_formula_insight_expanders(
+            "Uploads by Day",
+            formula_lines=[
+                "**videos** = count of uploads whose timestamp falls on that weekday.",
+            ],
+            insights=[
+                "Compare to average views — busy upload days can dilute per-video averages.",
+            ],
+        )
 
     hour_cols = st.columns(2)
     with hour_cols[0]:
@@ -2650,6 +2894,15 @@ def _render_content_planner(channel_df: pd.DataFrame) -> None:
             title="Uploads by Hour (UTC)",
         )
         show_plotly_chart(fig_hour_uploads)
+        chart_formula_insight_expanders(
+            "Uploads by Hour (UTC)",
+            formula_lines=[
+                "Count of videos published in each hour slot (UTC).",
+            ],
+            insights=[
+                "Use with average-views-by-hour to see if you publish at high-competition times.",
+            ],
+        )
 
     heatmap_source = (
         channel_df.groupby(["publish_day", "publish_hour"], dropna=False)
@@ -2673,6 +2926,15 @@ def _render_content_planner(channel_df: pd.DataFrame) -> None:
             title="Day x Hour Average Views",
         )
         show_plotly_chart(heat_views)
+        chart_formula_insight_expanders(
+            "Day × Hour Average Views",
+            formula_lines=[
+                "Each cell: mean **views** for videos published on that weekday + hour (UTC).",
+            ],
+            insights=[
+                "Hot cells suggest scheduling hypotheses; cold cells may be thin samples.",
+            ],
+        )
     with heat_cols[1]:
         heat_uploads = plotly_heatmap(
             heatmap_source,
@@ -2682,6 +2944,15 @@ def _render_content_planner(channel_df: pd.DataFrame) -> None:
             title="Day x Hour Upload Density",
         )
         show_plotly_chart(heat_uploads)
+        chart_formula_insight_expanders(
+            "Day × Hour Upload Density",
+            formula_lines=[
+                "Each cell: **videos** count for that weekday + hour (UTC).",
+            ],
+            insights=[
+                "Shows when you actually ship — compare to the average-views heatmap for timing fit.",
+            ],
+        )
 
     top_topics = _top_keywords(channel_df, top_n=12)
     if top_topics:
