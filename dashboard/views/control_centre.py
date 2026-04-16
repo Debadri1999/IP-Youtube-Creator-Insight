@@ -134,25 +134,39 @@ def _inject_control_centre_css() -> None:
         [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stMarkdownContainer"] p {
             text-align: center !important;
         }
-        /* Streamlit wraps buttons in a full-width flex row; force content-sized CTA on same axis as copy. */
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) div[data-testid="stElementContainer"]:has(.stButton) {
-            width: fit-content !important;
-            max-width: 100% !important;
-            align-self: center !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+        /*
+         * Primary CTA: Streamlit 1.53+ often drops the .stButton class from the outer wrapper, so
+         * :has(.stButton) never matched and the inner row stayed left-aligned. Target :has(button) and
+         * center the widget's immediate wrapper div (the wide horizontal flex row).
+         */
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
         }
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) .stButton {
-            width: fit-content !important;
-            max-width: 100% !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) > div {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: center !important;
+            align-items: center !important;
         }
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) .stButton > button {
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) .stButton,
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) [data-baseweb="button"] {
+            width: auto !important;
+            max-width: 100% !important;
+            flex: 0 0 auto !important;
+        }
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) button {
             width: auto !important;
             min-width: unset !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+        }
+        /* Some builds nest the widget in a nested horizontal flex block. */
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) [data-testid="stHorizontalBlock"] {
+            justify-content: center !important;
+            width: 100% !important;
         }
         .cc-feature-card-stack {
             display: flex;
