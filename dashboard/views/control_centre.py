@@ -74,7 +74,7 @@ def _inject_control_centre_css() -> None:
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
-            padding: 0.85rem 1rem !important;
+            padding: 0.85rem 1rem 1.1rem !important;
             border-radius: 14px !important;
             background: linear-gradient(
                 165deg,
@@ -111,7 +111,8 @@ def _inject_control_centre_css() -> None:
             gap: 0.95rem !important;
             width: 100% !important;
         }
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"] {
+        /* Use descendants (not `>`): Streamlit often wraps blocks so stElementContainer is not a direct child of stVerticalBlock. */
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] div[data-testid="stElementContainer"] {
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
@@ -135,38 +136,45 @@ def _inject_control_centre_css() -> None:
             text-align: center !important;
         }
         /*
-         * Primary CTA: Streamlit 1.53+ often drops the .stButton class from the outer wrapper, so
-         * :has(.stButton) never matched and the inner row stayed left-aligned. Target :has(button) and
-         * center the widget's immediate wrapper div (the wide horizontal flex row).
+         * Primary CTA: target any stElementContainer under this card that contains the real <button>.
+         * Avoid `>` chains — Streamlit inserts extra divs between stVerticalBlock and the widget row.
          */
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) {
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) div[data-testid="stElementContainer"]:has(button) {
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
             width: 100% !important;
         }
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) > div {
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) div[data-testid="stElementContainer"]:has(button) > div {
             width: 100% !important;
             display: flex !important;
             flex-direction: row !important;
+            flex-wrap: wrap !important;
             justify-content: center !important;
             align-items: center !important;
         }
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) .stButton,
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) [data-baseweb="button"] {
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) div[data-testid="stElementContainer"]:has(button) .stButton,
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) div[data-testid="stElementContainer"]:has(button) [data-baseweb="button"] {
             width: auto !important;
             max-width: 100% !important;
             flex: 0 0 auto !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
         }
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) button {
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) div[data-testid="stElementContainer"]:has(button) button {
             width: auto !important;
             min-width: unset !important;
         }
-        /* Some builds nest the widget in a nested horizontal flex block. */
-        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] > div[data-testid="stElementContainer"]:has(button) [data-testid="stHorizontalBlock"] {
+        /* Nested column row inside the card (CTA band): center flex children. */
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] [data-testid="stHorizontalBlock"] {
             justify-content: center !important;
             width: 100% !important;
+        }
+        [data-testid="stVerticalBlockBorderWrapper"]:has(.cc-feature-card-title) [data-testid="stVerticalBlock"] [data-testid="stHorizontalBlock"] [data-testid="column"] {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
         }
         .cc-feature-card-stack {
             display: flex;
@@ -237,11 +245,14 @@ def render(nav_targets: Sequence[Tuple[str, str, Any, str]]) -> None:
                     f"</div>",
                     unsafe_allow_html=True,
                 )
-                if st.button(
-                    f"Open {title}",
-                    type="primary",
-                    icon=icon,
-                    use_container_width=False,
-                    key=f"cc_workspace_open_{idx}",
-                ):
-                    st.switch_page(page_obj)
+                # Nested columns center the CTA reliably (Streamlit widget rows often ignore outer flex CSS).
+                _cc_pad_l, _cc_pad_mid, _cc_pad_r = st.columns([2, 5, 2], gap="small")
+                with _cc_pad_mid:
+                    if st.button(
+                        f"Open {title}",
+                        type="primary",
+                        icon=icon,
+                        use_container_width=True,
+                        key=f"cc_workspace_open_{idx}",
+                    ):
+                        st.switch_page(page_obj)
