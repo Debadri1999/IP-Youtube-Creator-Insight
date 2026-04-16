@@ -462,14 +462,15 @@ def _inject_channel_insights_css() -> None:
         [data-testid="stForm"] .stFormSubmitButton button[kind="primary"],
         [data-testid="stForm"] .stFormSubmitButton button[data-testid="baseButton-primary"],
         [data-testid="stForm"] .stFormSubmitButton button[data-testid="stBaseButton-primary"] {
-            font-weight: 700 !important;
+            font-weight: 800 !important;
+            font-size: 16px !important;
             background: linear-gradient(
                 165deg,
                 rgba(246, 251, 255, 0.98) 0%,
                 rgba(224, 240, 255, 0.92) 45%,
                 rgba(201, 229, 255, 0.88) 100%
             ) !important;
-            color: #0a2540 !important;
+            color: #111216 !important;
             border: 1px solid rgba(0, 113, 227, 0.34) !important;
             box-shadow: 0 4px 20px rgba(0, 113, 227, 0.14), 0 1px 0 rgba(255, 255, 255, 0.75) inset !important;
         }
@@ -484,7 +485,7 @@ def _inject_channel_insights_css() -> None:
                 rgba(187, 221, 255, 0.92) 100%
             ) !important;
             border-color: rgba(0, 113, 227, 0.52) !important;
-            color: #061a2e !important;
+            color: #111216 !important;
         }
         /* Keep UI readable while Streamlit marks outputs stale (avoids full-page grey “glitch”) */
         [data-testid="stAppViewContainer"] [data-stale="true"] {

@@ -643,14 +643,15 @@ def _inject_outlier_css() -> None:
         [data-testid="stForm"] .stFormSubmitButton button {
             min-height: 46px !important;
             border-radius: 999px !important;
-            font-weight: 700 !important;
+            font-weight: 800 !important;
+            font-size: 16px !important;
             letter-spacing: 0.01em !important;
         }
         [data-testid="stForm"] .stFormSubmitButton button[kind="primary"],
         [data-testid="stForm"] .stFormSubmitButton button[data-testid="baseButton-primary"],
         [data-testid="stForm"] .stFormSubmitButton button[data-testid="stBaseButton-primary"] {
             background: linear-gradient(165deg, rgba(246, 251, 255, 0.97), rgba(224, 237, 252, 0.95)) !important;
-            color: #0b4f9e !important;
+            color: #111216 !important;
             border: 1px solid rgba(0, 113, 227, 0.34) !important;
             box-shadow:
                 inset 0 1px 0 rgba(255, 255, 255, 0.98),
