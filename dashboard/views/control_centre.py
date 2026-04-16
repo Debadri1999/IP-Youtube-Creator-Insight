@@ -41,16 +41,37 @@ def _inject_control_centre_css() -> None:
             margin-bottom: 0.75rem;
             max-width: 920px;
         }
+        /* Compact workspace row: columns shrink to card width, centered (no 50% empty gutters). */
+        section[data-testid="stMain"] [data-testid="stHorizontalBlock"]:has([data-testid="stVerticalBlockBorderWrapper"]) {
+            justify-content: center !important;
+            align-items: flex-start !important;
+            flex-wrap: wrap !important;
+            gap: 1.25rem !important;
+            width: 100% !important;
+        }
+        section[data-testid="stMain"] [data-testid="stHorizontalBlock"]:has([data-testid="stVerticalBlockBorderWrapper"]) [data-testid="column"] {
+            flex: 0 1 auto !important;
+            width: auto !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
         /* Uniform glass cards: only this page injects this stylesheet (Control Centre). */
         section[data-testid="stMain"] [data-testid="column"] [data-testid="stVerticalBlockBorderWrapper"] {
             margin-bottom: 0.9rem !important;
+            width: fit-content !important;
+            max-width: min(100%, 380px) !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
             box-sizing: border-box !important;
             min-height: """
         + f"{_CC_CARD_HEIGHT_PX}px !important;\n            height: {_CC_CARD_HEIGHT_PX}px !important;\n"
         + """
             display: flex !important;
             flex-direction: column !important;
-            padding: 1rem 1.05rem 1rem !important;
+            padding: 0.9rem 1rem 0.95rem !important;
             border-radius: 18px !important;
             background: linear-gradient(
                 165deg,
@@ -94,6 +115,7 @@ def _inject_control_centre_css() -> None:
             color: #14161b;
             margin: 0 0 0.35rem;
             line-height: 1.25;
+            max-width: 20rem;
         }
         .cc-feature-card-desc {
             font-size: 0.93rem;
@@ -101,7 +123,8 @@ def _inject_control_centre_css() -> None:
             line-height: 1.48;
             margin: 0;
             flex: 1 1 auto;
-            min-height: 4.5em;
+            min-height: 3.25em;
+            max-width: 20rem;
         }
         </style>
         """,
@@ -147,7 +170,7 @@ def render(nav_targets: Sequence[Tuple[str, str, Any, str]]) -> None:
                     f"Open {title}",
                     type="primary",
                     icon=icon,
-                    use_container_width=True,
+                    use_container_width=False,
                     key=f"cc_workspace_open_{idx}",
                 ):
                     st.switch_page(page_obj)

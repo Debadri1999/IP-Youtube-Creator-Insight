@@ -519,30 +519,45 @@ section[data-testid="stMain"] > div {
     text-wrap: balance;
 }
 
-/* Control Centre landing: flagship YCreator wordmark (same hero shell, larger glass-type treatment) */
+/* Control Centre landing: flagship YCreator wordmark (lighter red→blue, no heavy dark stops) */
 .glass-page-hero.control-centre-hero .feature-headline {
-    margin: 0 0 0.75rem;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 0.9rem;
     font-size: clamp(2.85rem, 8.5vw, 5rem);
     font-weight: 900;
     letter-spacing: -0.05em;
     line-height: 1.02;
     color: transparent;
     background: linear-gradient(
-        118deg,
-        #ff1a3d 0%,
-        #e60012 18%,
-        #8b0010 38%,
-        #0a2540 62%,
-        #0071e3 88%,
-        #38bdf8 100%
+        102deg,
+        #ff4d6a 0%,
+        #ff1a3d 18%,
+        #e60012 34%,
+        #ff8fa8 48%,
+        #4d9fff 62%,
+        #0071e3 78%,
+        #7dd3fc 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
     text-shadow: none;
     filter:
-        drop-shadow(0 1px 0 rgba(255, 255, 255, 0.55))
-        drop-shadow(0 6px 22px rgba(230, 0, 18, 0.22))
-        drop-shadow(0 14px 40px rgba(0, 113, 227, 0.14));
+        drop-shadow(0 1px 0 rgba(255, 255, 255, 0.65))
+        drop-shadow(0 5px 18px rgba(230, 0, 18, 0.18))
+        drop-shadow(0 10px 28px rgba(0, 113, 227, 0.12));
+}
+
+.glass-page-hero.control-centre-hero .feature-headline::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 3px;
+    margin: 0.55rem auto 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #e60012 0%, #ff6b6b 42%, #0071e3 100%);
+    box-shadow: 0 1px 10px rgba(230, 0, 18, 0.28);
 }
 
 .glass-page-hero.control-centre-hero .feature-description {
