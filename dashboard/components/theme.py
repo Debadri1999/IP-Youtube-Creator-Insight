@@ -537,6 +537,11 @@ div[data-testid="stMarkdownContainer"] .glass-page-hero .feature-description {
     text-align: center !important;
 }
 
+/* Streamlit often forces `text-align: start` on `p` inside markdown; hero body must stay centered */
+div[data-testid="stMarkdownContainer"] .glass-page-hero p {
+    text-align: center !important;
+}
+
 .feature-hero-tags {
     display: flex;
     flex-wrap: wrap;
