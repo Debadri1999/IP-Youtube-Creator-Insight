@@ -1098,57 +1098,25 @@ def _render_metadata_cluster(result, result_frame: pd.DataFrame) -> None:
 
 def _outlier_score_visual(score: float) -> Dict[str, str]:
     score_n = max(0.0, min(float(score), 100.0))
-    palette = [
-        (0.0, (82, 98, 132)),
-        (40.0, (0, 92, 182)),
-        (60.0, (158, 78, 0)),
-        (80.0, (150, 0, 18)),
-        (100.0, (118, 0, 16)),
-    ]
-
-    def _lerp(a: float, b: float, t: float) -> float:
-        return a + (b - a) * t
-
-    def _interpolate_color(value: float) -> Tuple[int, int, int]:
-        for idx in range(len(palette) - 1):
-            left_stop, left_rgb = palette[idx]
-            right_stop, right_rgb = palette[idx + 1]
-            if value <= right_stop:
-                span = max(right_stop - left_stop, 1e-9)
-                ratio = (value - left_stop) / span
-                return (
-                    int(round(_lerp(left_rgb[0], right_rgb[0], ratio))),
-                    int(round(_lerp(left_rgb[1], right_rgb[1], ratio))),
-                    int(round(_lerp(left_rgb[2], right_rgb[2], ratio))),
-                )
-        return palette[-1][1]
-
-    def _mix(rgb: Tuple[int, int, int], target: Tuple[int, int, int], weight: float) -> Tuple[int, int, int]:
-        return (
-            int(round(_lerp(rgb[0], target[0], weight))),
-            int(round(_lerp(rgb[1], target[1], weight))),
-            int(round(_lerp(rgb[2], target[2], weight))),
-        )
-
-    def _rgba(rgb: Tuple[int, int, int], alpha: float) -> str:
-        return f"rgba({rgb[0]}, {rgb[1]}, {rgb[2]}, {alpha:.3f})"
-
-    def _hex(rgb: Tuple[int, int, int]) -> str:
-        return f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
-
-    base = _interpolate_color(score_n)
-    bg_top = _mix(base, (255, 255, 255), 0.80)
-    bg_bottom = _mix(base, (255, 255, 255), 0.56)
-    text_color = _mix(base, (20, 24, 34), 0.14)
-    border_alpha = 0.30 + (score_n / 100.0) * 0.30
-    band_alpha = 0.09 + (score_n / 100.0) * 0.16
+    ratio = score_n / 100.0
+    hue = 222.0 + (352.0 - 222.0) * ratio
+    saturation = 58.0 + 34.0 * ratio
+    top_light = 98.0 - 10.0 * ratio
+    bottom_light = 93.0 - 20.0 * ratio
+    value_light = max(24.0, 38.0 - 10.0 * ratio)
+    band_light = max(28.0, 92.0 - 34.0 * ratio)
+    border_alpha = 0.32 + 0.42 * ratio
 
     return {
-        "badge_bg": f"linear-gradient(160deg, {_rgba(bg_top, 0.97)}, {_rgba(bg_bottom, 0.94)})",
-        "badge_border": _rgba(base, border_alpha),
-        "value_color": _hex(text_color),
-        "band_bg": _rgba(base, band_alpha),
-        "band_color": _hex(text_color),
+        "badge_bg": (
+            f"linear-gradient(160deg, "
+            f"hsla({hue:.1f}, {saturation:.1f}%, {top_light:.1f}%, 0.98), "
+            f"hsla({hue:.1f}, {saturation:.1f}%, {bottom_light:.1f}%, 0.95))"
+        ),
+        "badge_border": f"hsla({hue:.1f}, {saturation:.1f}%, {value_light:.1f}%, {border_alpha:.3f})",
+        "value_color": f"hsl({hue:.1f}, {min(96.0, saturation + 4.0):.1f}%, {value_light:.1f}%)",
+        "band_bg": f"hsla({hue:.1f}, {saturation:.1f}%, {band_light:.1f}%, 0.22)",
+        "band_color": f"hsl({hue:.1f}, {min(96.0, saturation + 6.0):.1f}%, {max(20.0, value_light - 2.0):.1f}%)",
     }
 
 
